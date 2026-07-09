@@ -7,10 +7,9 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
   return (
@@ -37,9 +36,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -77,17 +73,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Querix AI — Beyond Keywords" },
-      { name: "description", content: "Querix AI is an intelligent discovery engine that helps businesses understand what users mean, not just what they type." },
+      { title: "Querix AI - Beyond Keywords" },
+      {
+        name: "description",
+        content:
+          "Querix AI is an intelligent discovery engine that helps businesses understand what users mean, not just what they type.",
+      },
       { name: "theme-color", content: "#0A1B2E" },
-      { property: "og:title", content: "Querix AI — Beyond Keywords" },
-      { property: "og:description", content: "Querix AI is an intelligent discovery engine that helps businesses understand what users mean, not just what they type." },
+      { property: "og:title", content: "Querix AI - Beyond Keywords" },
+      {
+        property: "og:description",
+        content:
+          "Querix AI is an intelligent discovery engine that helps businesses understand what users mean, not just what they type.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Querix AI — Beyond Keywords" },
-      { name: "twitter:description", content: "Querix AI is an intelligent discovery engine that helps businesses understand what users mean, not just what they type." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d760da00-130c-4c4e-9a4d-1a6b13d91431/id-preview-c8bcc615--dd526628-6473-41ff-a784-8bb0e8948e9e.lovable.app-1782278901345.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d760da00-130c-4c4e-9a4d-1a6b13d91431/id-preview-c8bcc615--dd526628-6473-41ff-a784-8bb0e8948e9e.lovable.app-1782278901345.png" },
+      { name: "twitter:title", content: "Querix AI - Beyond Keywords" },
+      {
+        name: "twitter:description",
+        content:
+          "Querix AI is an intelligent discovery engine that helps businesses understand what users mean, not just what they type.",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

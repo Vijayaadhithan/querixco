@@ -1,0 +1,798 @@
+import { QuerixLogo } from "@/components/QuerixLogo";
+import { useState, type ReactNode } from "react";
+import {
+  Activity,
+  ArrowRight,
+  BookOpen,
+  Brain,
+  Briefcase,
+  Building2,
+  CheckCircle2,
+  Compass,
+  Cpu,
+  Database,
+  Gauge,
+  GraduationCap,
+  Headphones,
+  HeartPulse,
+  Home,
+  Landmark,
+  Languages,
+  Layers,
+  Mail,
+  Mic,
+  Newspaper,
+  Plane,
+  Rocket,
+  Search,
+  ShieldCheck,
+  ShoppingBag,
+  Sparkles,
+  Store,
+  Workflow,
+  Zap,
+} from "lucide-react";
+
+const capabilities = [
+  {
+    icon: Search,
+    title: "Semantic Search",
+    desc: "Retrieve by meaning, not brittle keyword overlap.",
+  },
+  {
+    icon: Brain,
+    title: "Intent Parsing",
+    desc: "Extract filters, goals, synonyms, and hidden constraints from messy queries.",
+  },
+  {
+    icon: Sparkles,
+    title: "Smart Discovery",
+    desc: "Promote relevant inventory before users know exactly what to type.",
+  },
+  {
+    icon: Compass,
+    title: "Adaptive Ranking",
+    desc: "Blend semantic relevance, business rules, freshness, and availability.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Zero-Result Recovery",
+    desc: "Rewrite, broaden, and explain fallbacks before a search dead-ends.",
+  },
+  {
+    icon: Layers,
+    title: "Hybrid Retrieval",
+    desc: "Fuse vector search, structured filters, lexical signals, and reranking.",
+  },
+  {
+    icon: Mic,
+    title: "Conversational Ready",
+    desc: "Handle voice-like questions, fragments, typos, and follow-up intent.",
+  },
+  {
+    icon: Languages,
+    title: "Multilingual Signals",
+    desc: "Support regional vocabulary, mixed-language prompts, and synonym expansion.",
+  },
+];
+
+const industries = [
+  { icon: ShoppingBag, label: "E-commerce" },
+  { icon: Store, label: "Marketplaces" },
+  { icon: Building2, label: "Enterprise Search" },
+  { icon: Home, label: "Property Platforms" },
+  { icon: Plane, label: "Travel Platforms" },
+  { icon: HeartPulse, label: "Healthcare" },
+  { icon: GraduationCap, label: "Education" },
+  { icon: Landmark, label: "Finance" },
+  { icon: Newspaper, label: "Media" },
+  { icon: BookOpen, label: "Knowledge Bases" },
+  { icon: Headphones, label: "Customer Support" },
+  { icon: Briefcase, label: "B2B Applications" },
+];
+
+const stack = [
+  "Embeddings",
+  "Hybrid Search",
+  "Vector Stores",
+  "Rerankers",
+  "Query Planning",
+  "FastAPI",
+  "Observability",
+  "Tenant Isolation",
+];
+
+const demoQueries = [
+  {
+    query: "budget family beach stay near Chennai this weekend",
+    intent: "Relaxed coastal trip",
+    filters: ["location: Chennai coast", "budget: low", "date: weekend", "traveler: family"],
+    rewrite: "family-friendly beach stays near Chennai with affordable weekend availability",
+    results: [
+      { label: "Mahabalipuram sea-view homestay", score: 96, reason: "family + coast + budget" },
+      { label: "ECR serviced villa with breakfast", score: 91, reason: "weekend + group fit" },
+      { label: "Pondy-style boutique stay", score: 84, reason: "broadened coastal match" },
+    ],
+  },
+  {
+    query: "laptop for editing reels under 80000",
+    intent: "Creator workstation",
+    filters: ["price: <= 80000", "use: video editing", "category: laptop"],
+    rewrite: "creator laptops with strong CPU/GPU for short-form video editing under 80000",
+    results: [
+      { label: "RTX creator laptop 16GB RAM", score: 95, reason: "GPU + RAM + price" },
+      { label: "OLED ultrabook with H-series CPU", score: 89, reason: "display + CPU" },
+      { label: "Gaming laptop for Premiere workflows", score: 86, reason: "performance match" },
+    ],
+  },
+  {
+    query: "doctor for skin allergy open now nearby",
+    intent: "Urgent local care",
+    filters: ["specialty: dermatology", "availability: now", "distance: nearby"],
+    rewrite: "nearby dermatologists or skin clinics currently open for allergy consultation",
+    results: [
+      { label: "Dermatology clinic - open until 9 PM", score: 98, reason: "open now + nearby" },
+      { label: "Skin allergy specialist", score: 93, reason: "specialty exact" },
+      {
+        label: "Multi-speciality clinic with dermatologist",
+        score: 87,
+        reason: "fallback available",
+      },
+    ],
+  },
+];
+
+const pipeline = [
+  {
+    icon: Brain,
+    title: "Understand",
+    body: "Parse intent, entities, filters, typos, and ambiguity before retrieval starts.",
+  },
+  {
+    icon: Database,
+    title: "Retrieve",
+    body: "Combine semantic candidates with structured filters and catalog-safe browse paths.",
+  },
+  {
+    icon: Workflow,
+    title: "Rerank",
+    body: "Apply context, freshness, availability, tenant rules, and business priorities.",
+  },
+  {
+    icon: Activity,
+    title: "Explain",
+    body: "Expose diagnostics, fallback reasons, and measurable quality signals for teams.",
+  },
+];
+
+const proof = [
+  { value: "3.8x", label: "more relevant discovery paths" },
+  { value: "-42%", label: "dead-end search sessions" },
+  { value: "99.9%", label: "API uptime target" },
+  { value: "<50ms", label: "ranking-path latency target" },
+];
+
+export function LandingPage() {
+  return (
+    <div className="min-h-screen overflow-hidden text-foreground">
+      <Nav />
+      <Hero />
+      <ProofStrip />
+      <LiveDemo />
+      <Problem />
+      <Capabilities />
+      <Pipeline />
+      <Industries />
+      <TechStack />
+      <VisionMission />
+      <Contact />
+      <Footer />
+    </div>
+  );
+}
+
+function Nav() {
+  return (
+    <header className="fixed inset-x-0 top-0 z-50">
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
+        <div className="glass-card flex items-center justify-between rounded-full px-4 py-2.5">
+          <a href="#top" className="flex items-center gap-2.5" aria-label="Querix AI home">
+            <QuerixLogo size={30} />
+            <span className="font-display text-lg font-semibold">
+              Querix<span className="gradient-text">AI</span>
+            </span>
+          </a>
+          <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
+            <a href="#demo" className="hover:text-foreground transition">
+              Demo
+            </a>
+            <a href="#capabilities" className="hover:text-foreground transition">
+              Capabilities
+            </a>
+            <a href="#pipeline" className="hover:text-foreground transition">
+              Pipeline
+            </a>
+            <a href="#industries" className="hover:text-foreground transition">
+              Industries
+            </a>
+          </nav>
+          <a
+            href="#contact"
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:bg-foreground/90"
+          >
+            Request Demo <ArrowRight className="h-3.5 w-3.5" />
+          </a>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function Hero() {
+  return (
+    <section id="top" className="relative overflow-hidden pt-36 pb-24 sm:pt-44 sm:pb-32">
+      <div className="absolute inset-0 grid-bg pointer-events-none" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-blue/60 to-transparent" />
+      <div className="relative mx-auto max-w-7xl px-6 text-center">
+        <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-4 py-1.5 text-xs text-muted-foreground backdrop-blur">
+          <span className="relative flex h-1.5 w-1.5">
+            <span
+              className="absolute inline-flex h-full w-full rounded-full bg-brand-purple opacity-75"
+              style={{ animation: "pulse-ring 1.8s ease-out infinite" }}
+            />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-brand-blue" />
+          </span>
+          Intent-aware search infrastructure for serious products
+        </div>
+
+        <h1
+          className="animate-fade-up mx-auto mt-8 max-w-5xl font-display text-5xl font-semibold leading-none sm:text-6xl md:text-7xl lg:text-[88px]"
+          style={{ animationDelay: "0.08s" }}
+        >
+          Make search feel like it can <span className="gradient-text">read minds.</span>
+        </h1>
+
+        <p
+          className="animate-fade-up mx-auto mt-7 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl"
+          style={{ animationDelay: "0.16s" }}
+        >
+          Querix AI turns vague, messy, multilingual questions into ranked, filtered, explainable
+          results your users actually trust.
+        </p>
+
+        <div
+          className="animate-fade-up mt-10 flex flex-wrap items-center justify-center gap-3"
+          style={{ animationDelay: "0.24s" }}
+        >
+          <a
+            href="#demo"
+            className="group inline-flex min-h-12 items-center gap-2 rounded-full px-6 py-3 text-sm font-medium text-primary-foreground shadow-[0_0_40px_-10px_oklch(0.62_0.22_290/0.7)] transition hover:shadow-[0_0_60px_-10px_oklch(0.62_0.22_290/0.9)]"
+            style={{ backgroundImage: "var(--gradient-brand)" }}
+          >
+            Watch it think
+            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+          </a>
+          <a
+            href="#pipeline"
+            className="inline-flex min-h-12 items-center gap-2 rounded-full border border-border bg-surface/70 px-6 py-3 text-sm font-medium text-foreground backdrop-blur transition hover:bg-surface"
+          >
+            See architecture
+          </a>
+        </div>
+
+        <div className="animate-fade-up mt-16" style={{ animationDelay: "0.34s" }}>
+          <HeroConsole />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HeroConsole() {
+  return (
+    <div className="relative mx-auto max-w-5xl">
+      <div className="console-shell overflow-hidden rounded-[1.75rem] border border-border bg-background/60 text-left shadow-2xl backdrop-blur-xl">
+        <div className="flex items-center justify-between border-b border-border bg-surface/50 px-5 py-3">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-300/80" />
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/80" />
+            <span className="ml-3 font-medium text-foreground">querix.live/search</span>
+          </div>
+          <div className="hidden items-center gap-2 text-xs text-muted-foreground sm:flex">
+            <Gauge className="h-3.5 w-3.5 text-brand-blue" />
+            realtime intent graph
+          </div>
+        </div>
+
+        <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="border-b border-border p-5 sm:p-6 lg:border-b-0 lg:border-r">
+            <div className="rounded-2xl border border-border bg-surface/50 p-4">
+              <div className="flex items-center gap-3 rounded-xl border border-input bg-background/70 px-4 py-3">
+                <Search className="h-4 w-4 text-brand-blue" />
+                <span className="typing-text font-mono text-sm text-foreground">
+                  wedding planner with DJ and makeup in Chennai under 50k
+                </span>
+              </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                {["city: Chennai", "budget: <50k", "bundle: event"].map((item) => (
+                  <div key={item} className="rounded-lg border border-border bg-background/40 p-3">
+                    <div className="text-[10px] uppercase text-muted-foreground">extracted</div>
+                    <div className="mt-1 text-sm text-foreground">{item}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              {[
+                ["intent", "event vendor bundle"],
+                ["fallback", "category + semantic"],
+                ["ranker", "hybrid rerank"],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-xl border border-border bg-background/35 p-4">
+                  <div className="text-[10px] uppercase text-muted-foreground">{label}</div>
+                  <div className="mt-1 text-sm font-medium text-foreground">{value}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative p-5 sm:p-6">
+            <div className="scan-line" />
+            <div className="space-y-3">
+              {[
+                { name: "Event studio with DJ partner", score: 97 },
+                { name: "Bridal makeup + decor package", score: 92 },
+                { name: "Planner network near Adyar", score: 88 },
+              ].map((result, index) => (
+                <div
+                  key={result.name}
+                  className="rounded-2xl border border-border bg-surface/45 p-4"
+                  style={{ animationDelay: `${index * 120}ms` }}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="text-sm font-medium text-foreground">{result.name}</div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        matched by meaning, filters, and bundle intent
+                      </div>
+                    </div>
+                    <div className="rounded-full border border-brand-blue/40 px-2.5 py-1 text-xs text-brand-blue">
+                      {result.score}%
+                    </div>
+                  </div>
+                  <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-border">
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${result.score}%`,
+                        backgroundImage: "var(--gradient-brand)",
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProofStrip() {
+  return (
+    <section className="relative -mt-8 pb-16">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          {proof.map((item) => (
+            <div key={item.label} className="rounded-2xl border border-border bg-surface/35 p-5">
+              <div className="font-display text-3xl font-semibold gradient-text">{item.value}</div>
+              <div className="mt-2 text-sm text-muted-foreground">{item.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function LiveDemo() {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const selected = demoQueries[selectedIndex];
+
+  return (
+    <section id="demo" className="relative py-24">
+      <div className="mx-auto max-w-7xl px-6">
+        <SectionHeader
+          eyebrow="Live Intelligence"
+          title={
+            <>
+              From messy text to <span className="gradient-text">ranked action</span>.
+            </>
+          }
+          sub="Try the kind of query that usually breaks ordinary search. Querix turns it into intent, filters, rewrites, and explainable results."
+        />
+
+        <div className="mt-14 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
+          <div className="space-y-3">
+            {demoQueries.map((demo, index) => (
+              <button
+                key={demo.query}
+                type="button"
+                onClick={() => setSelectedIndex(index)}
+                className={`w-full rounded-2xl border p-4 text-left transition ${
+                  selectedIndex === index
+                    ? "border-brand-blue/60 bg-brand-blue/10"
+                    : "border-border bg-surface/35 hover:border-brand-blue/35"
+                }`}
+              >
+                <div className="flex items-center gap-2 text-xs uppercase text-muted-foreground">
+                  <Zap className="h-3.5 w-3.5 text-brand-blue" />
+                  scenario {index + 1}
+                </div>
+                <div className="mt-2 text-sm font-medium text-foreground">{demo.query}</div>
+              </button>
+            ))}
+          </div>
+
+          <div className="console-shell rounded-[1.75rem] border border-border bg-background/55 p-5 backdrop-blur-xl">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+              <div>
+                <div className="text-xs uppercase text-muted-foreground">decoded intent</div>
+                <div className="mt-1 font-display text-2xl font-semibold text-foreground">
+                  {selected.intent}
+                </div>
+              </div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-xs text-emerald-200">
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                confident match
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-4 md:grid-cols-2">
+              <div className="rounded-2xl border border-border bg-surface/35 p-4">
+                <div className="text-xs uppercase text-muted-foreground">query rewrite</div>
+                <p className="mt-2 text-sm leading-6 text-foreground">{selected.rewrite}</p>
+              </div>
+              <div className="rounded-2xl border border-border bg-surface/35 p-4">
+                <div className="text-xs uppercase text-muted-foreground">structured filters</div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {selected.filters.map((filter) => (
+                    <span
+                      key={filter}
+                      className="rounded-full border border-border bg-background/40 px-3 py-1 text-xs text-foreground"
+                    >
+                      {filter}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 space-y-3">
+              {selected.results.map((result) => (
+                <div
+                  key={result.label}
+                  className="rounded-2xl border border-border bg-surface/35 p-4"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="text-sm font-semibold text-foreground">{result.label}</div>
+                      <div className="mt-1 text-xs text-muted-foreground">{result.reason}</div>
+                    </div>
+                    <div className="text-sm font-semibold text-brand-blue">{result.score}%</div>
+                  </div>
+                  <div className="mt-3 h-1.5 rounded-full bg-border">
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${result.score}%`,
+                        backgroundImage: "var(--gradient-brand)",
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SectionHeader({
+  eyebrow,
+  title,
+  sub,
+}: {
+  eyebrow: string;
+  title: ReactNode;
+  sub?: string;
+}) {
+  return (
+    <div className="mx-auto max-w-3xl text-center">
+      <div className="text-xs font-medium uppercase tracking-[0.2em] text-brand-blue">
+        {eyebrow}
+      </div>
+      <h2 className="mt-3 font-display text-3xl font-semibold sm:text-4xl md:text-5xl">{title}</h2>
+      {sub && <p className="mt-4 leading-7 text-muted-foreground">{sub}</p>}
+    </div>
+  );
+}
+
+function Problem() {
+  return (
+    <section className="relative py-24">
+      <div className="mx-auto max-w-6xl px-6">
+        <SectionHeader
+          eyebrow="The Upgrade"
+          title={
+            <>
+              Search should recover when users <span className="gradient-text">do not.</span>
+            </>
+          }
+        />
+        <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2">
+          <div className="rounded-[1.5rem] border border-border bg-surface/35 p-7">
+            <div className="text-xs uppercase text-muted-foreground">Traditional Search</div>
+            <p className="mt-3 text-foreground/90">
+              Matches strings. Misses meaning. Treats price, location, use case, urgency, and
+              synonyms as separate problems.
+            </p>
+            <div className="mt-6 space-y-2 font-mono text-xs text-muted-foreground">
+              <div className="rounded bg-background/40 px-3 py-2">query -&gt; exact match</div>
+              <div className="rounded bg-background/40 px-3 py-2">synonym -&gt; unknown</div>
+              <div className="rounded bg-background/40 px-3 py-2">intent -&gt; ignored</div>
+            </div>
+          </div>
+          <div className="hover-glow rounded-[1.5rem] border border-brand-blue/30 bg-surface/45 p-7">
+            <div className="text-xs font-semibold uppercase gradient-text">Querix AI</div>
+            <p className="mt-3 text-foreground/90">
+              Understands the job behind the query, builds a retrieval plan, then returns ranked
+              results with a reason to believe.
+            </p>
+            <div className="mt-6 space-y-2 font-mono text-xs">
+              <div className="rounded bg-background/40 px-3 py-2">query -&gt; intent graph</div>
+              <div className="rounded bg-background/40 px-3 py-2">filters -&gt; safe retrieval</div>
+              <div className="rounded bg-background/40 px-3 py-2 text-foreground">
+                results -&gt; explainable rank
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Capabilities() {
+  return (
+    <section id="capabilities" className="relative py-24">
+      <div className="mx-auto max-w-7xl px-6">
+        <SectionHeader
+          eyebrow="Core Capabilities"
+          title={
+            <>
+              Built for product teams that need{" "}
+              <span className="gradient-text">trustworthy AI</span>.
+            </>
+          }
+          sub="Not a decorative chatbot. A practical intelligence layer for real search and discovery systems."
+        />
+        <div className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {capabilities.map(({ icon: Icon, title, desc }) => (
+            <div
+              key={title}
+              className="hover-glow group rounded-2xl border border-border bg-surface/35 p-6"
+            >
+              <div
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl"
+                style={{ backgroundImage: "var(--gradient-brand)" }}
+              >
+                <Icon className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <h3 className="mt-5 font-display text-lg font-semibold">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Pipeline() {
+  return (
+    <section id="pipeline" className="relative py-24">
+      <div className="mx-auto max-w-7xl px-6">
+        <SectionHeader
+          eyebrow="Architecture"
+          title={
+            <>
+              A retrieval pipeline that feels <span className="gradient-text">alive</span>.
+            </>
+          }
+          sub="Every stage is observable, tunable, and built to fit inside an existing product stack."
+        />
+        <div className="mt-16 grid gap-4 md:grid-cols-4">
+          {pipeline.map(({ icon: Icon, title, body }, index) => (
+            <div
+              key={title}
+              className="relative rounded-2xl border border-border bg-surface/35 p-6"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-background/45">
+                  <Icon className="h-5 w-5 text-brand-blue" />
+                </div>
+                <span className="font-mono text-xs text-muted-foreground">0{index + 1}</span>
+              </div>
+              <h3 className="mt-6 font-display text-xl font-semibold">{title}</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">{body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Industries() {
+  return (
+    <section id="industries" className="relative py-24">
+      <div className="mx-auto max-w-7xl px-6">
+        <SectionHeader
+          eyebrow="Industries"
+          title={
+            <>
+              One engine, <span className="gradient-text">many discovery problems</span>.
+            </>
+          }
+          sub="Querix is domain-agnostic, but the retrieval behavior can be tuned for each product, tenant, and catalog."
+        />
+        <div className="mt-16 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {industries.map(({ icon: Icon, label }) => (
+            <div
+              key={label}
+              className="hover-glow flex items-center gap-3 rounded-xl border border-border bg-surface/35 p-4"
+            >
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background/40">
+                <Icon className="h-4 w-4 text-brand-blue" />
+              </div>
+              <span className="text-sm font-medium">{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TechStack() {
+  return (
+    <section id="stack" className="relative py-24">
+      <div className="mx-auto max-w-6xl px-6">
+        <SectionHeader
+          eyebrow="Technology"
+          title={
+            <>
+              Modern AI search, packaged for <span className="gradient-text">shipping</span>.
+            </>
+          }
+          sub="A composable foundation that can sit behind web, mobile, marketplace, and internal search experiences."
+        />
+        <div className="mt-16 rounded-[1.75rem] border border-border bg-surface/35 p-8 sm:p-10">
+          <div className="flex flex-wrap justify-center gap-2.5">
+            {stack.map((technology) => (
+              <span
+                key={technology}
+                className="rounded-full border border-border bg-background/40 px-4 py-2 text-sm text-foreground/90 transition hover:border-brand-blue/50"
+              >
+                {technology}
+              </span>
+            ))}
+          </div>
+          <div className="mt-10 grid grid-cols-1 gap-4 text-center sm:grid-cols-3">
+            {[
+              { icon: Cpu, label: "Model routing", value: "adaptive" },
+              { icon: Rocket, label: "Deployment", value: "API-first" },
+              { icon: ShieldCheck, label: "Controls", value: "tenant-safe" },
+            ].map(({ icon: Icon, label, value }) => (
+              <div key={label} className="rounded-2xl border border-border bg-background/30 p-6">
+                <Icon className="mx-auto h-5 w-5 text-brand-blue" />
+                <div className="mt-3 font-display text-2xl font-semibold gradient-text">
+                  {value}
+                </div>
+                <div className="mt-1 text-sm text-muted-foreground">{label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function VisionMission() {
+  return (
+    <section id="vision" className="relative py-24">
+      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-5 px-6 md:grid-cols-2">
+        <div className="rounded-[1.75rem] border border-border bg-surface/35 p-8 sm:p-10">
+          <div className="text-xs uppercase tracking-[0.2em] text-brand-blue">Vision</div>
+          <p className="mt-5 font-display text-2xl font-semibold leading-tight sm:text-3xl">
+            Become the intelligence layer behind search, recommendations, and discovery.
+          </p>
+        </div>
+        <div className="rounded-[1.75rem] border border-border bg-surface/35 p-8 sm:p-10">
+          <div className="text-xs uppercase tracking-[0.2em] text-brand-blue">Mission</div>
+          <p className="mt-5 font-display text-2xl font-semibold leading-tight sm:text-3xl">
+            Help businesses ship experiences that understand users naturally.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Contact() {
+  return (
+    <section id="contact" className="relative py-28">
+      <div className="mx-auto max-w-4xl px-6">
+        <div className="relative overflow-hidden rounded-[2rem] border border-border p-10 text-center sm:p-16">
+          <div className="absolute inset-0 -z-10" style={{ background: "var(--gradient-hero)" }} />
+          <div className="absolute inset-0 -z-10 grid-bg opacity-40" />
+          <div className="text-xs font-medium uppercase tracking-[0.25em] text-brand-blue">
+            Get Started
+          </div>
+          <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl md:text-6xl">
+            Turn your search box into your{" "}
+            <span className="gradient-text">best product feature</span>.
+          </h2>
+          <p className="mx-auto mt-5 max-w-xl leading-7 text-muted-foreground">
+            Bring a real catalog, messy queries, and business rules. Querix can show exactly where
+            relevance improves.
+          </p>
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+            <a
+              href="mailto:hello@querix.co?subject=Querix%20AI%20Demo%20Request"
+              className="group inline-flex min-h-12 items-center gap-2 rounded-full px-6 py-3 text-sm font-medium text-primary-foreground shadow-[0_0_40px_-10px_oklch(0.62_0.22_290/0.7)] transition hover:shadow-[0_0_60px_-10px_oklch(0.62_0.22_290/0.9)]"
+              style={{ backgroundImage: "var(--gradient-brand)" }}
+            >
+              Request Demo <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+            </a>
+            <a
+              href="mailto:hello@querix.co"
+              className="inline-flex min-h-12 items-center gap-2 rounded-full border border-border bg-surface/70 px-6 py-3 text-sm font-medium text-foreground backdrop-blur transition hover:bg-surface"
+            >
+              <Mail className="h-4 w-4" /> hello@querix.co
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="border-t border-border">
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-10 sm:flex-row">
+        <div className="flex items-center gap-2.5">
+          <QuerixLogo size={26} />
+          <span className="font-display font-semibold">
+            Querix<span className="gradient-text">AI</span>
+          </span>
+          <span className="ml-2 text-xs text-muted-foreground">Beyond Keywords.</span>
+        </div>
+        <div className="flex items-center gap-6 text-sm text-muted-foreground">
+          <a href="mailto:hello@querix.co" className="hover:text-foreground transition">
+            hello@querix.co
+          </a>
+          <span>(c) {new Date().getFullYear()} Querix AI</span>
+        </div>
+      </div>
+    </footer>
+  );
+}

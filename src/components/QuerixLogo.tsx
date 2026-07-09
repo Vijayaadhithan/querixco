@@ -23,7 +23,15 @@ export function QuerixLogo({ className = "", size = 36 }: { className?: string; 
       {/* Q circle */}
       <circle cx="34" cy="34" r="18" stroke="url(#qx-grad)" strokeWidth="5" fill="none" />
       {/* Q tail */}
-      <rect x="40" y="42" width="12" height="5" rx="1.5" transform="rotate(35 40 42)" fill="url(#qx-grad)" />
+      <rect
+        x="40"
+        y="42"
+        width="12"
+        height="5"
+        rx="1.5"
+        transform="rotate(35 40 42)"
+        fill="url(#qx-grad)"
+      />
     </svg>
   );
 }
