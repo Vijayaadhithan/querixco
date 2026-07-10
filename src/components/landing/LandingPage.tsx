@@ -1,5 +1,5 @@
 import { QuerixLogo } from "@/components/QuerixLogo";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Activity,
   ArrowRight,
@@ -25,10 +25,12 @@ import {
   Plane,
   Rocket,
   Search,
+  Server,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
   Store,
+  Terminal,
   Workflow,
   Zap,
 } from "lucide-react";
@@ -168,9 +170,17 @@ const pipeline = [
 const proof = [
   { value: "3.8x", label: "more relevant discovery paths" },
   { value: "-42%", label: "dead-end search sessions" },
-  { value: "99.9%", label: "API uptime target" },
+  { value: "live", label: "production API health" },
   { value: "<50ms", label: "ranking-path latency target" },
 ];
+
+type ApiHealth = {
+  status: string;
+  tenantMode: boolean;
+  configuredCompanies: number;
+  latencyMs: number;
+  checkedAt: string;
+};
 
 export function LandingPage() {
   return (
@@ -178,6 +188,7 @@ export function LandingPage() {
       <Nav />
       <Hero />
       <ProofStrip />
+      <ApiStatus />
       <LiveDemo />
       <Problem />
       <Capabilities />
@@ -187,6 +198,272 @@ export function LandingPage() {
       <VisionMission />
       <Contact />
       <Footer />
+    </div>
+  );
+}
+
+function ApiStatus() {
+  const [health, setHealth] = useState<ApiHealth | null>(null);
+  const [state, setState] = useState<"loading" | "online" | "offline">("loading");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function checkApi() {
+      try {
+        const response = await fetch("/api/ready", { cache: "no-store" });
+        if (!response.ok) throw new Error(`API status returned ${response.status}`);
+        const data = (await response.json()) as ApiHealth;
+        if (cancelled) return;
+        setHealth(data);
+        setState(data.status === "ok" ? "online" : "offline");
+      } catch {
+        if (cancelled) return;
+        setState("offline");
+      }
+    }
+
+    void checkApi();
+    const interval = window.setInterval(checkApi, 60_000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  const isOnline = state === "online";
+  const statusLabel =
+    state === "loading"
+      ? "checking live endpoint"
+      : isOnline
+        ? "api is live"
+        : "status check failed";
+  const latency = health?.latencyMs ?? 0;
+  const latencyLabel = health
+    ? latency < 250
+      ? "fast edge response"
+      : latency < 750
+        ? "healthy response"
+        : "elevated response"
+    : "awaiting probe";
+  const latencyWidth = health ? `${Math.min(100, Math.max(10, latency / 8))}%` : "12%";
+  const lastChecked = health
+    ? new Date(health.checkedAt).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+    : "--:--:--";
+
+  return (
+    <section id="status" className="relative py-24">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#081827] shadow-[0_32px_100px_-52px_oklch(0.68_0.18_250/0.9)]">
+          <div className="absolute inset-0 grid-bg opacity-40" />
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-blue to-transparent" />
+          <div className="relative grid lg:grid-cols-[1.08fr_0.92fr]">
+            <div className="p-6 sm:p-9 lg:p-10">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-brand-blue/30 bg-brand-blue/10">
+                    <Server className="h-5 w-5 text-brand-blue" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-brand-blue">
+                      Live infrastructure signal
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      Public readiness probe · refreshes every 60 seconds
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium ${isOnline ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-200" : state === "loading" ? "border-amber-300/30 bg-amber-300/10 text-amber-100" : "border-red-400/30 bg-red-400/10 text-red-200"}`}
+                >
+                  <span className="relative flex h-2 w-2">
+                    <span
+                      className={`absolute inline-flex h-full w-full rounded-full ${isOnline ? "bg-emerald-400 animate-ping" : ""}`}
+                    />
+                    <span
+                      className={`relative inline-flex h-2 w-2 rounded-full ${isOnline ? "bg-emerald-400" : state === "loading" ? "bg-amber-300" : "bg-red-400"}`}
+                    />
+                  </span>
+                  {statusLabel}
+                </div>
+              </div>
+
+              <div className="mt-10">
+                <p className="text-sm font-medium text-muted-foreground">
+                  Production control plane
+                </p>
+                <h2 className="mt-2 font-display text-4xl font-semibold leading-none text-white sm:text-5xl">
+                  {isOnline
+                    ? "All systems nominal."
+                    : state === "loading"
+                      ? "Verifying the edge."
+                      : "Availability needs attention."}
+                </h2>
+                <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground">
+                  A live readiness signal from the Querix API gateway. Search requests stay
+                  tenant-scoped and authenticated beyond this public boundary.
+                </p>
+              </div>
+
+              <div className="mt-9 grid gap-3 sm:grid-cols-3">
+                <StatusMetric
+                  label="gateway"
+                  value={health?.status ?? "checking"}
+                  detail="readiness response"
+                  accent={isOnline ? "emerald" : "blue"}
+                />
+                <StatusMetric
+                  label="isolation"
+                  value={health?.tenantMode ? "active" : "--"}
+                  detail="tenant mode"
+                  accent="blue"
+                />
+                <StatusMetric
+                  label="tenants"
+                  value={health ? String(health.configuredCompanies) : "--"}
+                  detail="configured now"
+                  accent="purple"
+                />
+              </div>
+
+              <div className="mt-7 rounded-lg border border-white/10 bg-black/20 p-4">
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+                      Edge probe latency
+                    </p>
+                    <p className="mt-1 font-display text-2xl font-semibold text-white">
+                      {health ? `${latency} ms` : "-- ms"}
+                    </p>
+                  </div>
+                  <span className="text-xs text-muted-foreground">{latencyLabel}</span>
+                </div>
+                <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
+                  <div
+                    className={`h-full rounded-full transition-all duration-700 ${latency < 250 ? "bg-emerald-400" : latency < 750 ? "bg-brand-blue" : "bg-amber-300"}`}
+                    style={{ width: latencyWidth }}
+                  />
+                </div>
+                <div className="mt-3 flex justify-between text-[10px] text-muted-foreground">
+                  <span>probe start</span>
+                  <span>last verified {lastChecked}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-white/10 bg-[#050d17]/75 p-5 backdrop-blur-xl lg:border-t-0 lg:border-l lg:p-7">
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <div className="flex items-center gap-2 text-xs font-medium text-foreground">
+                  <Terminal className="h-4 w-4 text-brand-blue" /> Live probe transcript
+                </div>
+                <span className="font-mono text-[10px] text-muted-foreground">GET /ready</span>
+              </div>
+              <div className="mt-5 rounded-lg border border-white/10 bg-black/30 p-4 font-mono text-xs leading-6 text-[#cfe2f8]">
+                <div className="text-muted-foreground">$ curl -sS api.querix.co/api/v1/ready</div>
+                <div className="mt-3 text-brand-blue">&#123;</div>
+                <div className="pl-4">
+                  "status":{" "}
+                  <span className={isOnline ? "text-emerald-300" : "text-amber-200"}>
+                    "{health?.status ?? "checking"}"
+                  </span>
+                  ,
+                </div>
+                <div className="pl-4">
+                  "tenant_mode":{" "}
+                  <span className="text-violet-300">{String(health?.tenantMode ?? false)}</span>,
+                </div>
+                <div className="pl-4">
+                  "configured_companies":{" "}
+                  <span className="text-amber-200">{health?.configuredCompanies ?? 0}</span>
+                </div>
+                <div className="text-brand-blue">&#125;</div>
+              </div>
+              <div className="mt-5 space-y-3">
+                <ProbeStep
+                  label="Gateway accepted request"
+                  value={health?.status === "ok" ? "verified" : "pending"}
+                  complete={health?.status === "ok"}
+                />
+                <ProbeStep
+                  label="Tenant boundary reported"
+                  value={health?.tenantMode ? "enabled" : "pending"}
+                  complete={Boolean(health?.tenantMode)}
+                />
+                <ProbeStep label="Next automatic probe" value="in under 60 seconds" complete />
+              </div>
+              <div className="mt-6 rounded-lg border border-brand-blue/20 bg-brand-blue/[0.06] p-4">
+                <div className="flex items-center gap-2 text-xs font-medium text-[#9ed1ff]">
+                  <ShieldCheck className="h-4 w-4" /> Search API contract
+                </div>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                  Tenant search calls require a tenant-bound key. Public status exposes only safe
+                  readiness information.
+                </p>
+                <a
+                  href="/developers/integration"
+                  className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-[#9ed1ff] transition hover:text-white"
+                >
+                  Read integration guide <ArrowRight className="h-3.5 w-3.5" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function StatusMetric({
+  label,
+  value,
+  detail,
+  accent,
+}: {
+  label: string;
+  value: string;
+  detail: string;
+  accent: "emerald" | "blue" | "purple";
+}) {
+  const accentStyles = {
+    emerald: "border-emerald-400/20 bg-emerald-400/[0.05] text-emerald-200",
+    blue: "border-brand-blue/20 bg-brand-blue/[0.05] text-[#9ed1ff]",
+    purple: "border-violet-400/20 bg-violet-400/[0.05] text-violet-200",
+  };
+  return (
+    <div className={`rounded-lg border p-4 ${accentStyles[accent]}`}>
+      <div className="text-[10px] font-medium uppercase tracking-[0.14em] opacity-70">{label}</div>
+      <div className="mt-2 font-display text-xl font-semibold text-white">{value}</div>
+      <div className="mt-1 text-[10px] text-muted-foreground">{detail}</div>
+    </div>
+  );
+}
+
+function ProbeStep({
+  label,
+  value,
+  complete,
+}: {
+  label: string;
+  value: string;
+  complete: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 border-b border-white/[0.07] pb-3 last:border-0 last:pb-0">
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <span
+          className={`h-1.5 w-1.5 rounded-full ${complete ? "bg-emerald-400" : "bg-amber-300"}`}
+        />
+        {label}
+      </div>
+      <span className={`font-mono text-[10px] ${complete ? "text-emerald-300" : "text-amber-200"}`}>
+        {value}
+      </span>
     </div>
   );
 }
@@ -214,6 +491,9 @@ function Nav() {
             </a>
             <a href="#industries" className="hover:text-foreground transition">
               Industries
+            </a>
+            <a href="/developers" className="hover:text-foreground transition">
+              Developers
             </a>
           </nav>
           <a
@@ -787,6 +1067,9 @@ function Footer() {
           <span className="ml-2 text-xs text-muted-foreground">Beyond Keywords.</span>
         </div>
         <div className="flex items-center gap-6 text-sm text-muted-foreground">
+          <a href="/developers" className="hover:text-foreground transition">
+            Developers
+          </a>
           <a href="mailto:hello@querix.co" className="hover:text-foreground transition">
             hello@querix.co
           </a>

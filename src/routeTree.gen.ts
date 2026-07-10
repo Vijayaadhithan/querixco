@@ -9,38 +9,135 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DevelopersRouteImport } from './routes/developers'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DevelopersPlatformRouteImport } from './routes/developers/platform'
+import { Route as DevelopersOperationsRouteImport } from './routes/developers/operations'
+import { Route as DevelopersIntegrationRouteImport } from './routes/developers/integration'
+import { Route as DevelopersDataPipelineRouteImport } from './routes/developers/data-pipeline'
+import { Route as DevelopersArchitectureRouteImport } from './routes/developers/architecture'
+import { Route as ApiReadyRouteImport } from './routes/api/ready'
 
+const DevelopersRoute = DevelopersRouteImport.update({
+  id: '/developers',
+  path: '/developers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DevelopersPlatformRoute = DevelopersPlatformRouteImport.update({
+  id: '/platform',
+  path: '/platform',
+  getParentRoute: () => DevelopersRoute,
+} as any)
+const DevelopersOperationsRoute = DevelopersOperationsRouteImport.update({
+  id: '/operations',
+  path: '/operations',
+  getParentRoute: () => DevelopersRoute,
+} as any)
+const DevelopersIntegrationRoute = DevelopersIntegrationRouteImport.update({
+  id: '/integration',
+  path: '/integration',
+  getParentRoute: () => DevelopersRoute,
+} as any)
+const DevelopersDataPipelineRoute = DevelopersDataPipelineRouteImport.update({
+  id: '/data-pipeline',
+  path: '/data-pipeline',
+  getParentRoute: () => DevelopersRoute,
+} as any)
+const DevelopersArchitectureRoute = DevelopersArchitectureRouteImport.update({
+  id: '/architecture',
+  path: '/architecture',
+  getParentRoute: () => DevelopersRoute,
+} as any)
+const ApiReadyRoute = ApiReadyRouteImport.update({
+  id: '/api/ready',
+  path: '/api/ready',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/developers': typeof DevelopersRouteWithChildren
+  '/api/ready': typeof ApiReadyRoute
+  '/developers/architecture': typeof DevelopersArchitectureRoute
+  '/developers/data-pipeline': typeof DevelopersDataPipelineRoute
+  '/developers/integration': typeof DevelopersIntegrationRoute
+  '/developers/operations': typeof DevelopersOperationsRoute
+  '/developers/platform': typeof DevelopersPlatformRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/developers': typeof DevelopersRouteWithChildren
+  '/api/ready': typeof ApiReadyRoute
+  '/developers/architecture': typeof DevelopersArchitectureRoute
+  '/developers/data-pipeline': typeof DevelopersDataPipelineRoute
+  '/developers/integration': typeof DevelopersIntegrationRoute
+  '/developers/operations': typeof DevelopersOperationsRoute
+  '/developers/platform': typeof DevelopersPlatformRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/developers': typeof DevelopersRouteWithChildren
+  '/api/ready': typeof ApiReadyRoute
+  '/developers/architecture': typeof DevelopersArchitectureRoute
+  '/developers/data-pipeline': typeof DevelopersDataPipelineRoute
+  '/developers/integration': typeof DevelopersIntegrationRoute
+  '/developers/operations': typeof DevelopersOperationsRoute
+  '/developers/platform': typeof DevelopersPlatformRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/developers'
+    | '/api/ready'
+    | '/developers/architecture'
+    | '/developers/data-pipeline'
+    | '/developers/integration'
+    | '/developers/operations'
+    | '/developers/platform'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/developers'
+    | '/api/ready'
+    | '/developers/architecture'
+    | '/developers/data-pipeline'
+    | '/developers/integration'
+    | '/developers/operations'
+    | '/developers/platform'
+  id:
+    | '__root__'
+    | '/'
+    | '/developers'
+    | '/api/ready'
+    | '/developers/architecture'
+    | '/developers/data-pipeline'
+    | '/developers/integration'
+    | '/developers/operations'
+    | '/developers/platform'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DevelopersRoute: typeof DevelopersRouteWithChildren
+  ApiReadyRoute: typeof ApiReadyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/developers': {
+      id: '/developers'
+      path: '/developers'
+      fullPath: '/developers'
+      preLoaderRoute: typeof DevelopersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +145,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/developers/platform': {
+      id: '/developers/platform'
+      path: '/platform'
+      fullPath: '/developers/platform'
+      preLoaderRoute: typeof DevelopersPlatformRouteImport
+      parentRoute: typeof DevelopersRoute
+    }
+    '/developers/operations': {
+      id: '/developers/operations'
+      path: '/operations'
+      fullPath: '/developers/operations'
+      preLoaderRoute: typeof DevelopersOperationsRouteImport
+      parentRoute: typeof DevelopersRoute
+    }
+    '/developers/integration': {
+      id: '/developers/integration'
+      path: '/integration'
+      fullPath: '/developers/integration'
+      preLoaderRoute: typeof DevelopersIntegrationRouteImport
+      parentRoute: typeof DevelopersRoute
+    }
+    '/developers/data-pipeline': {
+      id: '/developers/data-pipeline'
+      path: '/data-pipeline'
+      fullPath: '/developers/data-pipeline'
+      preLoaderRoute: typeof DevelopersDataPipelineRouteImport
+      parentRoute: typeof DevelopersRoute
+    }
+    '/developers/architecture': {
+      id: '/developers/architecture'
+      path: '/architecture'
+      fullPath: '/developers/architecture'
+      preLoaderRoute: typeof DevelopersArchitectureRouteImport
+      parentRoute: typeof DevelopersRoute
+    }
+    '/api/ready': {
+      id: '/api/ready'
+      path: '/api/ready'
+      fullPath: '/api/ready'
+      preLoaderRoute: typeof ApiReadyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface DevelopersRouteChildren {
+  DevelopersArchitectureRoute: typeof DevelopersArchitectureRoute
+  DevelopersDataPipelineRoute: typeof DevelopersDataPipelineRoute
+  DevelopersIntegrationRoute: typeof DevelopersIntegrationRoute
+  DevelopersOperationsRoute: typeof DevelopersOperationsRoute
+  DevelopersPlatformRoute: typeof DevelopersPlatformRoute
+}
+
+const DevelopersRouteChildren: DevelopersRouteChildren = {
+  DevelopersArchitectureRoute: DevelopersArchitectureRoute,
+  DevelopersDataPipelineRoute: DevelopersDataPipelineRoute,
+  DevelopersIntegrationRoute: DevelopersIntegrationRoute,
+  DevelopersOperationsRoute: DevelopersOperationsRoute,
+  DevelopersPlatformRoute: DevelopersPlatformRoute,
+}
+
+const DevelopersRouteWithChildren = DevelopersRoute._addFileChildren(
+  DevelopersRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DevelopersRoute: DevelopersRouteWithChildren,
+  ApiReadyRoute: ApiReadyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
