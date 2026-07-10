@@ -6,6 +6,10 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: deploy-cloudflare-workers-main
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
