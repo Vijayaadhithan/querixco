@@ -28,10 +28,10 @@ type Guide = "platform" | "integration" | "operations" | "architecture" | "data-
 const titles: Record<Guide | "overview", string> = {
   overview: "Documentation",
   platform: "Search Platform",
-  integration: "Integration Guide",
-  operations: "Operations Runbook",
-  architecture: "Architecture Reference",
-  "data-pipeline": "Data Pipeline",
+  integration: "API Integration",
+  operations: "Service Reliability",
+  architecture: "Architecture Summary",
+  "data-pipeline": "Data Lifecycle",
 };
 
 export function DeveloperShell({
@@ -43,11 +43,11 @@ export function DeveloperShell({
 }) {
   const nav = [
     ["Overview", "/developers", "overview"],
+    ["API integration", "/developers/integration", "integration"],
     ["Search platform", "/developers/platform", "platform"],
-    ["Integration guide", "/developers/integration", "integration"],
-    ["Operations runbook", "/developers/operations", "operations"],
-    ["Architecture reference", "/developers/architecture", "architecture"],
-    ["Data pipeline", "/developers/data-pipeline", "data-pipeline"],
+    ["Architecture summary", "/developers/architecture", "architecture"],
+    ["Data lifecycle", "/developers/data-pipeline", "data-pipeline"],
+    ["Service reliability", "/developers/operations", "operations"],
   ] as const;
 
   return (
@@ -57,7 +57,7 @@ export function DeveloperShell({
           <a href="/" className="flex items-center gap-2.5" aria-label="Querix AI home">
             <QuerixLogo size={28} />
             <span className="font-display text-lg font-semibold">
-              Querix<span className="gradient-text">AI</span>
+              Querix <span className="gradient-text">AI</span>
             </span>
             <span className="hidden border-l border-white/15 pl-3 text-sm text-muted-foreground sm:inline">
               {titles[active]}
@@ -88,7 +88,7 @@ export function DeveloperShell({
             ))}
             <div className="mt-8 border-t border-white/10 pt-6">
               <p className="px-3 text-xs leading-5 text-muted-foreground">
-                Private product documentation for approved integration and platform teams.
+                Developer documentation for approved customer engineering and platform teams.
               </p>
             </div>
           </nav>
@@ -124,14 +124,14 @@ function PlatformGuide() {
         icon={Cpu}
         eyebrow="System overview"
         title="The Querix search platform"
-        body="A production-oriented hybrid discovery system for catalogs where both exact constraints and natural-language need matter."
+        body="The customer-visible behavior behind exact catalog filtering, natural-language discovery, secure pagination, and fresh results."
       />
       <Section number="01" title="What Querix does">
         <p>
           Querix handles both explicit catalogue search, such as a product with a location, price,
           and duration constraint, and need-based search where the customer cannot name the right
-          product. It combines structured filtering, semantic retrieval, keyword retrieval,
-          reranking, canonical database hydration, tenant isolation, and usage accounting.
+          product. The API chooses the appropriate search path while preserving tenant rules and
+          returning the current approved catalog fields.
         </p>
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           <Metric
@@ -142,173 +142,106 @@ function PlatformGuide() {
           <Metric
             icon={Network}
             title="Semantic discovery"
-            text="Hybrid retrieval for functional language, vocabulary gaps, and ambiguity."
+            text="Intent-aware retrieval for functional language, vocabulary gaps, and ambiguity."
           />
           <Metric
             icon={ShieldCheck}
-            title="Tenant safe"
+            title="Tenant-safe by design"
             text="Per-tenant credentials, limits, response fields, state, and storage."
           />
         </div>
       </Section>
-      <Section number="02" title="Core service components">
-        <FieldTable
-          rows={[
-            [
-              "API gateway",
-              "FastAPI + Uvicorn",
-              "Authenticates tenant keys, maps requests, applies limits, and manages pagination.",
-            ],
-            [
-              "Canonical data",
-              "MySQL or PostgreSQL",
-              "The authoritative source for current public rows in every response.",
-            ],
-            [
-              "Vector retrieval",
-              "Chroma or pgvector",
-              "Finds semantically related candidate records from retrieval text and metadata.",
-            ],
-            [
-              "Lexical retrieval",
-              "SQLite FTS5/BM25",
-              "Handles exact terms and structured catalogue filtering.",
-            ],
-            [
-              "Embeddings",
-              "Ollama",
-              "Generates local normalized query vectors with the configured embedding model.",
-            ],
-            [
-              "Planning and rerank",
-              "Hosted providers",
-              "Produces schema-constrained plans and orders bounded candidates with fallbacks.",
-            ],
-            [
-              "Shared state",
-              "Redis",
-              "Stores plan/cache state, rate coordination, and tenant-scoped short-lived sessions.",
-            ],
+      <Section number="02" title="How requests are handled">
+        <Flow
+          steps={[
+            "Authenticate the tenant endpoint",
+            "Interpret explicit filters and intent",
+            "Choose browse or semantic retrieval",
+            "Hydrate current approved catalog rows",
+            "Return results, diagnostics, and a next cursor",
           ]}
         />
       </Section>
-      <Section number="03" title="When each route is selected">
+      <Section number="03" title="When each search path is selected">
         <FieldTable
           rows={[
             [
               "bike",
-              "Deterministic browse",
-              "No model calls. Uses indexed category/filter values and catalog-safe pagination.",
+              "Catalog browse",
+              "Uses indexed category values and catalog-safe pagination for broad discovery.",
             ],
             [
               "bike in Chennai under 1000",
-              "Deterministic filter",
-              "No model calls. Enforces explicit category, location, and price.",
+              "Exact filter",
+              "Enforces the explicit category, location, and price constraints.",
             ],
             [
               "red bike with ABS",
-              "Semantic hybrid",
-              "Plans, embeds, retrieves in parallel, fuses, reranks, and hydrates current rows.",
+              "Intent-aware search",
+              "Combines exact constraints with descriptive meaning before ranking current rows.",
             ],
             [
               "equipment for a distant event",
-              "Semantic hybrid",
-              "Treats inferred category as a soft hint, preserving alternative useful items.",
+              "Need-based discovery",
+              "Uses inferred categories as ranking hints so useful alternatives remain possible.",
             ],
             [
               "Repeated normalized request",
-              "Result cache",
-              "Reuses ordered IDs and plan metadata, then fetches current rows again.",
+              "Cached search session",
+              "Reuses the ranking session while still fetching current approved catalog rows.",
             ],
           ]}
         />
       </Section>
-      <Section number="04" title="Dependencies and first environment check">
+      <Section number="04" title="Freshness and tenant boundaries">
         <p>
-          A production deployment needs Python, a tenant database, Redis, Ollama with the configured
-          embedding model, and credentials for the enabled planning/reranking providers. OpenSearch
-          is not a prerequisite; pgvector is needed only when a tenant selects that vector backend.
+          Search indexes select and order candidate IDs; the tenant's canonical database supplies
+          the current public fields before a response is returned. This keeps display data fresh
+          while search state, credentials, limits, and pagination remain isolated per tenant.
         </p>
-        <CodeBlock
-          label="Read-only dependency and source check"
-          code={`redis-cli ping
-ollama list
-.venv/bin/python scripts/doctor.py --company <tenant> --strict
-.venv/bin/python src/ingest.py --company <tenant> --mysql --check --limit 10`}
+        <Checklist
+          items={[
+            "Public response fields are allowlisted for each tenant.",
+            "Explicit filters are enforced; inferred intent remains a ranking hint.",
+            "Query sessions and cursors cannot be reused across tenant endpoints.",
+            "Catalog changes that affect retrieval are refreshed through the validated data lifecycle.",
+          ]}
         />
-        <Callout icon={LockKeyhole} title="Secret management">
-          Keep database, tenant API, provider, and admin keys in a secret manager or a local ignored
-          environment file. The frontend and documentation use placeholders only.
-        </Callout>
       </Section>
-      <Section number="05" title="Search-index ingestion modes">
+      <Section number="05" title="What your team integrates">
         <p>
-          Search ingestion reads a tenant's validated search-ready data and writes only the isolated
-          vector and lexical retrieval indexes. It does not update or delete canonical tenant
-          database rows. Content-hash tracking prevents unnecessary embedding work.
+          Your integration needs a provisioned tenant slug, a server-side API key, one backend proxy
+          route, and a small client state model for the active query and next cursor. Querix
+          operates the search and index lifecycle behind that contract.
         </p>
         <FieldTable
           rows={[
             [
-              "--check",
-              "Read-only",
-              "Validates source tables and columns without changing indexes.",
-            ],
-            ["Default ingestion", "Incremental", "Upserts new or changed vector and BM25 records."],
-            [
-              "Reconcile deletions",
-              "Full scan",
-              "Safely removes index IDs absent from a successful source scan.",
+              "Tenant endpoint",
+              "HTTPS API",
+              "A company-scoped route protected by an issued API key.",
             ],
             [
-              "BM25-only",
-              "Lexical rebuild",
-              "Updates structured/keyword retrieval without embedding calls.",
+              "Backend proxy",
+              "Your application",
+              "Keeps the tenant key server-side and forwards validated search requests.",
             ],
             [
-              "Force re-embed",
-              "Vector refresh",
-              "Regenerates vectors even where retrieval content is unchanged.",
+              "Search session",
+              "Query + cursor",
+              "Starts with a query and advances with an opaque, short-lived cursor.",
             ],
             [
-              "Replace source",
-              "Index rebuild",
-              "Clears and rebuilds tenant retrieval indexes without changing source rows.",
+              "Health checks",
+              "Readiness + tenant health",
+              "Separates public readiness from authenticated tenant dependency status.",
             ],
           ]}
         />
-      </Section>
-      <Section number="06" title="Caching, diagnostics, and evaluation">
-        <p>
-          The query-plan cache avoids repeated hosted planning. The result cache stores ordered IDs,
-          result tiers, and interpretation metadata rather than whole rows. Because every cache hit
-          hydrates current canonical rows, visible titles, photos, and current availability remain
-          fresh. Ingestion revision metadata makes stale ranking keys unreachable after a refresh.
-        </p>
-        <Checklist
-          items={[
-            "Trace each request through plan, retrieval, rerank, hydration, and completion without raw query text in standard logs.",
-            "Run unit/integration tests, labelled query-plan cases, labelled retrieval cases, strict doctor checks, and representative load tests.",
-            "Measure deterministic, uncached semantic, cached semantic, and provider-fallback workloads separately.",
-            "Keep admin diagnostics protected by a separate admin credential and return only privacy-safe summaries.",
-          ]}
-        />
-      </Section>
-      <Section number="07" title="Production boundaries and known limits">
-        <p>
-          The default deployment is a single API worker with an embedded, tenant-isolated vector
-          store. Deep semantic pagination is intentionally bounded; broad catalogue discovery
-          belongs on the deterministic browse/filter route. Full index replacement is a controlled
-          maintenance operation rather than an atomic generation swap today.
-        </p>
-        <Checklist
-          items={[
-            "Keep the embedded vector store single-host until durable shared retrieval is introduced.",
-            "Move to shared vector retrieval, durable telemetry, and durable ingestion jobs before adding replicas.",
-            "Validate database TLS, backups, restore procedures, provider quotas, and load behavior before raising concurrency.",
-            "Confirm tenant-specific visibility and business rules during onboarding rather than assuming one catalogue contract fits every domain.",
-          ]}
-        />
+        <Callout icon={LockKeyhole} title="Credential boundary">
+          The tenant API key stays in your server-side secret store. Browser and mobile clients
+          receive mapped search results, never the permanent credential.
+        </Callout>
       </Section>
     </article>
   );
@@ -348,9 +281,9 @@ function IntegrationGuide() {
       </Section>
       <Section number="02" title="Readiness and tenant health">
         <p>
-          Use readiness to confirm that the API process accepts traffic. Use authenticated tenant
-          health to confirm the index, cache, and runtime dependencies behind a company search
-          experience.
+          Use readiness to confirm that critical serving dependencies are available across the
+          configured tenants. Use authenticated tenant health for the index, cache, embedding, and
+          runtime detail behind one company search experience.
         </p>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <Endpoint
@@ -358,7 +291,7 @@ function IntegrationGuide() {
             method="GET"
             path="/ready"
             title="Public readiness"
-            detail="Suitable for a public status indicator and deployment checks."
+            detail="Checks configured tenant indexes, source databases, and the embedding runtime; returns 503 when a critical serving dependency is unavailable."
           />
           <Endpoint
             icon={ServerCog}
@@ -581,9 +514,9 @@ function OperationsGuide() {
     <article className="max-w-5xl">
       <Title
         icon={ServerCog}
-        eyebrow="Platform runbook"
-        title="Production search operations"
-        body="A practical operating model for configuring, refreshing, monitoring, and troubleshooting tenant-isolated search."
+        eyebrow="Service reliability"
+        title="Production reliability and assurance"
+        body="How Querix keeps tenant search healthy, current, observable, and predictable through dependency or provider failures."
       />
       <Section number="01" title="The serving data boundary">
         <p>
@@ -642,7 +575,7 @@ function OperationsGuide() {
           />
         </div>
       </Section>
-      <Section number="04" title="Route-aware verification">
+      <Section number="04" title="Route-aware assurance">
         <p>
           Do not treat a warm result-cache hit as representative production throughput. Test
           deterministic filters, unique semantic queries, repeated semantic queries, provider
@@ -651,10 +584,16 @@ function OperationsGuide() {
         </p>
         <StatusTable
           rows={[
-            ["Readiness", "API process accepts requests."],
+            ["Readiness", "Critical serving dependencies are available for configured tenants."],
             ["Tenant health", "Index, database, cache, and dependencies are ready."],
-            ["Strict doctor", "Configuration, index paths, and runtime prerequisites are safe."],
-            ["Evaluation", "Expected query-routing and relevance behavior regressions are caught."],
+            [
+              "Contract checks",
+              "Authentication, request mapping, pagination, and public fields stay compatible.",
+            ],
+            [
+              "Relevance evaluation",
+              "Expected query-routing and ranking regressions are caught before release.",
+            ],
           ]}
         />
       </Section>
@@ -671,14 +610,14 @@ function OperationsGuide() {
           and cached routes.
         </Callout>
       </Section>
-      <Section number="06" title="Runbook checklist">
+      <Section number="06" title="Service assurance checklist">
         <Checklist
           items={[
             "Confirm readiness and tenant health after every deployment.",
             "Run a deterministic query, a semantic query, and a repeat-query cache check.",
             "Refresh indexes incrementally; reconcile only after a successful full scan.",
             "Rotate exposed credentials, verify backups, and test restore procedures.",
-            "Keep one worker for an embedded single-host vector store until durable shared retrieval is introduced.",
+            "Confirm authentication, public fields, and pagination remain compatible after changes.",
           ]}
         />
       </Section>
@@ -691,126 +630,74 @@ function ArchitectureGuide() {
     <article className="max-w-5xl">
       <Title
         icon={Network}
-        eyebrow="Technical reference"
-        title="Semantic search architecture"
-        body="The decisions that protect relevance, data freshness, tenant boundaries, and predictable failure behavior."
+        eyebrow="Architecture summary"
+        title="How a Querix request moves through the platform"
+        body="A concise system view for integration, security, and platform reviews—without internal deployment detail."
       />
-      <Section number="01" title="Design principles">
+      <Section number="01" title="Request flow">
         <p>
-          Querix preserves broad browse/filter behavior instead of forcing every query through a
-          semantic top-K. It separates explicit constraints from descriptive meaning, skips model
-          work when deterministic rules are enough, hydrates current canonical rows, and keeps every
-          tenant's data and runtime state isolated.
-        </p>
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <Metric
-            icon={Search}
-            title="Intent-safe"
-            text="Explicit constraints are enforced; inferred categories remain soft ranking hints."
-          />
-          <Metric
-            icon={Database}
-            title="Fresh"
-            text="Indexes select IDs; canonical source rows are fetched at response time."
-          />
-          <Metric
-            icon={ShieldCheck}
-            title="Isolated"
-            text="Credentials, indexes, caches, cursors, and mappings are tenant-scoped."
-          />
-        </div>
-      </Section>
-      <Section number="02" title="Four data roles">
-        <FieldTable
-          rows={[
-            [
-              "Search-ready source",
-              "MySQL or PostgreSQL",
-              "Preprocessed retrieval text, filter metadata, stable IDs.",
-            ],
-            ["Vector index", "Chroma or pgvector", "Embeddings and candidate-retrieval metadata."],
-            [
-              "Lexical/filter index",
-              "SQLite FTS5/BM25",
-              "Literal relevance, structured browse fields, relationship catalogue.",
-            ],
-            [
-              "Result table",
-              "MySQL or PostgreSQL",
-              "Canonical public fields returned in the response.",
-            ],
-          ]}
-        />
-      </Section>
-      <Section number="03" title="Three execution paths">
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          <Metric
-            icon={Workflow}
-            title="Deterministic filter"
-            text="For fully understood catalogue queries such as category, location, duration, or budget. No model, embedding, vector retrieval, or reranker."
-          />
-          <Metric
-            icon={GitBranch}
-            title="Semantic hybrid"
-            text="For functional, descriptive, brand/model, or ambiguous language. Vector and lexical retrieval fuse before reranking."
-          />
-          <Metric
-            icon={TimerReset}
-            title="Result cache"
-            text="Returns ordered IDs and interpretation metadata, then rehydrates current rows without repeating ranking work."
-          />
-        </div>
-      </Section>
-      <Section number="04" title="Query planning and filter safety">
-        <p>
-          The planner uses a closed JSON schema. A deterministic validator normalizes values,
-          resolves only against indexed catalogues, records unresolved values, and rejects silently
-          invented filters. Explicit UI filters override query-derived values. The governing rule is
-          simple: explicit constraints become hard filters; functional inference remains a soft
-          hint.
-        </p>
-        <CodeBlock
-          label="Closed plan shape"
-          code={`{
-  "semantic_query": "portable equipment for recording a distant event",
-  "keyword_query": "portable camera recorder microphone",
-  "target_ad_type": "offer",
-  "filters": { "city": null, "max_rental_fee": null }
-}`}
-        />
-      </Section>
-      <Section number="05" title="Hybrid retrieval and reranking">
-        <p>
-          Vector retrieval handles paraphrase and functional need. Lexical BM25 retrieval handles
-          literal names, IDs, brands, and rare terms. Results are fused by rank, validated against
-          current availability/type information, reranked within a bounded window, then hydrated
-          from the canonical table.
+          Every search enters through a tenant-bound endpoint. Querix validates the request,
+          separates explicit constraints from descriptive intent, chooses the appropriate retrieval
+          path, fetches current approved catalog rows, and returns a bounded result page.
         </p>
         <Flow
           steps={[
-            "Normalize and safely plan",
-            "Vector retrieval and BM25 run concurrently",
-            "Reciprocal-rank fusion",
-            "Current-state validation",
-            "Bounded provider reranking",
-            "Canonical row hydration and IDs-only cache",
+            "Tenant-authenticated request",
+            "Intent and constraint validation",
+            "Browse or hybrid retrieval",
+            "Current-row hydration",
+            "Mapped response and next cursor",
           ]}
         />
       </Section>
-      <Section number="06" title="Security, resilience, and scaling">
+      <Section number="02" title="Three execution paths">
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <Metric
+            icon={Workflow}
+            title="Catalog browse"
+            text="For broad category discovery and explicit location, duration, price, or availability filters."
+          />
+          <Metric
+            icon={GitBranch}
+            title="Intent-aware search"
+            text="For descriptive, functional, brand, model, or ambiguous language where meaning improves ranking."
+          />
+          <Metric
+            icon={TimerReset}
+            title="Continuation"
+            text="For later pages in the same bounded search session using an opaque tenant-bound cursor."
+          />
+        </div>
+      </Section>
+      <Section number="03" title="Data boundaries and freshness">
         <p>
-          Request models reject unexpected fields. API keys bind to endpoint slugs. Public response
-          mappings are allowlisted. Tenant rate policies, cache keys, cursors, and indexes are
-          isolated. When a planner or reranker provider fails, configured fallbacks are attempted; a
-          complete ranking failure is observable rather than presented as normal quality.
+          Search-ready data supplies retrieval text and filter metadata. Search indexes identify
+          candidate IDs, while the tenant's canonical database supplies the current allowlisted
+          fields returned to the client. The API does not expose private source columns or internal
+          ranking payloads.
         </p>
         <Checklist
           items={[
-            "Use HTTPS, network restrictions, secret rotation, and read-only database grants.",
-            "Do not cache complete rows; cache ordered IDs so visible fields stay current.",
-            "Move to a durable shared vector service before adding API replicas.",
-            "Use shared cache/rate/cursor state and durable telemetry before horizontal scaling.",
-            "Build atomic index generations and durable ingestion jobs as scale requirements grow.",
+            "Explicit request and UI filters override inferred intent.",
+            "Inferred categories guide ranking rather than silently excluding alternatives.",
+            "Current catalog rows are hydrated before the response is mapped.",
+            "Credentials, cursors, cache state, indexes, and response mappings remain tenant-scoped.",
+          ]}
+        />
+      </Section>
+      <Section number="04" title="Failure behavior and client contract">
+        <p>
+          Querix uses bounded fallbacks when an optional planning or ranking provider is
+          unavailable. Critical serving failures return an error rather than presenting degraded
+          quality as a normal response. Authentication, validation, rate-limit, cursor, and
+          temporary-service errors remain explicit HTTP outcomes for clients to handle.
+        </p>
+        <Checklist
+          items={[
+            "Use readiness for public traffic checks and tenant health for authenticated dependency detail.",
+            "Restart the original query when a cursor expires instead of modifying or decoding it.",
+            "Honor Retry-After for rate limits and temporary capacity responses.",
+            "Keep the tenant key behind the application's server-side credential boundary.",
           ]}
         />
       </Section>
@@ -939,6 +826,14 @@ function DataPipelineGuide() {
             text="Avoids presenting a partially loaded destination table to search consumers."
           />
         </div>
+        <Checklist
+          items={[
+            "Stable catalog IDs are present and unique, with no cross-tenant rows.",
+            "Retrieval text and keyword content are present for every searchable record.",
+            "Category, location, and attribute mappings meet the tenant's accepted quality baseline.",
+            "Unexpected row-count drops, join regressions, or unusually large source changes stop promotion for review.",
+          ]}
+        />
       </Section>
       <Section number="06" title="Reliable lifecycle management">
         <p>

@@ -1,37 +1,25 @@
 export function QuerixLogo({ className = "", size = 36 }: { className?: string; size?: number }) {
   return (
     <svg
-      width={size}
+      width={Math.round(size * 1.16)}
       height={size}
-      viewBox="0 0 64 64"
+      viewBox="0 0 116 100"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
-      aria-label="Querix AI logo"
+      role="img"
+      aria-label="Querix AI mark"
     >
-      <defs>
-        <linearGradient id="qx-grad" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#1E90FF" />
-          <stop offset="1" stopColor="#7B5CFF" />
-        </linearGradient>
-      </defs>
-      {/* pixels */}
-      <rect x="6" y="10" width="4" height="4" rx="1" fill="#7B5CFF" />
-      <rect x="12" y="6" width="3" height="3" rx="1" fill="#1E90FF" />
-      <rect x="14" y="13" width="3" height="3" rx="1" fill="#7B5CFF" />
-      <rect x="8" y="18" width="2.5" height="2.5" rx="0.5" fill="#1E90FF" />
-      {/* Q circle */}
-      <circle cx="34" cy="34" r="18" stroke="url(#qx-grad)" strokeWidth="5" fill="none" />
-      {/* Q tail */}
-      <rect
-        x="40"
-        y="42"
-        width="12"
-        height="5"
-        rx="1.5"
-        transform="rotate(35 40 42)"
-        fill="url(#qx-grad)"
-      />
+      <circle cx="45" cy="47" r="31" stroke="currentColor" strokeWidth="9" />
+
+      <circle cx="33" cy="47" r="4" fill="#1746D1" />
+      <circle cx="45" cy="47" r="4" fill="#1746D1" />
+      <circle cx="57" cy="47" r="4" fill="#1746D1" />
+
+      <circle cx="70" cy="70" r="7.5" fill="currentColor" />
+      <circle cx="85" cy="77" r="6" fill="currentColor" />
+      <circle cx="98" cy="76" r="5" fill="currentColor" />
+      <circle cx="109" cy="69" r="3" fill="currentColor" />
     </svg>
   );
 }

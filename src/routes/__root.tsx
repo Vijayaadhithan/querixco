@@ -73,33 +73,35 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Querix AI - Beyond Keywords" },
+      { title: "Querix AI — Understanding thoughts, not just words" },
       {
         name: "description",
         content:
-          "Querix AI is an intelligent discovery engine that helps businesses understand what users mean, not just what they type.",
+          "Querix AI provides tenant-scoped product search APIs for e-commerce, marketplaces, product catalogs, and advertisement platforms.",
       },
       { name: "theme-color", content: "#0A1B2E" },
-      { property: "og:title", content: "Querix AI - Beyond Keywords" },
+      { property: "og:title", content: "Querix AI — Understanding thoughts, not just words" },
       {
         property: "og:description",
         content:
-          "Querix AI is an intelligent discovery engine that helps businesses understand what users mean, not just what they type.",
+          "Intent-aware product search APIs for e-commerce, marketplaces, and listing platforms.",
       },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Querix AI - Beyond Keywords" },
+      { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Querix AI — Understanding thoughts, not just words" },
       {
         name: "twitter:description",
         content:
-          "Querix AI is an intelligent discovery engine that helps businesses understand what users mean, not just what they type.",
+          "Intent-aware product search APIs for e-commerce, marketplaces, and listing platforms.",
       },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "icon", href: "/favicon.ico?v=3", sizes: "48x48" },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg?v=3" },
+      { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png?v=3" },
       { rel: "manifest", href: "/site.webmanifest" },
-      { rel: "apple-touch-icon", href: "/favicon.svg" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png?v=3" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {

@@ -3,26 +3,22 @@ import { useEffect, useState, type ReactNode } from "react";
 import {
   Activity,
   ArrowRight,
-  BookOpen,
   Brain,
   Briefcase,
-  Building2,
+  Car,
   CheckCircle2,
   Compass,
   Cpu,
   Database,
   Gauge,
-  GraduationCap,
-  Headphones,
-  HeartPulse,
   Home,
-  Landmark,
   Languages,
   Layers,
   Mail,
+  Megaphone,
   Mic,
   Newspaper,
-  Plane,
+  PackageSearch,
   Rocket,
   Search,
   Server,
@@ -38,82 +34,82 @@ import {
 const capabilities = [
   {
     icon: Search,
-    title: "Semantic Search",
+    title: "Semantic search",
     desc: "Retrieve by meaning, not brittle keyword overlap.",
   },
   {
     icon: Brain,
-    title: "Intent Parsing",
+    title: "Intent parsing",
     desc: "Extract filters, goals, synonyms, and hidden constraints from messy queries.",
   },
   {
     icon: Sparkles,
-    title: "Smart Discovery",
+    title: "Smart discovery",
     desc: "Promote relevant inventory before users know exactly what to type.",
   },
   {
     icon: Compass,
-    title: "Adaptive Ranking",
+    title: "Adaptive ranking",
     desc: "Blend semantic relevance, business rules, freshness, and availability.",
   },
   {
     icon: ShieldCheck,
-    title: "Zero-Result Recovery",
+    title: "Zero-result recovery",
     desc: "Rewrite, broaden, and explain fallbacks before a search dead-ends.",
   },
   {
     icon: Layers,
-    title: "Hybrid Retrieval",
+    title: "Hybrid retrieval",
     desc: "Fuse vector search, structured filters, lexical signals, and reranking.",
   },
   {
     icon: Mic,
-    title: "Conversational Ready",
+    title: "Conversational search",
     desc: "Handle voice-like questions, fragments, typos, and follow-up intent.",
   },
   {
     icon: Languages,
-    title: "Multilingual Signals",
+    title: "Multilingual signals",
     desc: "Support regional vocabulary, mixed-language prompts, and synonym expansion.",
   },
 ];
 
 const industries = [
-  { icon: ShoppingBag, label: "E-commerce" },
-  { icon: Store, label: "Marketplaces" },
-  { icon: Building2, label: "Enterprise Search" },
-  { icon: Home, label: "Property Platforms" },
-  { icon: Plane, label: "Travel Platforms" },
-  { icon: HeartPulse, label: "Healthcare" },
-  { icon: GraduationCap, label: "Education" },
-  { icon: Landmark, label: "Finance" },
-  { icon: Newspaper, label: "Media" },
-  { icon: BookOpen, label: "Knowledge Bases" },
-  { icon: Headphones, label: "Customer Support" },
-  { icon: Briefcase, label: "B2B Applications" },
+  { icon: ShoppingBag, label: "E-commerce stores" },
+  { icon: Store, label: "Online marketplaces" },
+  { icon: Megaphone, label: "Advertisement platforms" },
+  { icon: Newspaper, label: "Classifieds and listings" },
+  { icon: PackageSearch, label: "Product catalogs" },
+  { icon: Briefcase, label: "B2B commerce" },
+  { icon: Car, label: "Automotive listings" },
+  { icon: Home, label: "Property listings" },
 ];
 
 const stack = [
   "Embeddings",
-  "Hybrid Search",
-  "Vector Stores",
+  "Hybrid search",
+  "Vector stores",
   "Rerankers",
-  "Query Planning",
+  "Query planning",
   "FastAPI",
   "Observability",
-  "Tenant Isolation",
+  "Tenant isolation",
 ];
 
 const demoQueries = [
   {
-    query: "budget family beach stay near Chennai this weekend",
-    intent: "Relaxed coastal trip",
-    filters: ["location: Chennai coast", "budget: low", "date: weekend", "traveler: family"],
-    rewrite: "family-friendly beach stays near Chennai with affordable weekend availability",
+    query: "comfortable office chair for long workdays under 15000",
+    intent: "Ergonomic home-office upgrade",
+    filters: ["category: office chair", "price: <= 15000", "use: long workdays"],
+    rewrite: "ergonomic office chairs with strong back support for extended daily use under 15000",
     results: [
-      { label: "Mahabalipuram sea-view homestay", score: 96, reason: "family + coast + budget" },
-      { label: "ECR serviced villa with breakfast", score: 91, reason: "weekend + group fit" },
-      { label: "Pondy-style boutique stay", score: 84, reason: "broadened coastal match" },
+      {
+        label: "Ergonomic mesh chair with lumbar support",
+        score: 96,
+        reason: "comfort + support + price",
+      },
+      { label: "Adjustable high-back office chair", score: 91, reason: "long-use fit + budget" },
+      { label: "Breathable work chair with headrest", score: 86, reason: "ergonomic alternative" },
     ],
   },
   {
@@ -128,18 +124,22 @@ const demoQueries = [
     ],
   },
   {
-    query: "doctor for skin allergy open now nearby",
-    intent: "Urgent local care",
-    filters: ["specialty: dermatology", "availability: now", "distance: nearby"],
-    rewrite: "nearby dermatologists or skin clinics currently open for allergy consultation",
+    query: "used automatic hatchback in Chennai under 6 lakh",
+    intent: "City-friendly used car",
+    filters: ["condition: used", "transmission: automatic", "city: Chennai", "price: <= 600000"],
+    rewrite: "used automatic hatchback listings in Chennai priced below 6 lakh",
     results: [
-      { label: "Dermatology clinic - open until 9 PM", score: 98, reason: "open now + nearby" },
-      { label: "Skin allergy specialist", score: 93, reason: "specialty exact" },
       {
-        label: "Multi-speciality clinic with dermatologist",
-        score: 87,
-        reason: "fallback available",
+        label: "2021 automatic hatchback · single owner",
+        score: 97,
+        reason: "type + city + budget",
       },
+      {
+        label: "2020 compact automatic · low mileage",
+        score: 92,
+        reason: "condition + transmission",
+      },
+      { label: "2019 city hatchback · automatic", score: 86, reason: "broadened model match" },
     ],
   },
 ];
@@ -168,10 +168,10 @@ const pipeline = [
 ];
 
 const proof = [
-  { value: "3.8x", label: "more relevant discovery paths" },
-  { value: "-42%", label: "dead-end search sessions" },
-  { value: "live", label: "production API health" },
-  { value: "<50ms", label: "ranking-path latency target" },
+  { value: "API", label: "Tenant-scoped integration" },
+  { value: "Hybrid", label: "Semantic + lexical retrieval" },
+  { value: "Cursor", label: "Stable search pagination" },
+  { value: "Live", label: "Public readiness status" },
 ];
 
 type ApiHealth = {
@@ -235,18 +235,18 @@ function ApiStatus() {
   const isOnline = state === "online";
   const statusLabel =
     state === "loading"
-      ? "checking live endpoint"
+      ? "Checking live endpoint"
       : isOnline
-        ? "api is live"
-        : "status check failed";
+        ? "API is live"
+        : "Status check failed";
   const latency = health?.latencyMs ?? 0;
   const latencyLabel = health
     ? latency < 250
-      ? "fast edge response"
+      ? "Fast edge response"
       : latency < 750
-        ? "healthy response"
-        : "elevated response"
-    : "awaiting probe";
+        ? "Healthy response"
+        : "Elevated response"
+    : "Awaiting probe";
   const latencyWidth = health ? `${Math.min(100, Math.max(10, latency / 8))}%` : "12%";
   const lastChecked = health
     ? new Date(health.checkedAt).toLocaleTimeString([], {
@@ -312,21 +312,21 @@ function ApiStatus() {
 
               <div className="mt-9 grid gap-3 sm:grid-cols-3">
                 <StatusMetric
-                  label="gateway"
-                  value={health?.status ?? "checking"}
-                  detail="readiness response"
+                  label="Gateway"
+                  value={health?.status === "ok" ? "OK" : (health?.status ?? "Checking")}
+                  detail="Readiness response"
                   accent={isOnline ? "emerald" : "blue"}
                 />
                 <StatusMetric
-                  label="isolation"
-                  value={health?.tenantMode ? "active" : "--"}
-                  detail="tenant mode"
+                  label="Isolation"
+                  value={health?.tenantMode ? "Active" : "--"}
+                  detail="Tenant mode"
                   accent="blue"
                 />
                 <StatusMetric
-                  label="tenants"
+                  label="Tenants"
                   value={health ? String(health.configuredCompanies) : "--"}
-                  detail="configured now"
+                  detail="Configured now"
                   accent="purple"
                 />
               </div>
@@ -350,8 +350,8 @@ function ApiStatus() {
                   />
                 </div>
                 <div className="mt-3 flex justify-between text-[10px] text-muted-foreground">
-                  <span>probe start</span>
-                  <span>last verified {lastChecked}</span>
+                  <span>Probe start</span>
+                  <span>Last verified {lastChecked}</span>
                 </div>
               </div>
             </div>
@@ -386,15 +386,15 @@ function ApiStatus() {
               <div className="mt-5 space-y-3">
                 <ProbeStep
                   label="Gateway accepted request"
-                  value={health?.status === "ok" ? "verified" : "pending"}
+                  value={health?.status === "ok" ? "Verified" : "Pending"}
                   complete={health?.status === "ok"}
                 />
                 <ProbeStep
                   label="Tenant boundary reported"
-                  value={health?.tenantMode ? "enabled" : "pending"}
+                  value={health?.tenantMode ? "Enabled" : "Pending"}
                   complete={Boolean(health?.tenantMode)}
                 />
-                <ProbeStep label="Next automatic probe" value="in under 60 seconds" complete />
+                <ProbeStep label="Next automatic probe" value="In under 60 seconds" complete />
               </div>
               <div className="mt-6 rounded-lg border border-brand-blue/20 bg-brand-blue/[0.06] p-4">
                 <div className="flex items-center gap-2 text-xs font-medium text-[#9ed1ff]">
@@ -476,7 +476,7 @@ function Nav() {
           <a href="#top" className="flex items-center gap-2.5" aria-label="Querix AI home">
             <QuerixLogo size={30} />
             <span className="font-display text-lg font-semibold">
-              Querix<span className="gradient-text">AI</span>
+              Querix <span className="gradient-text">AI</span>
             </span>
           </a>
           <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
@@ -522,22 +522,22 @@ function Hero() {
             />
             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-brand-blue" />
           </span>
-          Intent-aware search infrastructure for serious products
+          Intent-aware search API for commerce and listings
         </div>
 
         <h1
           className="animate-fade-up mx-auto mt-8 max-w-5xl font-display text-5xl font-semibold leading-none sm:text-6xl md:text-7xl lg:text-[88px]"
           style={{ animationDelay: "0.08s" }}
         >
-          Make search feel like it can <span className="gradient-text">read minds.</span>
+          Make product search feel like it can <span className="gradient-text">read minds.</span>
         </h1>
 
         <p
           className="animate-fade-up mx-auto mt-7 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl"
           style={{ animationDelay: "0.16s" }}
         >
-          Querix AI turns vague, messy, multilingual questions into ranked, filtered, explainable
-          results your users actually trust.
+          Querix AI turns vague shopping, product, and listing queries into ranked, filtered results
+          that e-commerce and marketplace users can trust.
         </p>
 
         <div
@@ -581,7 +581,7 @@ function HeroConsole() {
           </div>
           <div className="hidden items-center gap-2 text-xs text-muted-foreground sm:flex">
             <Gauge className="h-3.5 w-3.5 text-brand-blue" />
-            realtime intent graph
+            Realtime intent graph
           </div>
         </div>
 
@@ -597,7 +597,7 @@ function HeroConsole() {
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 {["city: Chennai", "budget: <50k", "bundle: event"].map((item) => (
                   <div key={item} className="rounded-lg border border-border bg-background/40 p-3">
-                    <div className="text-[10px] uppercase text-muted-foreground">extracted</div>
+                    <div className="text-[10px] uppercase text-muted-foreground">Extracted</div>
                     <div className="mt-1 text-sm text-foreground">{item}</div>
                   </div>
                 ))}
@@ -606,9 +606,9 @@ function HeroConsole() {
 
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
               {[
-                ["intent", "event vendor bundle"],
-                ["fallback", "category + semantic"],
-                ["ranker", "hybrid rerank"],
+                ["Intent", "Event vendor bundle"],
+                ["Fallback", "Category + semantic"],
+                ["Ranker", "Hybrid rerank"],
               ].map(([label, value]) => (
                 <div key={label} className="rounded-xl border border-border bg-background/35 p-4">
                   <div className="text-[10px] uppercase text-muted-foreground">{label}</div>
@@ -635,7 +635,7 @@ function HeroConsole() {
                     <div>
                       <div className="text-sm font-medium text-foreground">{result.name}</div>
                       <div className="mt-1 text-xs text-muted-foreground">
-                        matched by meaning, filters, and bundle intent
+                        Matched by meaning, filters, and bundle intent
                       </div>
                     </div>
                     <div className="rounded-full border border-brand-blue/40 px-2.5 py-1 text-xs text-brand-blue">
@@ -686,13 +686,13 @@ function LiveDemo() {
     <section id="demo" className="relative py-24">
       <div className="mx-auto max-w-7xl px-6">
         <SectionHeader
-          eyebrow="Live Intelligence"
+          eyebrow="Live intelligence"
           title={
             <>
               From messy text to <span className="gradient-text">ranked action</span>.
             </>
           }
-          sub="Try the kind of query that usually breaks ordinary search. Querix turns it into intent, filters, rewrites, and explainable results."
+          sub="Try a shopping or listing query that usually breaks ordinary search. Querix turns it into intent, filters, rewrites, and ranked catalog results."
         />
 
         <div className="mt-14 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
@@ -710,7 +710,7 @@ function LiveDemo() {
               >
                 <div className="flex items-center gap-2 text-xs uppercase text-muted-foreground">
                   <Zap className="h-3.5 w-3.5 text-brand-blue" />
-                  scenario {index + 1}
+                  Scenario {index + 1}
                 </div>
                 <div className="mt-2 text-sm font-medium text-foreground">{demo.query}</div>
               </button>
@@ -720,24 +720,24 @@ function LiveDemo() {
           <div className="console-shell rounded-[1.75rem] border border-border bg-background/55 p-5 backdrop-blur-xl">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
               <div>
-                <div className="text-xs uppercase text-muted-foreground">decoded intent</div>
+                <div className="text-xs uppercase text-muted-foreground">Decoded intent</div>
                 <div className="mt-1 font-display text-2xl font-semibold text-foreground">
                   {selected.intent}
                 </div>
               </div>
               <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-xs text-emerald-200">
                 <CheckCircle2 className="h-3.5 w-3.5" />
-                confident match
+                Confident match
               </div>
             </div>
 
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               <div className="rounded-2xl border border-border bg-surface/35 p-4">
-                <div className="text-xs uppercase text-muted-foreground">query rewrite</div>
+                <div className="text-xs uppercase text-muted-foreground">Query rewrite</div>
                 <p className="mt-2 text-sm leading-6 text-foreground">{selected.rewrite}</p>
               </div>
               <div className="rounded-2xl border border-border bg-surface/35 p-4">
-                <div className="text-xs uppercase text-muted-foreground">structured filters</div>
+                <div className="text-xs uppercase text-muted-foreground">Structured filters</div>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {selected.filters.map((filter) => (
                     <span
@@ -808,7 +808,7 @@ function Problem() {
     <section className="relative py-24">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeader
-          eyebrow="The Upgrade"
+          eyebrow="The upgrade"
           title={
             <>
               Search should recover when users <span className="gradient-text">do not.</span>
@@ -817,10 +817,10 @@ function Problem() {
         />
         <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2">
           <div className="rounded-[1.5rem] border border-border bg-surface/35 p-7">
-            <div className="text-xs uppercase text-muted-foreground">Traditional Search</div>
+            <div className="text-xs uppercase text-muted-foreground">Traditional search</div>
             <p className="mt-3 text-foreground/90">
-              Matches strings. Misses meaning. Treats price, location, use case, urgency, and
-              synonyms as separate problems.
+              Matches strings and misses buying intent. Treats category, price, location, product
+              use, condition, and synonyms as separate problems.
             </p>
             <div className="mt-6 space-y-2 font-mono text-xs text-muted-foreground">
               <div className="rounded bg-background/40 px-3 py-2">query -&gt; exact match</div>
@@ -853,14 +853,14 @@ function Capabilities() {
     <section id="capabilities" className="relative py-24">
       <div className="mx-auto max-w-7xl px-6">
         <SectionHeader
-          eyebrow="Core Capabilities"
+          eyebrow="Core capabilities"
           title={
             <>
-              Built for product teams that need{" "}
+              Built for commerce teams that need{" "}
               <span className="gradient-text">trustworthy AI</span>.
             </>
           }
-          sub="Not a decorative chatbot. A practical intelligence layer for real search and discovery systems."
+          sub="A practical intelligence layer for e-commerce search, marketplace discovery, product catalogs, and listing platforms."
         />
         <div className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {capabilities.map(({ icon: Icon, title, desc }) => (
@@ -895,7 +895,7 @@ function Pipeline() {
               A retrieval pipeline that feels <span className="gradient-text">alive</span>.
             </>
           }
-          sub="Every stage is observable, tunable, and built to fit inside an existing product stack."
+          sub="Every stage is observable, tunable, and built to fit behind an existing commerce or marketplace experience."
         />
         <div className="mt-16 grid gap-4 md:grid-cols-4">
           {pipeline.map(({ icon: Icon, title, body }, index) => (
@@ -927,10 +927,10 @@ function Industries() {
           eyebrow="Industries"
           title={
             <>
-              One engine, <span className="gradient-text">many discovery problems</span>.
+              Built for <span className="gradient-text">commerce and catalog discovery</span>.
             </>
           }
-          sub="Querix is domain-agnostic, but the retrieval behavior can be tuned for each product, tenant, and catalog."
+          sub="Querix is focused on companies that sell, rent, advertise, or organize products and listings at scale."
         />
         <div className="mt-16 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {industries.map(({ icon: Icon, label }) => (
@@ -961,7 +961,7 @@ function TechStack() {
               Modern AI search, packaged for <span className="gradient-text">shipping</span>.
             </>
           }
-          sub="A composable foundation that can sit behind web, mobile, marketplace, and internal search experiences."
+          sub="A composable API foundation for web and mobile storefronts, marketplaces, classified listings, and product catalogs."
         />
         <div className="mt-16 rounded-[1.75rem] border border-border bg-surface/35 p-8 sm:p-10">
           <div className="flex flex-wrap justify-center gap-2.5">
@@ -976,9 +976,9 @@ function TechStack() {
           </div>
           <div className="mt-10 grid grid-cols-1 gap-4 text-center sm:grid-cols-3">
             {[
-              { icon: Cpu, label: "Model routing", value: "adaptive" },
+              { icon: Cpu, label: "Model routing", value: "Adaptive" },
               { icon: Rocket, label: "Deployment", value: "API-first" },
-              { icon: ShieldCheck, label: "Controls", value: "tenant-safe" },
+              { icon: ShieldCheck, label: "Controls", value: "Tenant-safe" },
             ].map(({ icon: Icon, label, value }) => (
               <div key={label} className="rounded-2xl border border-border bg-background/30 p-6">
                 <Icon className="mx-auto h-5 w-5 text-brand-blue" />
@@ -1002,13 +1002,15 @@ function VisionMission() {
         <div className="rounded-[1.75rem] border border-border bg-surface/35 p-8 sm:p-10">
           <div className="text-xs uppercase tracking-[0.2em] text-brand-blue">Vision</div>
           <p className="mt-5 font-display text-2xl font-semibold leading-tight sm:text-3xl">
-            Become the intelligence layer behind search, recommendations, and discovery.
+            Become the intelligence layer behind product search, marketplace discovery, and catalog
+            recommendations.
           </p>
         </div>
         <div className="rounded-[1.75rem] border border-border bg-surface/35 p-8 sm:p-10">
           <div className="text-xs uppercase tracking-[0.2em] text-brand-blue">Mission</div>
           <p className="mt-5 font-display text-2xl font-semibold leading-tight sm:text-3xl">
-            Help businesses ship experiences that understand users naturally.
+            Help commerce and listing businesses connect customer intent with the right products,
+            services, and advertisements.
           </p>
         </div>
       </div>
@@ -1024,15 +1026,15 @@ function Contact() {
           <div className="absolute inset-0 -z-10" style={{ background: "var(--gradient-hero)" }} />
           <div className="absolute inset-0 -z-10 grid-bg opacity-40" />
           <div className="text-xs font-medium uppercase tracking-[0.25em] text-brand-blue">
-            Get Started
+            Get started
           </div>
           <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl md:text-6xl">
             Turn your search box into your{" "}
             <span className="gradient-text">best product feature</span>.
           </h2>
           <p className="mx-auto mt-5 max-w-xl leading-7 text-muted-foreground">
-            Bring a real catalog, messy queries, and business rules. Querix can show exactly where
-            relevance improves.
+            Bring a real product or listing catalog, messy customer queries, and business rules.
+            Querix can show exactly where discovery improves.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <a
@@ -1062,9 +1064,11 @@ function Footer() {
         <div className="flex items-center gap-2.5">
           <QuerixLogo size={26} />
           <span className="font-display font-semibold">
-            Querix<span className="gradient-text">AI</span>
+            Querix <span className="gradient-text">AI</span>
           </span>
-          <span className="ml-2 text-xs text-muted-foreground">Beyond Keywords.</span>
+          <span className="ml-2 text-xs text-muted-foreground">
+            Understanding thoughts — not just words.
+          </span>
         </div>
         <div className="flex items-center gap-6 text-sm text-muted-foreground">
           <a href="/developers" className="hover:text-foreground transition">
