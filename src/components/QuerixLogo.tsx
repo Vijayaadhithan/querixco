@@ -1,25 +1,53 @@
-export function QuerixLogo({ className = "", size = 36 }: { className?: string; size?: number }) {
+import { useId } from "react";
+
+type QuerixLogoProps = {
+  className?: string;
+  size?: number;
+  tone?: "dark" | "light";
+};
+
+export function QuerixLogo({ className = "", size = 40, tone = "dark" }: QuerixLogoProps) {
+  const filterId = `querix-logo-${useId().replaceAll(":", "")}`;
+
   return (
     <svg
-      width={Math.round(size * 1.16)}
+      width={Math.round(size * 3.5)}
       height={size}
-      viewBox="0 0 116 100"
-      fill="none"
+      viewBox="40 435 1050 300"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       role="img"
-      aria-label="Querix AI mark"
+      aria-label="Querix AI"
     >
-      <circle cx="45" cy="47" r="31" stroke="currentColor" strokeWidth="9" />
-
-      <circle cx="33" cy="47" r="4" fill="#1746D1" />
-      <circle cx="45" cy="47" r="4" fill="#1746D1" />
-      <circle cx="57" cy="47" r="4" fill="#1746D1" />
-
-      <circle cx="70" cy="70" r="7.5" fill="currentColor" />
-      <circle cx="85" cy="77" r="6" fill="currentColor" />
-      <circle cx="98" cy="76" r="5" fill="currentColor" />
-      <circle cx="109" cy="69" r="3" fill="currentColor" />
+      {tone === "dark" && (
+        <defs>
+          <filter
+            id={filterId}
+            x="0"
+            y="0"
+            width="1380"
+            height="1020"
+            filterUnits="userSpaceOnUse"
+            colorInterpolationFilters="sRGB"
+          >
+            {/* Keep the logo blue while adapting its black artwork for dark surfaces. */}
+            <feColorMatrix
+              type="matrix"
+              values="1.48 0 -1.48 0 1
+                      1.25 0 -1.25 0 1
+                      0.48 0 -0.48 0 1
+                      0    0  0    1 0"
+            />
+          </filter>
+        </defs>
+      )}
+      <image
+        href="/querixai-logo.png"
+        width="1380"
+        height="1020"
+        preserveAspectRatio="xMidYMid meet"
+        filter={tone === "dark" ? `url(#${filterId})` : undefined}
+      />
     </svg>
   );
 }

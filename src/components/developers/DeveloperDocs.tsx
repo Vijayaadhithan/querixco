@@ -55,10 +55,7 @@ export function DeveloperShell({
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#07111f]/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-5 lg:px-8">
           <a href="/" className="flex items-center gap-2.5" aria-label="Querix AI home">
-            <QuerixLogo size={28} />
-            <span className="font-display text-lg font-semibold">
-              Querix <span className="gradient-text">AI</span>
-            </span>
+            <QuerixLogo size={40} className="h-8 w-auto sm:h-10" />
             <span className="hidden border-l border-white/15 pl-3 text-sm text-muted-foreground sm:inline">
               {titles[active]}
             </span>

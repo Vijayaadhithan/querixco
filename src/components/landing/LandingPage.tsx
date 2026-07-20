@@ -473,11 +473,8 @@ function Nav() {
     <header className="fixed inset-x-0 top-0 z-50">
       <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
         <div className="glass-card flex items-center justify-between rounded-full px-4 py-2.5">
-          <a href="#top" className="flex items-center gap-2.5" aria-label="Querix AI home">
-            <QuerixLogo size={30} />
-            <span className="font-display text-lg font-semibold">
-              Querix <span className="gradient-text">AI</span>
-            </span>
+          <a href="#top" className="flex items-center" aria-label="Querix AI home">
+            <QuerixLogo size={42} className="h-8 w-auto sm:h-[42px]" />
           </a>
           <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
             <a href="#demo" className="hover:text-foreground transition">
@@ -1062,10 +1059,7 @@ function Footer() {
     <footer className="border-t border-border">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-10 sm:flex-row">
         <div className="flex items-center gap-2.5">
-          <QuerixLogo size={26} />
-          <span className="font-display font-semibold">
-            Querix <span className="gradient-text">AI</span>
-          </span>
+          <QuerixLogo size={38} />
           <span className="ml-2 text-xs text-muted-foreground">
             Understanding thoughts — not just words.
           </span>
