@@ -182,9 +182,11 @@ export function DeveloperShell({
             </div>
             <a
               href="mailto:hello@querix.co?subject=Querix%20AI%20Integration"
-              className="inline-flex h-9 items-center gap-2 rounded-lg bg-brand-blue px-3.5 text-sm font-medium text-white transition hover:bg-brand-blue/85"
+              className="inline-flex h-9 items-center gap-2 rounded-lg bg-brand-blue px-2.5 text-xs font-medium text-white transition hover:bg-brand-blue/85 sm:px-3.5 sm:text-sm"
             >
-              Request API access <ArrowRight className="hidden h-3.5 w-3.5 sm:block" />
+              <span className="sm:hidden">API access</span>
+              <span className="hidden sm:inline">Request API access</span>
+              <ArrowRight className="hidden h-3.5 w-3.5 sm:block" />
             </a>
             <button
               type="button"

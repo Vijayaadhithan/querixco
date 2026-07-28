@@ -1,5 +1,5 @@
 import { QuerixLogo } from "@/components/QuerixLogo";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Reveal } from "@/components/Reveal";
 import { useApiHealth } from "@/lib/use-api-health";
 import type { LucideIcon } from "lucide-react";
@@ -345,78 +345,152 @@ function Hero() {
 }
 
 function HeroSearch() {
+  const [activeScenario, setActiveScenario] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const scenario = demoQueries[activeScenario];
+
+  useEffect(() => {
+    if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const interval = window.setInterval(() => {
+      setActiveScenario((current) => (current + 1) % demoQueries.length);
+    }, 6_500);
+
+    return () => window.clearInterval(interval);
+  }, [paused]);
+
   return (
-    <div className="relative">
+    <div
+      className="hero-search-stage animate-fade-up relative min-w-0"
+      style={{ animationDelay: "180ms" }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
+    >
+      <div className="hero-orbit hero-orbit-one" aria-hidden="true">
+        <span />
+      </div>
+      <div className="hero-orbit hero-orbit-two" aria-hidden="true">
+        <span />
+      </div>
+      <div className="hero-floating-note hero-floating-note-intent" aria-hidden="true">
+        <BrainCircuit className="h-3.5 w-3.5" />
+        Intent mapped
+      </div>
+      <div className="hero-floating-note hero-floating-note-catalog" aria-hidden="true">
+        <RefreshCw className="h-3.5 w-3.5" />
+        Current catalog
+      </div>
       <div className="absolute -inset-8 rounded-[3rem] bg-gradient-to-br from-brand-blue/20 via-brand-purple/10 to-transparent blur-3xl" />
-      <div className="relative overflow-hidden rounded-[1.75rem] border border-white/12 bg-[#081522]/95 shadow-[0_36px_120px_-45px_rgba(0,0,0,0.95)]">
+      <div className="hero-search-window relative overflow-hidden rounded-[1.5rem] border border-white/12 bg-[#081522]/95 shadow-[0_36px_120px_-45px_rgba(0,0,0,0.95)] sm:rounded-[1.75rem]">
+        <div className="hero-processing-rail" aria-hidden="true">
+          <span />
+        </div>
         <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
           <div className="flex items-center gap-2 text-xs font-medium text-[#b7c6d8]">
             <Store className="h-4 w-4 text-brand-blue" />
-            Store search
+            Intent search
           </div>
-          <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[10px] text-[#8193a8]">
-            Experience preview
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="hidden text-[10px] text-[#657a91] sm:block">
+              Query {activeScenario + 1} of {demoQueries.length}
+            </span>
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-50" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-300" />
+            </span>
+          </div>
         </div>
-        <div className="p-5 sm:p-6">
-          <div className="rounded-2xl border border-[#4fa4ff]/30 bg-[#07111c] p-4 shadow-[0_0_0_3px_rgba(30,144,255,0.05)]">
+        <div key={scenario.query} className="hero-scenario p-4 sm:p-6">
+          <div className="hero-query-box rounded-xl border border-[#4fa4ff]/30 bg-[#07111c] p-4 shadow-[0_0_0_3px_rgba(30,144,255,0.05)] sm:rounded-2xl">
             <div className="flex items-start gap-3">
               <Search className="mt-0.5 h-5 w-5 shrink-0 text-brand-blue" />
-              <div>
-                <p className="text-sm leading-6 text-white">
-                  something for back pain while working from home
+              <div className="min-w-0">
+                <p className="hero-query-text text-sm leading-6 text-white">{scenario.query}</p>
+                <p className="mt-1 flex items-center gap-1.5 text-[10px] text-[#6f849b] sm:text-[11px]">
+                  <Sparkles className="h-3 w-3 text-violet-300" />
+                  Interpreting natural language
                 </p>
-                <p className="mt-1 text-[11px] text-[#6f849b]">Press Enter to search</p>
               </div>
             </div>
           </div>
 
-          <div className="mt-5 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-[#71849a]">
-            <BrainCircuit className="h-3.5 w-3.5 text-violet-300" />
-            Querix understood
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {["ergonomic support", "home office", "back comfort", "long sitting"].map((item) => (
-              <span
-                key={item}
-                className="rounded-full border border-violet-300/20 bg-violet-300/[0.07] px-3 py-1.5 text-xs text-violet-100"
-              >
-                {item}
-              </span>
-            ))}
+          <div className="hero-intent-layer">
+            <div className="mt-5 flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.14em] text-[#71849a] sm:text-[11px]">
+              <BrainCircuit className="h-3.5 w-3.5 text-violet-300" />
+              Intent and constraints
+            </div>
+            <div className="mt-3 flex flex-wrap gap-1.5 sm:gap-2">
+              {scenario.understood.map((item, index) => (
+                <span
+                  key={item}
+                  className="hero-intent-chip rounded-full border border-violet-300/20 bg-violet-300/[0.07] px-2.5 py-1 text-[10px] text-violet-100 sm:px-3 sm:py-1.5 sm:text-xs"
+                  style={{ animationDelay: `${900 + index * 110}ms` }}
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
 
-          <div className="mt-6 space-y-3">
-            {[
-              ["Ergonomic mesh chair", "Lumbar support · adjustable seat", "Best overall match"],
-              ["High-back work chair", "Headrest · multi-angle recline", "Strong comfort match"],
-              [
-                "Sit-stand desk converter",
-                "Alternate posture through the day",
-                "Useful alternative",
-              ],
-            ].map(([name, detail, reason], index) => (
+          <div className="hero-results mt-5 space-y-2.5 sm:mt-6 sm:space-y-3">
+            {scenario.results.map((result, index) => (
               <div
-                key={name}
-                className="rounded-2xl border border-white/[0.09] bg-white/[0.025] p-4"
+                key={result.name}
+                className="hero-result-row rounded-xl border border-white/[0.09] bg-white/[0.025] p-3 sm:rounded-2xl sm:p-4"
+                style={{ animationDelay: `${1_450 + index * 150}ms` }}
               >
-                <div className="flex gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#163f65] to-[#302556]">
-                    <ShoppingBag className="h-5 w-5 text-[#c9e7ff]" />
+                <div className="flex gap-3 sm:gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#163f65] to-[#302556] sm:h-11 sm:w-11 sm:rounded-xl">
+                    <ShoppingBag className="h-4 w-4 text-[#c9e7ff] sm:h-5 sm:w-5" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="truncate text-sm font-semibold text-white">{name}</p>
-                      <span className="font-mono text-[10px] text-[#6e8298]">0{index + 1}</span>
+                      <p className="truncate text-xs font-semibold text-white sm:text-sm">
+                        {result.name}
+                      </p>
+                      <span className="shrink-0 font-mono text-[9px] text-[#6e8298] sm:text-[10px]">
+                        0{index + 1}
+                      </span>
                     </div>
-                    <p className="mt-1 text-xs text-[#7f93a9]">{detail}</p>
-                    <p className="mt-2 inline-flex items-center gap-1.5 text-[11px] text-emerald-200">
+                    <p className="mt-1 truncate text-[10px] text-[#7f93a9] sm:text-xs">
+                      {result.detail}
+                    </p>
+                    <p className="mt-1.5 flex items-start gap-1.5 text-[9px] leading-4 text-emerald-200 sm:mt-2 sm:text-[11px]">
                       <CircleDot className="h-3 w-3" />
-                      {reason}
+                      <span className="line-clamp-1">{result.reason}</span>
                     </p>
                   </div>
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between border-t border-white/10 px-4 py-3 sm:px-5">
+          <span className="text-[9px] uppercase tracking-[0.14em] text-[#5e7288] sm:text-[10px]">
+            Meaning → filters → ranked inventory
+          </span>
+          <div
+            className="flex items-center gap-1.5"
+            role="tablist"
+            aria-label="Hero search scenarios"
+          >
+            {demoQueries.map((item, index) => (
+              <button
+                key={item.label}
+                type="button"
+                role="tab"
+                aria-selected={activeScenario === index}
+                aria-label={`Show ${item.label} search`}
+                onClick={() => setActiveScenario(index)}
+                className={`h-1.5 rounded-full transition-all duration-500 ${
+                  activeScenario === index
+                    ? "w-6 bg-brand-blue"
+                    : "w-1.5 bg-white/20 hover:bg-white/40"
+                }`}
+              />
             ))}
           </div>
         </div>
@@ -459,7 +533,7 @@ function Problem() {
           align="left"
         />
 
-        <div className="mt-14 grid gap-5 lg:grid-cols-[0.92fr_1.08fr]">
+        <div className="reveal-stagger mt-14 grid gap-5 lg:grid-cols-[0.92fr_1.08fr]">
           <div className="rounded-[1.75rem] border border-white/[0.08] bg-white/[0.025] p-7 sm:p-8">
             <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#778ba1]">
               Keyword-only search hears
@@ -557,7 +631,7 @@ function SearchExperience() {
         </div>
 
         <div className="mt-8 overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#081522] shadow-[0_32px_100px_-55px_rgba(30,144,255,0.8)]">
-          <div className="grid lg:grid-cols-[0.78fr_1.22fr]">
+          <div key={demo.query} className="demo-panel-enter grid lg:grid-cols-[0.78fr_1.22fr]">
             <div className="border-b border-white/10 p-6 sm:p-8 lg:border-b-0 lg:border-r">
               <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#768ba2]">
                 Customer searched
@@ -646,7 +720,7 @@ function BusinessValue() {
           title="Make product discovery feel effortless."
           body="Querix helps teams improve the experience at the exact moment a shopper expresses intent—without forcing a complete storefront rebuild."
         />
-        <div className="mt-14 grid gap-5 md:grid-cols-3">
+        <div className="reveal-stagger mt-14 grid gap-5 md:grid-cols-3">
           {outcomes.map(({ icon: Icon, title, body }, index) => (
             <article
               key={title}
@@ -709,7 +783,7 @@ function HowItWorks() {
           align="left"
         />
 
-        <div className="mt-14 grid gap-4 lg:grid-cols-4">
+        <div className="homepage-flow reveal-stagger mt-14 grid gap-4 lg:grid-cols-4">
           {steps.map(({ icon: Icon, label, title, body }, index) => (
             <article
               key={label}
@@ -761,7 +835,7 @@ function Capabilities() {
             </a>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="reveal-stagger grid gap-4 sm:grid-cols-2">
             {capabilities.map(({ icon: Icon, title, body }) => (
               <article
                 key={title}
@@ -789,7 +863,7 @@ function Platform() {
           body="Querix connects a controlled data lifecycle with an intent-aware serving layer, so search quality starts before the first customer query."
         />
 
-        <div className="mt-14 grid gap-5 lg:grid-cols-2">
+        <div className="platform-pair reveal-stagger mt-14 grid gap-5 lg:grid-cols-2">
           <article className="rounded-[1.75rem] border border-white/10 bg-[#081522] p-7 sm:p-9">
             <div className="flex items-center justify-between">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-violet-300/20 bg-violet-300/[0.08]">
