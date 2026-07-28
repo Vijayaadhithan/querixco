@@ -147,15 +147,37 @@ export function DevelopersPage() {
             </span>
           </div>
           <div className="p-5 font-mono text-[12px] leading-6 sm:p-6">
-            <p>
-              <span className="text-emerald-300">POST</span>{" "}
-              <span className="text-[#b7dcff]">/api/v1/&lt;tenant&gt;/search</span>
-            </p>
-            <p className="text-muted-foreground">X-API-Key: &lt;server-side-key&gt;</p>
-            <pre className="mt-4 whitespace-pre-wrap text-[#d8e6f7]">{`{
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                Request
+              </p>
+              <p className="mt-2">
+                <span className="text-emerald-300">POST</span>{" "}
+                <span className="text-[#b7dcff]">/api/v1/&lt;tenant&gt;/search</span>
+              </p>
+              <p className="text-muted-foreground">X-API-Key: &lt;server-side-key&gt;</p>
+              <pre className="mt-3 whitespace-pre-wrap text-[#d8e6f7]">{`{
   "query": "bike in Chennai under 1000",
   "page_size": 20
 }`}</pre>
+            </div>
+            <div className="mt-5 border-t border-white/10 pt-4">
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                  Response
+                </p>
+                <span className="text-[10px] text-emerald-300">200 OK</span>
+              </div>
+              <pre className="mt-3 whitespace-pre-wrap text-[#d8e6f7]">{`{
+  "items": [{ "id": "p_1042", "title": "City Bike" }],
+  "interpreted_query": {
+    "category": "bicycles",
+    "location": "Chennai",
+    "max_price": 1000
+  },
+  "pagination": { "has_more": true, "next_cursor": "..." }
+}`}</pre>
+            </div>
             <div className="mt-5 grid grid-cols-3 gap-2 border-t border-white/10 pt-4 text-center text-[10px] text-muted-foreground">
               <span>public fields</span>
               <span>safe filters</span>

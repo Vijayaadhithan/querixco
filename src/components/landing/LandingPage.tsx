@@ -919,10 +919,10 @@ function Platform() {
             </p>
             <ul className="mt-6 space-y-3 text-sm text-[#b2c0d0]">
               {[
+                "Hosted API—no search infrastructure to deploy",
                 "Deterministic and semantic routes",
                 "Hybrid candidate retrieval",
                 "Tenant-scoped controls",
-                "Observable fallback behavior",
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3">
                   <Zap className="h-4 w-4 text-[#8dc9ff]" />
@@ -1123,28 +1123,22 @@ function Footer() {
             </div>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#62778f]">
-              Engineering
-            </p>
+            <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#62778f]">API</p>
             <div className="mt-4 grid gap-3 text-sm text-[#9bacc0]">
-              <a
-                href="https://github.com/Vijayaadhithan/querix-semantic-search"
-                target="_blank"
-                rel="noreferrer"
-                className="transition hover:text-white"
-              >
-                Search engine
+              <a href="/developers/integration" className="transition hover:text-white">
+                API integration
               </a>
-              <a
-                href="https://github.com/Vijayaadhithan/ETL_Pipeline"
-                target="_blank"
-                rel="noreferrer"
-                className="transition hover:text-white"
-              >
-                ETL pipeline
+              <a href="/developers/platform" className="transition hover:text-white">
+                Request &amp; response
               </a>
               <a href="/developers/operations" className="transition hover:text-white">
-                Reliability
+                Reliability &amp; health
+              </a>
+              <a
+                href="mailto:hello@querix.co?subject=Querix%20AI%20API%20Access"
+                className="transition hover:text-white"
+              >
+                Request API access
               </a>
             </div>
           </div>

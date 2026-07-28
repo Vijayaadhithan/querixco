@@ -24,12 +24,11 @@ The website health endpoint is implemented in `src/routes/api/ready.ts`. It call
 payload to safe frontend fields, disables caching, and returns a controlled `502` or `503` response
 when the upstream API is unavailable.
 
-## Related systems
+## Service boundary
 
-- [Querix semantic search](https://github.com/Vijayaadhithan/querix-semantic-search) — multi-tenant
-  hybrid product search API
-- [Querix ETL pipeline](https://github.com/Vijayaadhithan/ETL_Pipeline) — validated,
-  company-isolated catalog preparation
+Querix is delivered as a tenant-scoped hosted API. The search engine, ranking services, and catalog
+pipeline are private implementation details; customer integrations use authenticated HTTPS request
+and response contracts documented under `/developers/integration`.
 
 ## Local development
 

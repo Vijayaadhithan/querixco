@@ -3,7 +3,6 @@ import type { LucideIcon } from "lucide-react";
 import {
   Activity,
   ArrowRight,
-  ArrowUpRight,
   BookOpen,
   Check,
   CheckCircle2,
@@ -276,12 +275,10 @@ export function DeveloperShell({
                 Production contracts and integration guidance for customer engineering teams.
               </p>
               <a
-                href="https://github.com/Vijayaadhithan/querix-semantic-search"
-                target="_blank"
-                rel="noreferrer"
-                className="mt-4 flex items-center gap-2 px-3 text-xs text-[#8ebfe9] transition hover:text-white"
+                href="mailto:hello@querix.co?subject=Querix%20AI%20API%20Access"
+                className="mt-4 inline-flex items-center gap-2 rounded-md border border-brand-blue/25 bg-brand-blue/[0.07] px-3 py-2 text-xs text-[#9ed1ff] transition hover:border-brand-blue/50 hover:text-white"
               >
-                Search repository <ArrowUpRight className="h-3.5 w-3.5" />
+                Request API access <ArrowRight className="h-3.5 w-3.5" />
               </a>
             </div>
           </nav>
