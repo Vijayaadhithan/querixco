@@ -13,30 +13,54 @@ export const Route = createFileRoute("/api/ready")({
     handlers: {
       GET: async () => {
         const startedAt = Date.now();
-        const upstream = await fetch(READY_URL, {
-          method: "GET",
-          headers: { accept: "application/json" },
-          signal: AbortSignal.timeout(4_000),
-        });
 
-        const latencyMs = Date.now() - startedAt;
-        const data = (await upstream.json()) as ReadyResponse;
+        try {
+          const upstream = await fetch(READY_URL, {
+            method: "GET",
+            headers: { accept: "application/json" },
+            signal: AbortSignal.timeout(4_000),
+          });
 
-        return Response.json(
-          {
-            status: data.status ?? "unknown",
-            tenantMode: Boolean(data.tenant_mode),
-            configuredCompanies: data.configured_companies ?? 0,
-            latencyMs,
-            checkedAt: new Date().toISOString(),
-          },
-          {
-            status: upstream.ok ? 200 : 502,
-            headers: {
-              "cache-control": "no-store",
+          const latencyMs = Date.now() - startedAt;
+          const contentType = upstream.headers.get("content-type") ?? "";
+          const data = contentType.includes("application/json")
+            ? ((await upstream.json()) as ReadyResponse)
+            : {};
+
+          return Response.json(
+            {
+              status: data.status ?? (upstream.ok ? "unknown" : "unavailable"),
+              tenantMode: Boolean(data.tenant_mode),
+              configuredCompanies: data.configured_companies ?? 0,
+              latencyMs,
+              checkedAt: new Date().toISOString(),
+              upstreamStatus: upstream.status,
             },
-          },
-        );
+            {
+              status: upstream.ok ? 200 : 502,
+              headers: {
+                "cache-control": "no-store",
+              },
+            },
+          );
+        } catch {
+          return Response.json(
+            {
+              status: "unavailable",
+              tenantMode: false,
+              configuredCompanies: 0,
+              latencyMs: Date.now() - startedAt,
+              checkedAt: new Date().toISOString(),
+              upstreamStatus: null,
+            },
+            {
+              status: 503,
+              headers: {
+                "cache-control": "no-store",
+              },
+            },
+          );
+        }
       },
     },
   },

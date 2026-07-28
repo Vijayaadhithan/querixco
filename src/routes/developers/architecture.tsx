@@ -4,7 +4,7 @@ import { DeveloperDocument } from "@/components/developers/DeveloperDocs";
 export const Route = createFileRoute("/developers/architecture")({
   head: () => ({
     meta: [
-      { title: "Architecture — Querix AI Developers" },
+      { title: "System Architecture — Querix AI Developers" },
       {
         name: "description",
         content:

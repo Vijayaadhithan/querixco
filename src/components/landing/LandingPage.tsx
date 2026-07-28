@@ -1,5 +1,7 @@
 import { QuerixLogo } from "@/components/QuerixLogo";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
+import { Reveal } from "@/components/Reveal";
+import { useApiHealth } from "@/lib/use-api-health";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
@@ -160,27 +162,39 @@ const useCases = [
   { icon: MessageSquareText, label: "Classifieds and listings" },
 ] satisfies Array<{ icon: LucideIcon; label: string }>;
 
-type ApiHealth = {
-  status: string;
-  tenantMode: boolean;
-  configuredCompanies: number;
-};
-
 export function LandingPage() {
   return (
     <div className="min-h-screen overflow-hidden text-foreground">
       <Nav />
       <main>
         <Hero />
-        <AudienceStrip />
-        <Problem />
-        <SearchExperience />
-        <BusinessValue />
-        <HowItWorks />
-        <Capabilities />
-        <Platform />
-        <Trust />
-        <FinalCta />
+        <Reveal>
+          <AudienceStrip />
+        </Reveal>
+        <Reveal>
+          <Problem />
+        </Reveal>
+        <Reveal>
+          <SearchExperience />
+        </Reveal>
+        <Reveal>
+          <BusinessValue />
+        </Reveal>
+        <Reveal>
+          <HowItWorks />
+        </Reveal>
+        <Reveal>
+          <Capabilities />
+        </Reveal>
+        <Reveal>
+          <Platform />
+        </Reveal>
+        <Reveal>
+          <Trust />
+        </Reveal>
+        <Reveal>
+          <FinalCta />
+        </Reveal>
       </main>
       <Footer />
     </div>
@@ -856,30 +870,9 @@ function Platform() {
 }
 
 function Trust() {
-  const [health, setHealth] = useState<ApiHealth | null>(null);
-  const [offline, setOffline] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function checkHealth() {
-      try {
-        const response = await fetch("/api/ready", { cache: "no-store" });
-        if (!response.ok) throw new Error("Readiness failed");
-        const payload = (await response.json()) as ApiHealth;
-        if (!cancelled) setHealth(payload);
-      } catch {
-        if (!cancelled) setOffline(true);
-      }
-    }
-
-    void checkHealth();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const ready = health?.status === "ok";
+  const { data: health, phase } = useApiHealth();
+  const ready = phase === "ready";
+  const offline = phase === "unavailable";
 
   return (
     <section className="py-24 sm:py-32">

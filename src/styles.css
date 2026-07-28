@@ -203,6 +203,188 @@
     radial-gradient(circle at 84% 80%, oklch(0.62 0.22 290 / 0.26), transparent 38%);
 }
 
+@layer components {
+  .reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(28px);
+    filter: blur(5px);
+    transition:
+      opacity 0.75s var(--motion-smooth) var(--reveal-delay, 0ms),
+      transform 0.75s var(--motion-smooth) var(--reveal-delay, 0ms),
+      filter 0.75s var(--motion-smooth) var(--reveal-delay, 0ms);
+  }
+
+  .reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
+  .reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.6s var(--motion-smooth),
+      transform 0.6s var(--motion-smooth);
+  }
+
+  .is-visible .reveal-stagger > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .is-visible .reveal-stagger > *:nth-child(2) {
+    transition-delay: 80ms;
+  }
+
+  .is-visible .reveal-stagger > *:nth-child(3) {
+    transition-delay: 160ms;
+  }
+
+  .is-visible .reveal-stagger > *:nth-child(4) {
+    transition-delay: 240ms;
+  }
+
+  .is-visible .reveal-stagger > *:nth-child(5) {
+    transition-delay: 320ms;
+  }
+
+  .is-visible .reveal-stagger > *:nth-child(6) {
+    transition-delay: 400ms;
+  }
+
+  .docs-page-enter {
+    animation: docs-page-enter 0.65s var(--motion-smooth) both;
+  }
+
+  .api-status-badge {
+    display: inline-flex;
+    min-height: 2.25rem;
+    align-items: center;
+    gap: 0.625rem;
+    border: 1px solid oklch(1 0 0 / 0.1);
+    border-radius: 0.625rem;
+    background: oklch(1 0 0 / 0.035);
+    padding: 0.45rem 0.65rem;
+    transition:
+      border-color 0.3s var(--motion-smooth),
+      background-color 0.3s var(--motion-smooth),
+      transform 0.3s var(--motion-smooth);
+  }
+
+  .api-status-badge:hover {
+    border-color: oklch(0.68 0.18 250 / 0.4);
+    background: oklch(0.68 0.18 250 / 0.07);
+    transform: translateY(-1px);
+  }
+
+  .api-status-orb {
+    position: relative;
+    display: flex;
+    height: 0.55rem;
+    width: 0.55rem;
+    flex: none;
+    border-radius: 999px;
+    background: oklch(0.8 0.16 90);
+  }
+
+  .api-status-orb span {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    animation: status-ripple 1.8s ease-out infinite;
+  }
+
+  .api-status-badge.is-ready .api-status-orb {
+    background: oklch(0.8 0.18 155);
+  }
+
+  .api-status-badge.is-unavailable .api-status-orb {
+    background: oklch(0.72 0.2 28);
+  }
+
+  .docs-flow {
+    position: relative;
+  }
+
+  .docs-flow::before {
+    content: "";
+    position: absolute;
+    top: 1.65rem;
+    right: 8%;
+    left: 8%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      oklch(0.68 0.18 250 / 0.35),
+      oklch(0.62 0.22 290 / 0.35),
+      transparent
+    );
+  }
+
+  .docs-flow::after {
+    content: "";
+    position: absolute;
+    top: calc(1.65rem - 2px);
+    left: 8%;
+    height: 5px;
+    width: 18%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, oklch(0.75 0.16 250), transparent);
+    filter: blur(1px);
+    animation: flow-signal 3.8s ease-in-out infinite;
+  }
+
+  .docs-nav-link {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .docs-nav-link::before {
+    content: "";
+    position: absolute;
+    inset-block: 0.55rem;
+    left: 0;
+    width: 2px;
+    border-radius: 999px;
+    background: var(--gradient-brand);
+    opacity: 0;
+    transform: scaleY(0.3);
+    transition:
+      opacity 0.25s var(--motion-smooth),
+      transform 0.25s var(--motion-smooth);
+  }
+
+  .docs-nav-link.is-active::before {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+
+  .code-copy-button {
+    display: inline-flex;
+    min-height: 2rem;
+    align-items: center;
+    gap: 0.35rem;
+    border: 1px solid oklch(1 0 0 / 0.1);
+    border-radius: 0.45rem;
+    padding-inline: 0.6rem;
+    font-family: var(--font-sans);
+    color: oklch(0.75 0.03 250);
+    transition:
+      border-color 0.25s ease,
+      color 0.25s ease,
+      background-color 0.25s ease;
+  }
+
+  .code-copy-button:hover {
+    border-color: oklch(0.68 0.18 250 / 0.45);
+    background: oklch(0.68 0.18 250 / 0.08);
+    color: white;
+  }
+}
+
 @keyframes float-pixel {
   0%,
   100% {
@@ -212,6 +394,43 @@
   50% {
     transform: translateY(-8px) translateX(4px);
     opacity: 1;
+  }
+}
+
+@keyframes docs-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes status-ripple {
+  from {
+    opacity: 0.65;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+
+@keyframes flow-signal {
+  0% {
+    left: 8%;
+    opacity: 0;
+  }
+  12%,
+  82% {
+    opacity: 1;
+  }
+  100% {
+    left: 74%;
+    opacity: 0;
   }
 }
 
@@ -289,5 +508,19 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .reveal-on-scroll,
+  .reveal-stagger > * {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .docs-flow::before,
+  .docs-flow::after {
+    display: none;
   }
 }

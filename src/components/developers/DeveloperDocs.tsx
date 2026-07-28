@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   Activity,
   ArrowRight,
   ArrowUpRight,
   BookOpen,
+  Check,
   CheckCircle2,
   ChevronRight,
+  Clipboard,
   Cpu,
   Database,
   DatabaseZap,
@@ -25,17 +27,19 @@ import {
   X,
 } from "lucide-react";
 
+import { ApiStatusBadge } from "@/components/ApiStatus";
 import { QuerixLogo } from "@/components/QuerixLogo";
+import { Reveal } from "@/components/Reveal";
 
 type Guide = "platform" | "integration" | "operations" | "architecture" | "data-pipeline";
 
 const titles: Record<Guide | "overview", string> = {
-  overview: "Documentation",
-  platform: "Search Platform",
-  integration: "API Integration",
-  operations: "Service Reliability",
-  architecture: "Architecture Summary",
-  "data-pipeline": "Data Lifecycle",
+  overview: "API Documentation",
+  platform: "Search API Behavior",
+  integration: "Quickstart & API",
+  operations: "Reliability & Health",
+  architecture: "System Architecture",
+  "data-pipeline": "Catalog Data Pipeline",
 };
 
 const guideSections: Record<Guide, string[]> = {
@@ -58,6 +62,7 @@ const guideSections: Record<Guide, string[]> = {
     "Usage and protected diagnostics",
   ],
   operations: [
+    "Readiness and health contract",
     "The serving data boundary",
     "Tenant configuration and isolation",
     "Index refresh lifecycle",
@@ -83,13 +88,40 @@ const guideSections: Record<Guide, string[]> = {
 };
 
 const documentationNav = [
-  ["Overview", "/developers", "overview"],
-  ["API integration", "/developers/integration", "integration"],
-  ["Search platform", "/developers/platform", "platform"],
-  ["Architecture", "/developers/architecture", "architecture"],
-  ["Data lifecycle", "/developers/data-pipeline", "data-pipeline"],
-  ["Reliability", "/developers/operations", "operations"],
+  { label: "Overview", to: "/developers", key: "overview", group: "Get started" },
+  {
+    label: "Quickstart & API",
+    to: "/developers/integration",
+    key: "integration",
+    group: "Get started",
+  },
+  {
+    label: "Search API behavior",
+    to: "/developers/platform",
+    key: "platform",
+    group: "Core concepts",
+  },
+  {
+    label: "System architecture",
+    to: "/developers/architecture",
+    key: "architecture",
+    group: "Core concepts",
+  },
+  {
+    label: "Catalog data pipeline",
+    to: "/developers/data-pipeline",
+    key: "data-pipeline",
+    group: "Operate",
+  },
+  {
+    label: "Reliability & health",
+    to: "/developers/operations",
+    key: "operations",
+    group: "Operate",
+  },
 ] as const;
+
+const documentationGroups = ["Get started", "Core concepts", "Operate"] as const;
 
 function sectionId(title: string) {
   return title
@@ -106,7 +138,33 @@ export function DeveloperShell({
   active: Guide | "overview";
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const sections = active === "overview" ? [] : guideSections[active];
+  const sections = useMemo(() => (active === "overview" ? [] : guideSections[active]), [active]);
+  const [activeSection, setActiveSection] = useState(sections[0] ? sectionId(sections[0]) : "");
+
+  useEffect(() => {
+    if (sections.length === 0 || !("IntersectionObserver" in window)) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+
+        if (visible?.target.id) setActiveSection(visible.target.id);
+      },
+      {
+        rootMargin: "-18% 0px -68% 0px",
+        threshold: 0,
+      },
+    );
+
+    const elements = sections
+      .map((section) => document.getElementById(sectionId(section)))
+      .filter((element): element is HTMLElement => Boolean(element));
+
+    elements.forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, [sections]);
 
   return (
     <div className="min-h-screen bg-[#07111f] text-foreground">
@@ -119,9 +177,9 @@ export function DeveloperShell({
             </span>
           </a>
           <div className="flex items-center gap-2">
-            <span className="hidden text-xs text-muted-foreground xl:inline">
-              Updated July 2026
-            </span>
+            <div className="hidden xl:block">
+              <ApiStatusBadge detailed />
+            </div>
             <a
               href="mailto:hello@querix.co?subject=Querix%20AI%20Integration"
               className="inline-flex h-9 items-center gap-2 rounded-lg bg-brand-blue px-3.5 text-sm font-medium text-white transition hover:bg-brand-blue/85"
@@ -145,7 +203,7 @@ export function DeveloperShell({
         {mobileOpen && (
           <nav id="docs-mobile-navigation" className="border-t border-white/10 px-5 py-4 lg:hidden">
             <div className="mx-auto grid max-w-[1440px] gap-1 sm:grid-cols-2">
-              {documentationNav.map(([label, to, key]) => (
+              {documentationNav.map(({ label, to, key }) => (
                 <a
                   key={to}
                   href={to}
@@ -168,7 +226,7 @@ export function DeveloperShell({
           className="mx-auto flex max-w-[1440px] gap-1 overflow-x-auto px-4 py-2"
           aria-label="Documentation sections"
         >
-          {documentationNav.map(([label, to, key]) => (
+          {documentationNav.map(({ label, to, key }) => (
             <a
               key={to}
               href={to}
@@ -183,20 +241,35 @@ export function DeveloperShell({
       </div>
       <div className="mx-auto grid max-w-[1440px] lg:grid-cols-[250px_minmax(0,1fr)] 2xl:grid-cols-[250px_minmax(0,1fr)_230px]">
         <aside className="hidden border-r border-white/10 px-6 py-10 lg:block">
-          <nav className="sticky top-24 space-y-1 text-sm">
-            <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground/70">
-              Querix developers
-            </p>
-            {documentationNav.map(([label, to, key]) => (
-              <a
-                key={to}
-                href={to}
-                className={`block rounded-md px-3 py-2 transition ${key === active ? "bg-brand-blue/10 text-[#9ed1ff]" : "text-muted-foreground hover:bg-white/[0.05] hover:text-white"}`}
-              >
-                {label}
-              </a>
+          <nav className="sticky top-24 text-sm">
+            {documentationGroups.map((group, groupIndex) => (
+              <div key={group} className={groupIndex === 0 ? "" : "mt-7"}>
+                <p className="mb-2 px-3 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground/55">
+                  {group}
+                </p>
+                <div className="space-y-1">
+                  {documentationNav
+                    .filter((item) => item.group === group)
+                    .map(({ label, to, key }) => (
+                      <a
+                        key={to}
+                        href={to}
+                        className={`docs-nav-link block rounded-md px-3 py-2 pl-4 transition ${
+                          key === active
+                            ? "is-active bg-brand-blue/10 text-[#9ed1ff]"
+                            : "text-muted-foreground hover:bg-white/[0.05] hover:text-white"
+                        }`}
+                      >
+                        {label}
+                      </a>
+                    ))}
+                </div>
+              </div>
             ))}
             <div className="mt-8 border-t border-white/10 pt-6">
+              <div className="px-3">
+                <ApiStatusBadge detailed />
+              </div>
               <p className="px-3 text-xs leading-5 text-muted-foreground">
                 Production contracts and integration guidance for customer engineering teams.
               </p>
@@ -221,7 +294,7 @@ export function DeveloperShell({
               <span className="text-[#9ed1ff]">{titles[active]}</span>
             </div>
           )}
-          {children}
+          <div className="docs-page-enter">{children}</div>
           <div className="mt-20 flex flex-col gap-4 border-t border-white/10 pt-8 text-sm sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="font-medium text-white">Need help with your integration?</p>
@@ -248,7 +321,11 @@ export function DeveloperShell({
                   <li key={section}>
                     <a
                       href={`#${sectionId(section)}`}
-                      className="flex gap-2 text-xs leading-5 text-muted-foreground transition hover:text-[#9ed1ff]"
+                      className={`flex gap-2 border-l pl-3 text-xs leading-5 transition ${
+                        activeSection === sectionId(section)
+                          ? "border-brand-blue text-[#9ed1ff]"
+                          : "border-white/10 text-muted-foreground hover:border-white/25 hover:text-white"
+                      }`}
                     >
                       <span className="font-mono text-[10px] text-[#526b83]">
                         {String(index + 1).padStart(2, "0")}
@@ -685,7 +762,43 @@ function OperationsGuide() {
         title="Production reliability and assurance"
         body="How Querix keeps tenant search healthy, current, observable, and predictable through dependency or provider failures."
       />
-      <Section number="01" title="The serving data boundary">
+      <Section number="01" title="Readiness and health contract">
+        <p>
+          Querix exposes two health signals. Public readiness answers whether the shared serving
+          path can accept traffic. Authenticated tenant health reports whether one company's index,
+          source database, embedding runtime, cache, and search configuration are ready.
+        </p>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <Endpoint
+            icon={Activity}
+            method="GET"
+            path="/api/v1/ready"
+            title="Public readiness"
+            detail="Used by load balancers, uptime checks, and the live status indicator in this documentation."
+          />
+          <Endpoint
+            icon={ShieldCheck}
+            method="GET"
+            path="/api/v1/{tenant}/health"
+            title="Authenticated tenant health"
+            detail="Used by customer backends and operators to inspect one tenant's serving dependencies."
+          />
+        </div>
+        <CodeBlock
+          label="Public readiness response"
+          code={`{
+  "status": "ok",
+  "tenant_mode": true,
+  "configured_companies": 1
+}`}
+        />
+        <Callout icon={Activity} title="How this website checks health">
+          The website calls its same-origin <Code>/api/ready</Code> route. That server route probes
+          the Querix Search API, applies a four-second timeout, removes internal detail, and returns
+          a cache-disabled status payload to the browser.
+        </Callout>
+      </Section>
+      <Section number="02" title="The serving data boundary">
         <p>
           Indexes discover and rank candidate IDs. The tenant database remains the canonical source
           of the public rows returned to users. This means display-only changes are visible
@@ -702,7 +815,7 @@ function OperationsGuide() {
           ]}
         />
       </Section>
-      <Section number="02" title="Tenant configuration and isolation">
+      <Section number="03" title="Tenant configuration and isolation">
         <p>
           Each tenant owns an endpoint slug, API keys, database connection, vector namespace,
           lexical index, cache namespace, cursor sessions, rate policy, request mapping, response
@@ -718,7 +831,7 @@ function OperationsGuide() {
           ]}
         />
       </Section>
-      <Section number="03" title="Index refresh lifecycle">
+      <Section number="04" title="Index refresh lifecycle">
         <p>
           Ingestion is incremental by content hash: read a bounded source page, prepare retrieval
           text and metadata, update lexical records, embed only changed items, then update vector
@@ -742,7 +855,7 @@ function OperationsGuide() {
           />
         </div>
       </Section>
-      <Section number="04" title="Route-aware assurance">
+      <Section number="05" title="Route-aware assurance">
         <p>
           Do not treat a warm result-cache hit as representative production throughput. Test
           deterministic filters, unique semantic queries, repeated semantic queries, provider
@@ -764,7 +877,7 @@ function OperationsGuide() {
           ]}
         />
       </Section>
-      <Section number="05" title="Monitoring and incident response">
+      <Section number="06" title="Monitoring and incident response">
         <p>
           One trace should connect request start, cache lookup, planning, vector and lexical
           retrieval, fusion, reranker attempts, canonical row mapping, and completion. Store route,
@@ -777,7 +890,7 @@ function OperationsGuide() {
           and cached routes.
         </Callout>
       </Section>
-      <Section number="06" title="Service assurance checklist">
+      <Section number="07" title="Service assurance checklist">
         <Checklist
           items={[
             "Confirm readiness and tenant health after every deployment.",
@@ -1201,9 +1314,11 @@ function Section({
 }) {
   return (
     <section id={sectionId(title)} className="mt-16 scroll-mt-28 border-t border-white/10 pt-10">
-      <p className="font-mono text-xs text-brand-blue">{number}</p>
-      <h2 className="mt-3 font-display text-2xl font-semibold text-white">{title}</h2>
-      <div className="mt-4 space-y-4 text-sm leading-6 text-muted-foreground">{children}</div>
+      <Reveal>
+        <p className="font-mono text-xs text-brand-blue">{number}</p>
+        <h2 className="mt-3 font-display text-2xl font-semibold text-white">{title}</h2>
+        <div className="mt-4 space-y-4 text-sm leading-6 text-muted-foreground">{children}</div>
+      </Reveal>
     </section>
   );
 }
@@ -1215,10 +1330,31 @@ function Code({ children }: { children: React.ReactNode }) {
   );
 }
 function CodeBlock({ label, code }: { label: string; code: string }) {
+  const [copied, setCopied] = useState(false);
+
+  async function copyCode() {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1_800);
+    } catch {
+      setCopied(false);
+    }
+  }
+
   return (
     <div className="mt-6 overflow-hidden rounded-lg border border-white/10 bg-[#050b13]">
-      <div className="border-b border-white/10 px-4 py-2.5 font-mono text-[11px] text-muted-foreground">
-        {label}
+      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-2.5 font-mono text-[11px] text-muted-foreground">
+        <span>{label}</span>
+        <button
+          type="button"
+          onClick={() => void copyCode()}
+          className="code-copy-button"
+          aria-label={`Copy ${label}`}
+        >
+          {copied ? <Check className="h-3.5 w-3.5" /> : <Clipboard className="h-3.5 w-3.5" />}
+          {copied ? "Copied" : "Copy"}
+        </button>
       </div>
       <pre className="overflow-x-auto p-4 text-[12px] leading-6 text-[#d8e6f7]">
         <code>{code}</code>
@@ -1327,11 +1463,11 @@ function Metric({ icon: Icon, title, text }: { icon: LucideIcon; title: string; 
 }
 function Flow({ steps }: { steps: string[] }) {
   return (
-    <ol className="mt-6 grid gap-3 md:grid-cols-5">
+    <ol className="docs-flow mt-6 grid gap-3 md:grid-cols-5">
       {steps.map((step, index) => (
         <li
           key={step}
-          className="relative rounded-lg border border-white/10 bg-white/[0.025] p-4 text-sm text-muted-foreground"
+          className="relative z-10 rounded-lg border border-white/10 bg-[#091522] p-4 text-sm text-muted-foreground transition duration-300 hover:-translate-y-1 hover:border-brand-blue/30 hover:text-white"
         >
           <span className="font-mono text-xs text-brand-blue">0{index + 1}</span>
           <p className="mt-3 leading-5">{step}</p>
