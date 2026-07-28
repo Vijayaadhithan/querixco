@@ -73,30 +73,41 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Querix AI — Understanding thoughts, not just words" },
+      { title: "Querix AI — Intent-aware product discovery" },
       {
         name: "description",
         content:
-          "Querix AI provides tenant-scoped product search APIs for e-commerce, marketplaces, product catalogs, and advertisement platforms.",
+          "Querix AI understands customer intent and helps shoppers find the products they actually want—even from vague, incomplete, and natural-language queries.",
       },
       { name: "theme-color", content: "#0A1B2E" },
-      { property: "og:title", content: "Querix AI — Understanding thoughts, not just words" },
+      { property: "og:title", content: "Querix AI — Intent-aware product discovery" },
       {
         property: "og:description",
         content:
-          "Intent-aware product search APIs for e-commerce, marketplaces, and listing platforms.",
+          "Help shoppers find the products they actually want, even when they search with vague or natural-language queries.",
       },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "Querix AI — Understanding thoughts, not just words" },
+      { property: "og:url", content: "https://querix.co" },
+      { property: "og:image", content: "https://querix.co/og.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      {
+        property: "og:image:alt",
+        content:
+          "Querix AI — Your customers think in ideas. Your search engine thinks in keywords.",
+      },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Querix AI — Intent-aware product discovery" },
       {
         name: "twitter:description",
         content:
-          "Intent-aware product search APIs for e-commerce, marketplaces, and listing platforms.",
+          "Help shoppers find the products they actually want, even from vague or natural-language queries.",
       },
+      { name: "twitter:image", content: "https://querix.co/og.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "canonical", href: "https://querix.co" },
       { rel: "icon", href: "/favicon.ico?v=3", sizes: "48x48" },
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg?v=3" },
       { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png?v=3" },

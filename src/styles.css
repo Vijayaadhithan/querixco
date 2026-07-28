@@ -183,6 +183,26 @@
   mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 30%, transparent 75%);
 }
 
+@utility hero-mesh {
+  background-image:
+    linear-gradient(oklch(1 0 0 / 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(1 0 0 / 0.025) 1px, transparent 1px),
+    radial-gradient(ellipse 70% 55% at 78% 22%, oklch(0.68 0.18 250 / 0.16), transparent 68%),
+    radial-gradient(ellipse 55% 55% at 22% 15%, oklch(0.62 0.22 290 / 0.14), transparent 72%);
+  background-size:
+    72px 72px,
+    72px 72px,
+    auto,
+    auto;
+  mask-image: linear-gradient(to bottom, black 0%, black 76%, transparent 100%);
+}
+
+@utility cta-glow {
+  background:
+    radial-gradient(circle at 16% 20%, oklch(0.68 0.18 250 / 0.3), transparent 34%),
+    radial-gradient(circle at 84% 80%, oklch(0.62 0.22 290 / 0.26), transparent 38%);
+}
+
 @keyframes float-pixel {
   0%,
   100% {

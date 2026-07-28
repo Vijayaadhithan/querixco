@@ -3,14 +3,17 @@ import type { LucideIcon } from "lucide-react";
 import {
   Activity,
   ArrowRight,
+  ArrowUpRight,
   BookOpen,
   CheckCircle2,
+  ChevronRight,
   Cpu,
   Database,
   DatabaseZap,
   Gauge,
   GitBranch,
   KeyRound,
+  Menu,
   LockKeyhole,
   Network,
   RefreshCw,
@@ -19,6 +22,7 @@ import {
   ShieldCheck,
   TimerReset,
   Workflow,
+  X,
 } from "lucide-react";
 
 import { QuerixLogo } from "@/components/QuerixLogo";
@@ -34,6 +38,66 @@ const titles: Record<Guide | "overview", string> = {
   "data-pipeline": "Data Lifecycle",
 };
 
+const guideSections: Record<Guide, string[]> = {
+  platform: [
+    "What Querix does",
+    "How requests are handled",
+    "When each search path is selected",
+    "Freshness and tenant boundaries",
+    "What your team integrates",
+  ],
+  integration: [
+    "Base URL and authentication",
+    "Readiness and tenant health",
+    "Recommended browser integration architecture",
+    "Browser request and response contract",
+    "Interaction lifecycle: typing, submit, and next page",
+    "Generic search contract",
+    "Response, pagination, and diagnostics",
+    "Client error behavior and launch checks",
+    "Usage and protected diagnostics",
+  ],
+  operations: [
+    "The serving data boundary",
+    "Tenant configuration and isolation",
+    "Index refresh lifecycle",
+    "Route-aware assurance",
+    "Monitoring and incident response",
+    "Service assurance checklist",
+  ],
+  architecture: [
+    "Request flow",
+    "Three execution paths",
+    "Data boundaries and freshness",
+    "Failure behavior and client contract",
+  ],
+  "data-pipeline": [
+    "What the pipeline owns",
+    "The staged transformation model",
+    "Freshness without exposing internal operations",
+    "Incremental change handling",
+    "Validation before search",
+    "Reliable lifecycle management",
+    "What this means for a tenant",
+  ],
+};
+
+const documentationNav = [
+  ["Overview", "/developers", "overview"],
+  ["API integration", "/developers/integration", "integration"],
+  ["Search platform", "/developers/platform", "platform"],
+  ["Architecture", "/developers/architecture", "architecture"],
+  ["Data lifecycle", "/developers/data-pipeline", "data-pipeline"],
+  ["Reliability", "/developers/operations", "operations"],
+] as const;
+
+function sectionId(title: string) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 export function DeveloperShell({
   children,
   active,
@@ -41,14 +105,8 @@ export function DeveloperShell({
   children: React.ReactNode;
   active: Guide | "overview";
 }) {
-  const nav = [
-    ["Overview", "/developers", "overview"],
-    ["API integration", "/developers/integration", "integration"],
-    ["Search platform", "/developers/platform", "platform"],
-    ["Architecture summary", "/developers/architecture", "architecture"],
-    ["Data lifecycle", "/developers/data-pipeline", "data-pipeline"],
-    ["Service reliability", "/developers/operations", "operations"],
-  ] as const;
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const sections = active === "overview" ? [] : guideSections[active];
 
   return (
     <div className="min-h-screen bg-[#07111f] text-foreground">
@@ -57,24 +115,79 @@ export function DeveloperShell({
           <a href="/" className="flex items-center gap-2.5" aria-label="Querix AI home">
             <QuerixLogo size={40} className="h-8 w-auto sm:h-10" />
             <span className="hidden border-l border-white/15 pl-3 text-sm text-muted-foreground sm:inline">
-              {titles[active]}
+              Docs
             </span>
           </a>
-          <a
-            href="mailto:hello@querix.co?subject=Querix%20AI%20Integration"
-            className="inline-flex h-9 items-center gap-2 rounded-md bg-brand-blue px-3.5 text-sm font-medium text-white transition hover:bg-brand-blue/85"
-          >
-            Request API access <ArrowRight className="h-3.5 w-3.5" />
-          </a>
+          <div className="flex items-center gap-2">
+            <span className="hidden text-xs text-muted-foreground xl:inline">
+              Updated July 2026
+            </span>
+            <a
+              href="mailto:hello@querix.co?subject=Querix%20AI%20Integration"
+              className="inline-flex h-9 items-center gap-2 rounded-lg bg-brand-blue px-3.5 text-sm font-medium text-white transition hover:bg-brand-blue/85"
+            >
+              Request API access <ArrowRight className="hidden h-3.5 w-3.5 sm:block" />
+            </a>
+            <button
+              type="button"
+              onClick={() => setMobileOpen((value) => !value)}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-white lg:hidden"
+              aria-expanded={mobileOpen}
+              aria-controls="docs-mobile-navigation"
+              aria-label={
+                mobileOpen ? "Close documentation navigation" : "Open documentation navigation"
+              }
+            >
+              {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
+          </div>
         </div>
+        {mobileOpen && (
+          <nav id="docs-mobile-navigation" className="border-t border-white/10 px-5 py-4 lg:hidden">
+            <div className="mx-auto grid max-w-[1440px] gap-1 sm:grid-cols-2">
+              {documentationNav.map(([label, to, key]) => (
+                <a
+                  key={to}
+                  href={to}
+                  onClick={() => setMobileOpen(false)}
+                  className={`rounded-lg px-3 py-2.5 text-sm transition ${
+                    key === active
+                      ? "bg-brand-blue/10 text-[#9ed1ff]"
+                      : "text-muted-foreground hover:bg-white/[0.05] hover:text-white"
+                  }`}
+                >
+                  {label}
+                </a>
+              ))}
+            </div>
+          </nav>
+        )}
       </header>
-      <div className="mx-auto grid max-w-[1440px] lg:grid-cols-[250px_minmax(0,1fr)]">
+      <div className="border-b border-white/10 bg-[#081522] lg:hidden">
+        <nav
+          className="mx-auto flex max-w-[1440px] gap-1 overflow-x-auto px-4 py-2"
+          aria-label="Documentation sections"
+        >
+          {documentationNav.map(([label, to, key]) => (
+            <a
+              key={to}
+              href={to}
+              className={`shrink-0 rounded-md px-3 py-2 text-xs transition ${
+                key === active ? "bg-brand-blue/10 text-[#9ed1ff]" : "text-muted-foreground"
+              }`}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+      </div>
+      <div className="mx-auto grid max-w-[1440px] lg:grid-cols-[250px_minmax(0,1fr)] 2xl:grid-cols-[250px_minmax(0,1fr)_230px]">
         <aside className="hidden border-r border-white/10 px-6 py-10 lg:block">
           <nav className="sticky top-24 space-y-1 text-sm">
             <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground/70">
               Querix developers
             </p>
-            {nav.map(([label, to, key]) => (
+            {documentationNav.map(([label, to, key]) => (
               <a
                 key={to}
                 href={to}
@@ -85,12 +198,69 @@ export function DeveloperShell({
             ))}
             <div className="mt-8 border-t border-white/10 pt-6">
               <p className="px-3 text-xs leading-5 text-muted-foreground">
-                Developer documentation for approved customer engineering and platform teams.
+                Production contracts and integration guidance for customer engineering teams.
               </p>
+              <a
+                href="https://github.com/Vijayaadhithan/querix-semantic-search"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 flex items-center gap-2 px-3 text-xs text-[#8ebfe9] transition hover:text-white"
+              >
+                Search repository <ArrowUpRight className="h-3.5 w-3.5" />
+              </a>
             </div>
           </nav>
         </aside>
-        <main className="min-w-0 px-5 py-12 sm:px-8 lg:px-14 lg:py-16">{children}</main>
+        <main className="min-w-0 px-5 py-12 sm:px-8 lg:px-12 lg:py-16 xl:px-14">
+          {active !== "overview" && (
+            <div className="mb-8 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+              <a href="/developers" className="transition hover:text-white">
+                Docs
+              </a>
+              <ChevronRight className="h-3 w-3" />
+              <span className="text-[#9ed1ff]">{titles[active]}</span>
+            </div>
+          )}
+          {children}
+          <div className="mt-20 flex flex-col gap-4 border-t border-white/10 pt-8 text-sm sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-medium text-white">Need help with your integration?</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Talk to us about your catalog and search contract.
+              </p>
+            </div>
+            <a
+              href="mailto:hello@querix.co?subject=Querix%20AI%20Integration%20Support"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 text-sm font-medium text-white transition hover:border-brand-blue/50"
+            >
+              Contact engineering <ArrowRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
+        </main>
+        {sections.length > 0 && (
+          <aside className="hidden border-l border-white/10 px-6 py-10 2xl:block">
+            <nav className="sticky top-24">
+              <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground/70">
+                On this page
+              </p>
+              <ol className="mt-4 space-y-3">
+                {sections.map((section, index) => (
+                  <li key={section}>
+                    <a
+                      href={`#${sectionId(section)}`}
+                      className="flex gap-2 text-xs leading-5 text-muted-foreground transition hover:text-[#9ed1ff]"
+                    >
+                      <span className="font-mono text-[10px] text-[#526b83]">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      {section}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          </aside>
+        )}
       </div>
     </div>
   );
@@ -1012,6 +1182,11 @@ function Title({
         {title}
       </h1>
       <p className="mt-5 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">{body}</p>
+      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[#71869d]">
+        <span>Querix API · v1 contract</span>
+        <span className="hidden h-1 w-1 rounded-full bg-white/20 sm:block" />
+        <span>Last reviewed July 2026</span>
+      </div>
     </header>
   );
 }
@@ -1025,7 +1200,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="mt-16 scroll-mt-28 border-t border-white/10 pt-10">
+    <section id={sectionId(title)} className="mt-16 scroll-mt-28 border-t border-white/10 pt-10">
       <p className="font-mono text-xs text-brand-blue">{number}</p>
       <h2 className="mt-3 font-display text-2xl font-semibold text-white">{title}</h2>
       <div className="mt-4 space-y-4 text-sm leading-6 text-muted-foreground">{children}</div>
