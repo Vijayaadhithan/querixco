@@ -5,7 +5,6 @@ import { useApiHealth } from "@/lib/use-api-health";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
-  BadgeCheck,
   BrainCircuit,
   Check,
   CheckCircle2,
@@ -214,7 +213,7 @@ function Nav() {
     <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6">
       <div className="mx-auto max-w-7xl rounded-2xl border border-white/10 bg-[#071525]/90 shadow-[0_14px_45px_-24px_rgba(0,0,0,0.9)] backdrop-blur-xl">
         <div className="flex h-16 items-center justify-between px-4 sm:px-5">
-          <a href="#top" className="flex items-center" aria-label="Querix AI home">
+          <a href="/" className="flex items-center" aria-label="Querix AI home">
             <QuerixLogo size={42} className="h-9 w-auto" />
           </a>
 
@@ -282,24 +281,26 @@ function Nav() {
 
 function Hero() {
   return (
-    <section id="top" className="relative pb-20 pt-36 sm:pb-28 sm:pt-44">
+    <section className="relative pb-20 pt-36 sm:pb-28 sm:pt-44">
       <div className="pointer-events-none absolute inset-0 hero-mesh" />
       <div className="pointer-events-none absolute left-1/2 top-24 h-[420px] w-[720px] -translate-x-1/2 rounded-full bg-brand-blue/10 blur-[110px]" />
-      <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-[1.02fr_0.98fr]">
-        <div>
+      <div className="relative mx-auto max-w-7xl px-6">
+        <div className="mx-auto max-w-5xl text-center">
           <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-[#4fa4ff]/25 bg-[#4fa4ff]/10 px-3.5 py-1.5 text-xs font-medium text-[#a9d5ff]">
             <Sparkles className="h-3.5 w-3.5" />
             Intent-aware product discovery
           </div>
           <h1
-            className="animate-fade-up mt-7 max-w-3xl font-display text-[2.85rem] font-semibold leading-[1.02] tracking-[-0.045em] text-white sm:text-6xl lg:text-[4.65rem]"
+            className="animate-fade-up mt-7 font-display text-[2.85rem] font-semibold leading-[1.02] tracking-[-0.045em] text-white sm:text-6xl lg:text-[4.65rem]"
             style={{ animationDelay: "70ms" }}
           >
-            Your customers think in ideas.{" "}
-            <span className="text-[#8dc9ff]">Your search engine thinks in keywords.</span>
+            Your customers think in ideas.
+            <span className="mt-2 block text-[#8dc9ff]">
+              Your search engine thinks in keywords.
+            </span>
           </h1>
           <p
-            className="animate-fade-up mt-7 max-w-2xl text-lg leading-8 text-[#a9b8ca] sm:text-xl"
+            className="animate-fade-up mx-auto mt-7 max-w-3xl text-lg leading-8 text-[#a9b8ca] sm:text-xl"
             style={{ animationDelay: "140ms" }}
           >
             Querix AI understands customer intent and helps shoppers find the products they are
@@ -307,7 +308,7 @@ function Hero() {
             queries.
           </p>
           <div
-            className="animate-fade-up mt-9 flex flex-col gap-3 sm:flex-row"
+            className="animate-fade-up mt-9 flex flex-col justify-center gap-3 sm:flex-row"
             style={{ animationDelay: "210ms" }}
           >
             <a
@@ -324,7 +325,7 @@ function Hero() {
             </a>
           </div>
           <div
-            className="animate-fade-up mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-[#91a2b7]"
+            className="animate-fade-up mt-8 flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-[#91a2b7]"
             style={{ animationDelay: "280ms" }}
           >
             {["Natural-language queries", "Exact filter control", "API-first integration"].map(
@@ -337,8 +338,6 @@ function Hero() {
             )}
           </div>
         </div>
-
-        <HeroSearch />
       </div>
     </section>
   );
@@ -586,9 +585,6 @@ function Problem() {
 }
 
 function SearchExperience() {
-  const [active, setActive] = useState(0);
-  const demo = demoQueries[active];
-
   return (
     <section
       id="search-experience"
@@ -600,111 +596,15 @@ function SearchExperience() {
           eyebrow="The shopper experience"
           title={
             <>
-              Let customers search the way they{" "}
-              <span className="gradient-text">naturally think.</span>
+              We will never let your customers get{" "}
+              <span className="gradient-text">stuck anywhere.</span>
             </>
           }
-          body="Explore representative queries across products and listings. The examples show the intent and explicit constraints Querix can use to rank relevant inventory."
+          body="Watch Querix interpret representative searches across products and listings, preserve every explicit constraint, and rank the most relevant current inventory."
         />
 
-        <div
-          className="mt-12 flex flex-wrap justify-center gap-2"
-          role="tablist"
-          aria-label="Search examples"
-        >
-          {demoQueries.map((item, index) => (
-            <button
-              key={item.label}
-              type="button"
-              role="tab"
-              aria-selected={active === index}
-              onClick={() => setActive(index)}
-              className={`min-h-10 rounded-full border px-4 text-sm transition ${
-                active === index
-                  ? "border-brand-blue bg-brand-blue text-white"
-                  : "border-white/10 bg-white/[0.03] text-[#9aabbe] hover:border-white/20 hover:text-white"
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-8 overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#081522] shadow-[0_32px_100px_-55px_rgba(30,144,255,0.8)]">
-          <div key={demo.query} className="demo-panel-enter grid lg:grid-cols-[0.78fr_1.22fr]">
-            <div className="border-b border-white/10 p-6 sm:p-8 lg:border-b-0 lg:border-r">
-              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#768ba2]">
-                Customer searched
-              </p>
-              <div className="mt-4 rounded-xl border border-brand-blue/30 bg-[#050d16] p-4">
-                <div className="flex gap-3">
-                  <Search className="mt-0.5 h-5 w-5 shrink-0 text-brand-blue" />
-                  <p className="text-sm leading-6 text-white">{demo.query}</p>
-                </div>
-              </div>
-
-              <p className="mt-8 text-[11px] font-medium uppercase tracking-[0.16em] text-[#768ba2]">
-                Querix understood
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {demo.understood.map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-[#c3d0df]"
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
-
-              <div className="mt-8 rounded-xl border border-emerald-300/15 bg-emerald-300/[0.05] p-4">
-                <p className="flex items-center gap-2 text-xs font-medium text-emerald-100">
-                  <SlidersHorizontal className="h-4 w-4" />
-                  Intent and filters stay distinct
-                </p>
-                <p className="mt-2 text-xs leading-5 text-emerald-100/60">
-                  Stated constraints are enforced. Inferred preferences shape relevance without
-                  silently excluding useful alternatives.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-6 sm:p-8">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#768ba2]">
-                    Ranked results
-                  </p>
-                  <p className="mt-1 text-sm text-[#a6b6c8]">Matched by intent and catalog facts</p>
-                </div>
-                <BadgeCheck className="h-5 w-5 text-emerald-300" />
-              </div>
-
-              <div className="mt-5 space-y-3">
-                {demo.results.map((result, index) => (
-                  <div
-                    key={result.name}
-                    className="rounded-xl border border-white/[0.09] bg-white/[0.025] p-4 sm:p-5"
-                  >
-                    <div className="flex gap-4">
-                      <span className="font-mono text-xs text-[#5e758d]">0{index + 1}</span>
-                      <div>
-                        <h3 className="text-sm font-semibold text-white">{result.name}</h3>
-                        <p className="mt-1 text-xs text-[#8194aa]">{result.detail}</p>
-                        <p className="mt-3 flex items-start gap-2 text-xs leading-5 text-[#a9d5ff]">
-                          <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                          {result.reason}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-4 text-right text-[10px] text-[#5e7187]">
-                Illustrative catalog experience
-              </p>
-            </div>
-          </div>
+        <div className="mx-auto mt-14 max-w-3xl">
+          <HeroSearch />
         </div>
       </div>
     </section>

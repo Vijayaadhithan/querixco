@@ -413,10 +413,6 @@
     animation: note-float 5.2s 0.8s ease-in-out infinite reverse;
   }
 
-  .demo-panel-enter {
-    animation: demo-panel-enter 0.52s var(--motion-smooth) both;
-  }
-
   .homepage-flow {
     position: relative;
   }
@@ -811,19 +807,6 @@
   }
   50% {
     transform: translateY(-7px);
-  }
-}
-
-@keyframes demo-panel-enter {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-    filter: blur(3px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
   }
 }
 
