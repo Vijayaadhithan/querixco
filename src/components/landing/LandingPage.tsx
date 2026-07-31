@@ -36,68 +36,117 @@ import {
 
 const demoQueries = [
   {
-    label: "Home office",
-    query: "comfortable office chair for long workdays under ₹15,000",
-    understood: ["office chair", "comfort", "long daily use", "under ₹15,000"],
+    label: "Office shirt",
+    query: "cotton blue shirt for office under ₹1,000",
+    understood: ["blue office shirt", "cotton fabric", "formal style", "under ₹1,000"],
     results: [
       {
-        name: "Ergonomic mesh chair with lumbar support",
-        detail: "Adjustable support · breathable back · ₹12,499",
-        reason: "Best match for comfort, long use, and budget",
+        name: "Solid blue cotton formal shirt",
+        detail: "Regular fit · full sleeves · ₹899",
+        reason: "Matches colour, fabric, office use, and budget",
       },
       {
-        name: "High-back work chair with headrest",
-        detail: "Multi-angle recline · adjustable arms · ₹14,250",
-        reason: "Strong ergonomic fit within the stated budget",
+        name: "Sky-blue cotton office shirt",
+        detail: "Tailored fit · breathable weave · ₹949",
+        reason: "A polished workwear option within budget",
       },
       {
-        name: "Compact posture-support office chair",
-        detail: "Small-space design · lumbar support · ₹9,999",
-        reason: "Relevant lower-priced alternative",
+        name: "Blue Oxford cotton-blend shirt",
+        detail: "Smart-casual fit · easy care · ₹799",
+        reason: "Relevant lower-priced office alternative",
       },
     ],
   },
   {
-    label: "Creator laptop",
-    query: "laptop for editing reels under ₹80,000",
-    understood: ["laptop", "video editing", "creator performance", "under ₹80,000"],
+    label: "Heart-conscious oil",
+    query: "organic oil for high BP",
+    understood: [
+      "organic cooking oil",
+      "heart-conscious choice",
+      "unsaturated fats",
+      "not a BP treatment",
+    ],
     results: [
       {
-        name: "Creator laptop · 16 GB RAM · dedicated GPU",
-        detail: "Performance display · fast storage · ₹76,990",
-        reason: "Strongest fit for short-form video workflows",
+        name: "Organic cold-pressed sunflower oil",
+        detail: "High-oleic · everyday cooking · 1 L",
+        reason: "Organic option; product choice does not replace medical advice",
       },
       {
-        name: "OLED performance ultrabook",
-        detail: "H-series processor · colour-accurate panel · ₹79,499",
-        reason: "Balances editing performance and display quality",
+        name: "Organic extra virgin olive oil",
+        detail: "Cold extracted · salads and low-heat cooking · 500 ml",
+        reason: "Heart-conscious culinary fit; no oil treats high BP",
       },
       {
-        name: "Entry creator workstation",
-        detail: "Upgradeable memory · discrete graphics · ₹69,990",
-        reason: "Good value option for the stated use",
+        name: "Organic cold-pressed groundnut oil",
+        detail: "Unrefined · Indian cooking · 1 L",
+        reason: "Relevant organic alternative; portion size still matters",
       },
     ],
   },
   {
-    label: "Used car",
-    query: "used automatic hatchback in Chennai under ₹6 lakh",
-    understood: ["used car", "automatic", "hatchback", "Chennai", "under ₹6 lakh"],
+    label: "Stevia sweets",
+    query: "sweets made with stevia",
+    understood: ["Indian sweets", "stevia-sweetened", "no added sugar", "dessert"],
     results: [
       {
-        name: "2021 automatic hatchback · single owner",
-        detail: "Chennai · 32,000 km · ₹5.85 lakh",
-        reason: "Matches every explicit constraint",
+        name: "Stevia-sweetened almond barfi",
+        detail: "No added sugar · 250 g · ₹449",
+        reason: "Direct match for a stevia-based traditional sweet",
       },
       {
-        name: "2020 compact automatic · low mileage",
-        detail: "Chennai · 28,500 km · ₹5.60 lakh",
-        reason: "Strong match for city use, condition, and budget",
+        name: "Coconut bites sweetened with stevia",
+        detail: "No refined sugar · 200 g · ₹329",
+        reason: "Stevia-sweetened alternative with a short ingredient list",
       },
       {
-        name: "2019 city hatchback · automatic",
-        detail: "Chennai · 41,000 km · ₹4.95 lakh",
-        reason: "Relevant lower-priced alternative",
+        name: "Stevia dark-chocolate peda",
+        detail: "Cocoa-rich · no added sugar · 180 g · ₹399",
+        reason: "Relevant fusion sweet using the requested sweetener",
+      },
+    ],
+  },
+  {
+    label: "Running shoes",
+    query: "running shoes for flat feet under ₹3,000",
+    understood: ["running shoes", "flat-foot support", "stability", "under ₹3,000"],
+    results: [
+      {
+        name: "Stability running shoes with arch support",
+        detail: "Wide base · cushioned heel · ₹2,799",
+        reason: "Best match for support, running use, and budget",
+      },
+      {
+        name: "Structured daily running trainers",
+        detail: "Firm midsole · supportive upper · ₹2,499",
+        reason: "Balanced support for everyday runs within budget",
+      },
+      {
+        name: "Wide-fit motion-control running shoes",
+        detail: "Removable insole · grippy outsole · ₹2,999",
+        reason: "Useful option when extra stability is preferred",
+      },
+    ],
+  },
+  {
+    label: "Sensitive sunscreen",
+    query: "fragrance-free sunscreen for sensitive skin under ₹800",
+    understood: ["sunscreen", "fragrance-free", "sensitive skin", "under ₹800"],
+    results: [
+      {
+        name: "Mineral sunscreen SPF 50",
+        detail: "Fragrance-free · zinc oxide · ₹749",
+        reason: "Matches skin concern, formulation, protection, and budget",
+      },
+      {
+        name: "Sensitive-skin sunscreen gel SPF 40",
+        detail: "No added fragrance · lightweight · ₹699",
+        reason: "Gentle-feel daily option within the stated budget",
+      },
+      {
+        name: "Barrier-support sunscreen lotion SPF 50",
+        detail: "Fragrance-free · ceramides · ₹799",
+        reason: "Relevant option for sensitive, dryness-prone skin",
       },
     ],
   },
@@ -312,16 +361,16 @@ function Hero() {
             style={{ animationDelay: "210ms" }}
           >
             <a
-              href="mailto:hello@querix.co?subject=Querix%20AI%20Demo"
+              href="#search-experience"
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-blue px-5 text-sm font-semibold text-white shadow-[0_18px_50px_-20px_rgba(30,144,255,0.9)] transition hover:bg-[#49a7ff]"
             >
-              See Querix on your catalog <ArrowRight className="h-4 w-4" />
+              See Querix in action <ArrowRight className="h-4 w-4" />
             </a>
             <a
-              href="#search-experience"
+              href="#how-it-works"
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/12 bg-white/[0.035] px-5 text-sm font-semibold text-white transition hover:border-white/25 hover:bg-white/[0.07]"
             >
-              Explore the experience <ChevronRight className="h-4 w-4" />
+              See how it works <ChevronRight className="h-4 w-4" />
             </a>
           </div>
           <div
@@ -401,7 +450,12 @@ function HeroSearch() {
             </span>
           </div>
         </div>
-        <div key={scenario.query} className="hero-scenario p-4 sm:p-6">
+        <div
+          key={scenario.query}
+          className="hero-scenario p-4 sm:p-6"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           <div className="hero-query-box rounded-xl border border-[#4fa4ff]/30 bg-[#07111c] p-4 shadow-[0_0_0_3px_rgba(30,144,255,0.05)] sm:rounded-2xl">
             <div className="flex items-start gap-3">
               <Search className="mt-0.5 h-5 w-5 shrink-0 text-brand-blue" />
