@@ -1,6 +1,6 @@
 import { InternalAnalyticsShell } from "./InternalAnalyticsShell";
 import { QueryHistory } from "../shared/QueryHistory";
-import { InternalRouteGuard } from "@/lib/analytics-auth";
+import { InternalRouteGuard } from "@/components/analytics/shared/RouteGuards";
 
 export function InternalQueries({ company }: { company: string }) {
   return (

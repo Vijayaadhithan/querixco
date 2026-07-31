@@ -14,9 +14,10 @@ export function Reveal({ children, className = "", delay = 0 }: RevealProps) {
     const element = elementRef.current;
     if (!element) return;
 
-    if (!("IntersectionObserver" in window)) {
-      setVisible(true);
-      return;
+    const supportsIntersectionObserver = typeof window.IntersectionObserver === "function";
+    if (!supportsIntersectionObserver) {
+      const frame = window.requestAnimationFrame(() => setVisible(true));
+      return () => window.cancelAnimationFrame(frame);
     }
 
     const observer = new IntersectionObserver(

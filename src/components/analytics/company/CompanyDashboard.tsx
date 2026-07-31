@@ -3,9 +3,14 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CompanyAnalyticsShell } from "./CompanyAnalyticsShell";
 import { DashboardView } from "../shared/DashboardView";
 import { PortalState } from "../shared/PortalState";
-import { getCompanyDashboard, getCompanyStatus, isAnalyticsApiError } from "@/lib/analytics-api";
-import { CompanyRouteGuard, useClientReady, useUnauthorizedRedirect } from "@/lib/analytics-auth";
-import type { AnalyticsSession } from "@/lib/analytics-types";
+import {
+  getCompanyDashboard,
+  getCompanyStatus,
+  isAnalyticsApiError,
+} from "@/features/analytics/api";
+import { CompanyRouteGuard } from "@/components/analytics/shared/RouteGuards";
+import { useUnauthorizedRedirect } from "@/features/analytics/auth/session";
+import type { AnalyticsSession } from "@/features/analytics/model/types";
 
 export function CompanyDashboard({ company }: { company: string }) {
   return (
@@ -22,12 +27,10 @@ function CompanyDashboardContent({
   company: string;
   session: AnalyticsSession;
 }) {
-  const ready = useClientReady();
   const queryClient = useQueryClient();
   const dashboard = useQuery({
     queryKey: ["analytics", "company", company, "dashboard"],
     queryFn: ({ signal }) => getCompanyDashboard(company, signal),
-    enabled: ready,
     staleTime: 5 * 60_000,
     retry: false,
     refetchOnWindowFocus: false,
@@ -35,7 +38,6 @@ function CompanyDashboardContent({
   const status = useQuery({
     queryKey: ["analytics", "company", company, "status"],
     queryFn: ({ signal }) => getCompanyStatus(company, signal),
-    enabled: ready,
     staleTime: 5 * 60_000,
     retry: false,
     refetchOnWindowFocus: false,

@@ -1,7 +1,7 @@
 import { Clock3, Database } from "lucide-react";
 
-import { formatDateTime } from "@/lib/analytics-format";
-import type { SnapshotSummary } from "@/lib/analytics-types";
+import { formatDateTime } from "@/features/analytics/lib/format";
+import type { SnapshotSummary } from "@/features/analytics/model/types";
 
 export function SnapshotBadge({
   snapshot,

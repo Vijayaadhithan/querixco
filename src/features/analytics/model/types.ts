@@ -1,6 +1,6 @@
-export type AnalyticsRole = "company_user" | "internal_admin";
+type AnalyticsRole = "company_user" | "internal_admin";
 
-export type AnalyticsPrincipal = {
+type AnalyticsPrincipal = {
   username: string;
   role: AnalyticsRole;
   company_id: string | null;
@@ -18,7 +18,7 @@ export type AnalyticsModule =
   | "market_intelligence"
   | "api_performance";
 
-export type MetricChartType =
+type MetricChartType =
   | "bar"
   | "comparison_table"
   | "doughnut"
@@ -65,7 +65,7 @@ export type AnalyticsDashboard = {
   snapshot: SnapshotSummary;
 };
 
-export type CompanyInventoryItem = {
+type CompanyInventoryItem = {
   company_id: string;
   endpoint_slug: string;
   has_snapshot: boolean;

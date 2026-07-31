@@ -13,7 +13,6 @@ import {
   DatabaseZap,
   Gauge,
   GitBranch,
-  KeyRound,
   Menu,
   LockKeyhole,
   Network,

@@ -3,13 +3,13 @@ import { Eye, EyeOff, LoaderCircle, LockKeyhole } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
 import { QuerixLogo } from "@/components/QuerixLogo";
-import { login, logout } from "@/lib/analytics-api";
+import { login, logout } from "@/features/analytics/api";
 import {
   analyticsSessionKey,
   safeCompanyReturnPath,
   safeInternalReturnPath,
-} from "@/lib/analytics-auth";
-import { formatCompanyName } from "@/lib/analytics-format";
+} from "@/features/analytics/auth/session";
+import { formatCompanyName } from "@/features/analytics/lib/format";
 
 type AnalyticsLoginProps =
   { audience: "company"; company: string } | { audience: "internal"; company?: never };

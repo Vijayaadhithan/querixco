@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export type ApiHealth = {
+type ApiHealth = {
   status: string;
   tenantMode: boolean;
   configuredCompanies: number;

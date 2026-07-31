@@ -2,12 +2,12 @@ import { ArrowRight, Search } from "lucide-react";
 
 import { DashboardModule } from "./DashboardModule";
 import { SnapshotBadge } from "./SnapshotBadge";
-import { formatCompanyName, humanizeKey } from "@/lib/analytics-format";
+import { formatCompanyName, humanizeKey } from "@/features/analytics/lib/format";
 import type {
   AnalyticsDashboard,
   AnalyticsModule,
   MetricModulePayload,
-} from "@/lib/analytics-types";
+} from "@/features/analytics/model/types";
 
 type DashboardViewProps = {
   dashboard: AnalyticsDashboard;

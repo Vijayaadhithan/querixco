@@ -1,8 +1,4 @@
 const numberFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
-const compactNumberFormatter = new Intl.NumberFormat(undefined, {
-  notation: "compact",
-  maximumFractionDigits: 1,
-});
 
 export function formatCompanyName(value: string): string {
   return value
@@ -38,10 +34,6 @@ export function formatMetricValue(value: unknown, key = ""): string {
 
   if (/duration|latency|_ms$/i.test(key)) return `${numberFormatter.format(value)} ms`;
   return numberFormatter.format(value);
-}
-
-export function formatCompactNumber(value: number): string {
-  return compactNumberFormatter.format(value);
 }
 
 export function humanizeKey(value: string): string {

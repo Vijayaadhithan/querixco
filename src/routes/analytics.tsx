@@ -3,7 +3,7 @@ import { LockKeyhole } from "lucide-react";
 
 import { QuerixLogo } from "@/components/QuerixLogo";
 import { PrivatePortalError } from "@/components/analytics/shared/PrivatePortalError";
-import { privatePortalMeta } from "@/lib/analytics-head";
+import { privatePortalMeta } from "@/features/analytics/lib/head";
 
 export const Route = createFileRoute("/analytics")({
   head: () => ({ meta: privatePortalMeta("Private analytics portal · Querix") }),

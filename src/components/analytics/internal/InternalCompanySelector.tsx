@@ -4,10 +4,11 @@ import { useMemo, useState } from "react";
 
 import { InternalAnalyticsShell } from "./InternalAnalyticsShell";
 import { PortalState } from "../shared/PortalState";
-import { getInternalCompanies, isAnalyticsApiError } from "@/lib/analytics-api";
-import { InternalRouteGuard, useClientReady, useUnauthorizedRedirect } from "@/lib/analytics-auth";
-import { formatCompanyName, formatDateTime, humanizeKey } from "@/lib/analytics-format";
-import type { AnalyticsSession } from "@/lib/analytics-types";
+import { getInternalCompanies, isAnalyticsApiError } from "@/features/analytics/api";
+import { InternalRouteGuard } from "@/components/analytics/shared/RouteGuards";
+import { useUnauthorizedRedirect } from "@/features/analytics/auth/session";
+import { formatCompanyName, formatDateTime, humanizeKey } from "@/features/analytics/lib/format";
+import type { AnalyticsSession } from "@/features/analytics/model/types";
 
 export function InternalCompanySelector() {
   return (
@@ -18,13 +19,11 @@ export function InternalCompanySelector() {
 }
 
 function InternalCompanySelectorContent({ session }: { session: AnalyticsSession }) {
-  const ready = useClientReady();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const inventory = useQuery({
     queryKey: ["analytics", "internal", "companies"],
     queryFn: ({ signal }) => getInternalCompanies(signal),
-    enabled: ready,
     staleTime: 60_000,
     retry: false,
     refetchOnWindowFocus: false,

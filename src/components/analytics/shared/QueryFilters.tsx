@@ -1,6 +1,9 @@
 import { RotateCcw, Search } from "lucide-react";
 
-import type { QueryFilters as QueryFiltersValue, QueryOutcome } from "@/lib/analytics-types";
+import type {
+  QueryFilters as QueryFiltersValue,
+  QueryOutcome,
+} from "@/features/analytics/model/types";
 
 const outcomes: Array<{ value: QueryOutcome | ""; label: string }> = [
   { value: "", label: "All outcomes" },

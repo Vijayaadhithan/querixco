@@ -3,9 +3,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { InternalAnalyticsShell } from "./InternalAnalyticsShell";
 import { DashboardView } from "../shared/DashboardView";
 import { PortalState } from "../shared/PortalState";
-import { getInternalDashboard, isAnalyticsApiError } from "@/lib/analytics-api";
-import { InternalRouteGuard, useClientReady, useUnauthorizedRedirect } from "@/lib/analytics-auth";
-import type { AnalyticsSession } from "@/lib/analytics-types";
+import { getInternalDashboard, isAnalyticsApiError } from "@/features/analytics/api";
+import { InternalRouteGuard } from "@/components/analytics/shared/RouteGuards";
+import { useUnauthorizedRedirect } from "@/features/analytics/auth/session";
+import type { AnalyticsSession } from "@/features/analytics/model/types";
 
 export function InternalCompanyDashboard({ company }: { company: string }) {
   return (
@@ -22,12 +23,10 @@ function InternalCompanyDashboardContent({
   company: string;
   session: AnalyticsSession;
 }) {
-  const ready = useClientReady();
   const queryClient = useQueryClient();
   const dashboard = useQuery({
     queryKey: ["analytics", "internal", company, "dashboard"],
     queryFn: ({ signal }) => getInternalDashboard(company, signal),
-    enabled: ready,
     staleTime: 5 * 60_000,
     retry: false,
     refetchOnWindowFocus: false,
@@ -60,7 +59,11 @@ function InternalCompanyDashboardContent({
         action={{ label: "Try again", onClick: () => void dashboard.refetch() }}
       />
     );
-  } else if (dashboard.data && dashboard.data.metadata.audience !== "internal") {
+  } else if (
+    dashboard.data &&
+    (dashboard.data.metadata.audience !== "internal" ||
+      dashboard.data.metadata.company_id !== company)
+  ) {
     content = (
       <PortalState
         kind="forbidden"

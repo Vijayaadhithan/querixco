@@ -3,8 +3,8 @@ import { BarChart3, Building2, LogOut, Search } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { QuerixLogo } from "@/components/QuerixLogo";
-import { endAnalyticsSession } from "@/lib/analytics-auth";
-import { formatCompanyName } from "@/lib/analytics-format";
+import { endAnalyticsSession } from "@/features/analytics/auth/session";
+import { formatCompanyName } from "@/features/analytics/lib/format";
 
 type PortalShellProps = {
   audience: "company" | "internal";

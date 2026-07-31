@@ -1,6 +1,6 @@
 import { CompanyAnalyticsShell } from "./CompanyAnalyticsShell";
 import { QueryHistory } from "../shared/QueryHistory";
-import { CompanyRouteGuard } from "@/lib/analytics-auth";
+import { CompanyRouteGuard } from "@/components/analytics/shared/RouteGuards";
 
 export function CompanyQueries({ company }: { company: string }) {
   return (

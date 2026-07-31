@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, useLocation } from "@tanstack/react-router";
 
 import { InternalCompanyDashboard } from "@/components/analytics/internal/InternalCompanyDashboard";
-import { privatePortalMeta } from "@/lib/analytics-head";
+import { privatePortalMeta } from "@/features/analytics/lib/head";
 
 export const Route = createFileRoute("/internal/analytics/$company")({
   head: () => ({ meta: privatePortalMeta("Internal company analytics · Querix") }),

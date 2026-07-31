@@ -5,15 +5,19 @@ import { useEffect, useMemo, useState } from "react";
 import { PortalState } from "./PortalState";
 import { QueryFilters } from "./QueryFilters";
 import { QueryTable } from "./QueryTable";
-import { getCompanyQueries, getInternalQueries, isAnalyticsApiError } from "@/lib/analytics-api";
-import { useUnauthorizedRedirect } from "@/lib/analytics-auth";
-import { formatCompanyName } from "@/lib/analytics-format";
+import {
+  getCompanyQueries,
+  getInternalQueries,
+  isAnalyticsApiError,
+} from "@/features/analytics/api";
+import { useUnauthorizedRedirect } from "@/features/analytics/auth/session";
+import { formatCompanyName } from "@/features/analytics/lib/format";
 import type {
   CompanyQueryRecord,
   InternalQueryRecord,
   QueryFilters as QueryFiltersValue,
   QueryPage,
-} from "@/lib/analytics-types";
+} from "@/features/analytics/model/types";
 
 const emptyFilters: QueryFiltersValue = {
   query: "",

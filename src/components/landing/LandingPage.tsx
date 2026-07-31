@@ -898,7 +898,7 @@ function Platform() {
 }
 
 function Trust() {
-  const { data: health, phase } = useApiHealth();
+  const { phase } = useApiHealth();
   const ready = phase === "ready";
   const offline = phase === "unavailable";
 
