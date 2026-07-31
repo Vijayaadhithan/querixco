@@ -2,12 +2,18 @@ import { createFileRoute, Outlet, useLocation } from "@tanstack/react-router";
 import { LockKeyhole } from "lucide-react";
 
 import { QuerixLogo } from "@/components/QuerixLogo";
+import { PrivatePortalError } from "@/components/analytics/shared/PrivatePortalError";
 import { privatePortalMeta } from "@/lib/analytics-head";
 
 export const Route = createFileRoute("/analytics")({
   head: () => ({ meta: privatePortalMeta("Private analytics portal · Querix") }),
   component: AnalyticsRoot,
+  errorComponent: CompanyPortalError,
 });
+
+function CompanyPortalError({ error, reset }: { error: Error; reset: () => void }) {
+  return <PrivatePortalError error={error} reset={reset} />;
+}
 
 function AnalyticsRoot() {
   const { pathname } = useLocation();

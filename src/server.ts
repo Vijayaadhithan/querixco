@@ -37,18 +37,42 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   });
 }
 
+function addPrivatePortalHeaders(request: Request, response: Response): Response {
+  const pathname = new URL(request.url).pathname;
+  const isPrivatePortal =
+    pathname === "/analytics" ||
+    pathname.startsWith("/analytics/") ||
+    pathname === "/internal/analytics" ||
+    pathname.startsWith("/internal/analytics/");
+
+  if (!isPrivatePortal) return response;
+
+  const headers = new Headers(response.headers);
+  headers.set("cache-control", "private, no-store, max-age=0");
+  headers.set("pragma", "no-cache");
+  headers.set("x-robots-tag", "noindex, nofollow");
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      const normalized = await normalizeCatastrophicSsrResponse(response);
+      return addPrivatePortalHeaders(request, normalized);
     } catch (error) {
       console.error(error);
-      return new Response(renderErrorPage(), {
+      const response = new Response(renderErrorPage(), {
         status: 500,
         headers: { "content-type": "text/html; charset=utf-8" },
       });
+      return addPrivatePortalHeaders(request, response);
     }
   },
 };

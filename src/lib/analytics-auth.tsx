@@ -22,7 +22,7 @@ export function useAnalyticsSession(enabled = true) {
     enabled,
     staleTime: 30_000,
     retry: false,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: "always",
   });
 }
 
@@ -48,18 +48,28 @@ function loginPathWithReturn(loginPath: string): string {
   return `${loginPath}?returnTo=${encodeURIComponent(returnTo)}`;
 }
 
+function openPortalLogin(loginPath: string) {
+  window.location.assign(loginPathWithReturn(loginPath));
+}
+
 export function useUnauthorizedRedirect(
   errors: unknown[],
   loginPath: string,
   queryClient: ReturnType<typeof useQueryClient>,
 ) {
   const shouldRedirect = errors.some((error) => isAnalyticsApiError(error, 401));
+  const shouldRefreshPrincipal = errors.some((error) => isAnalyticsApiError(error, 403));
 
   useEffect(() => {
     if (!shouldRedirect) return;
     queryClient.removeQueries({ queryKey: ["analytics"] });
     window.location.replace(loginPathWithReturn(loginPath));
   }, [loginPath, queryClient, shouldRedirect]);
+
+  useEffect(() => {
+    if (!shouldRefreshPrincipal) return;
+    void queryClient.invalidateQueries({ queryKey: analyticsSessionKey });
+  }, [queryClient, shouldRefreshPrincipal]);
 }
 
 export async function endAnalyticsSession(
@@ -100,7 +110,21 @@ export function CompanyRouteGuard({ company, children }: GuardProps & { company:
     );
   }
 
-  if (session.data?.user.role !== "company_user" || session.data.user.company_id !== company) {
+  if (session.data?.user.role !== "company_user") {
+    return (
+      <PortalState
+        kind="forbidden"
+        title="Different portal session detected"
+        message="Another analytics portal is signed in in this browser. Sign in to this company portal again, or use a separate browser profile to keep company and internal sessions open at the same time."
+        action={{
+          label: "Sign in to company portal",
+          onClick: () => openPortalLogin(`/analytics/${company}/login`),
+        }}
+      />
+    );
+  }
+
+  if (session.data.user.company_id !== company) {
     return (
       <PortalState
         kind="forbidden"
@@ -140,8 +164,12 @@ export function InternalRouteGuard({ children }: GuardProps) {
     return (
       <PortalState
         kind="forbidden"
-        title="Internal access required"
-        message="This account is not authorized for the Querix internal portal."
+        title="Different portal session detected"
+        message="A company analytics session is active in this browser. Sign in to Querix Internal again, or use a separate browser profile to keep both portals open at the same time."
+        action={{
+          label: "Sign in to Querix Internal",
+          onClick: () => openPortalLogin("/internal/analytics/login"),
+        }}
         internal
       />
     );

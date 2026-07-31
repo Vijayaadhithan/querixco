@@ -6,6 +6,8 @@ import type { CompanyQueryRecord, InternalQueryRecord } from "@/lib/analytics-ty
 type QueryRecord = CompanyQueryRecord | InternalQueryRecord;
 
 export function QueryTable({ items, internal }: { items: QueryRecord[]; internal: boolean }) {
+  const safeItems = items.filter(isQueryRecord);
+
   return (
     <>
       <div className="hidden overflow-x-auto rounded-2xl border border-white/8 md:block">
@@ -31,55 +33,62 @@ export function QueryTable({ items, internal }: { items: QueryRecord[]; internal
             </tr>
           </thead>
           <tbody className="divide-y divide-white/6">
-            {items.map((item) => (
-              <QueryTableRow key={item.request_id} item={item} internal={internal} />
+            {safeItems.map((item, index) => (
+              <QueryTableRow key={queryKey(item, index)} item={item} internal={internal} />
             ))}
           </tbody>
         </table>
       </div>
 
       <div className="space-y-3 md:hidden">
-        {items.map((item) => (
-          <article
-            key={item.request_id}
-            className="rounded-2xl border border-white/8 bg-white/[0.035] p-4"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <p className="min-w-0 break-words text-sm font-medium text-white">{item.query}</p>
-              <OutcomeBadge outcome={item.outcome} />
-            </div>
-            <p className="mt-2 text-xs text-slate-500">{formatDateTime(item.created_at)}</p>
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {classification(item).map((value) => (
-                <span
-                  key={value}
-                  className="rounded-full border border-white/8 bg-white/5 px-2 py-1 text-xs text-slate-300"
-                >
-                  {value}
-                </span>
-              ))}
-            </div>
-            <p className="mt-3 text-xs text-slate-400">
-              {item.search.result_count === null
-                ? "Result count unavailable"
-                : `${item.search.result_count.toLocaleString()} results`}
-            </p>
-            {internal && isInternalRecord(item) && <InternalDetails item={item} />}
-          </article>
-        ))}
+        {safeItems.map((item, index) => {
+          const count = resultCount(item);
+          return (
+            <article
+              key={queryKey(item, index)}
+              className="rounded-2xl border border-white/8 bg-white/[0.035] p-4"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <p className="min-w-0 break-words text-sm font-medium text-white">
+                  {textValue(item.query, "Query unavailable")}
+                </p>
+                <OutcomeBadge outcome={item.outcome} />
+              </div>
+              <p className="mt-2 text-xs text-slate-500">{formatDateTime(item.created_at)}</p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {classification(item).map((value, valueIndex) => (
+                  <span
+                    key={`${value}-${valueIndex}`}
+                    className="rounded-full border border-white/8 bg-white/5 px-2 py-1 text-xs text-slate-300"
+                  >
+                    {value}
+                  </span>
+                ))}
+              </div>
+              <p className="mt-3 text-xs text-slate-400">
+                {count === null ? "Result count unavailable" : `${count.toLocaleString()} results`}
+              </p>
+              {internal && isInternalRecord(item) && <InternalDetails item={item} />}
+            </article>
+          );
+        })}
       </div>
     </>
   );
 }
 
 function QueryTableRow({ item, internal }: { item: QueryRecord; internal: boolean }) {
+  const count = resultCount(item);
+  const query = textValue(item.query, "Query unavailable");
+  const normalizedQuery = textValue(item.normalized_query);
+
   return (
     <>
       <tr className="align-top transition hover:bg-white/[0.025]">
         <td className="max-w-md px-4 py-4">
-          <p className="break-words font-medium text-slate-100">{item.query}</p>
-          {item.normalized_query && item.normalized_query !== item.query && (
-            <p className="mt-1 break-words text-xs text-slate-500">{item.normalized_query}</p>
+          <p className="break-words font-medium text-slate-100">{query}</p>
+          {normalizedQuery && normalizedQuery !== query && (
+            <p className="mt-1 break-words text-xs text-slate-500">{normalizedQuery}</p>
           )}
           {internal && isInternalRecord(item) && <InternalDetails item={item} />}
         </td>
@@ -88,9 +97,9 @@ function QueryTableRow({ item, internal }: { item: QueryRecord; internal: boolea
         </td>
         <td className="max-w-xs px-4 py-4">
           <div className="flex flex-wrap gap-1.5">
-            {classification(item).map((value) => (
+            {classification(item).map((value, valueIndex) => (
               <span
-                key={value}
+                key={`${value}-${valueIndex}`}
                 className="rounded-full border border-white/8 bg-white/5 px-2 py-1 text-xs text-slate-300"
               >
                 {value}
@@ -102,7 +111,7 @@ function QueryTableRow({ item, internal }: { item: QueryRecord; internal: boolea
           <OutcomeBadge outcome={item.outcome} />
         </td>
         <td className="px-4 py-4 text-right font-medium text-slate-200">
-          {item.search.result_count === null ? "—" : item.search.result_count.toLocaleString()}
+          {count === null ? "—" : count.toLocaleString()}
         </td>
       </tr>
     </>
@@ -111,36 +120,39 @@ function QueryTableRow({ item, internal }: { item: QueryRecord; internal: boolea
 
 function classification(item: QueryRecord): string[] {
   return [
-    ...item.categories.slice(0, 2),
-    ...item.brands.slice(0, 1),
-    ...item.locations.slice(0, 1),
-    ...(item.language ? [item.language] : []),
+    ...stringArray(item.categories).slice(0, 2),
+    ...stringArray(item.brands).slice(0, 1),
+    ...stringArray(item.locations).slice(0, 1),
+    ...stringArray(item.language ? [item.language] : []),
   ].filter(Boolean);
 }
 
-function OutcomeBadge({ outcome }: { outcome: QueryRecord["outcome"] }) {
-  const className = {
-    fulfilled: "border-emerald-400/20 bg-emerald-400/8 text-emerald-200",
-    zero_result: "border-amber-400/20 bg-amber-400/8 text-amber-200",
-    failure: "border-red-400/20 bg-red-400/8 text-red-200",
-    telemetry_missing: "border-slate-400/20 bg-slate-400/8 text-slate-300",
-  }[outcome];
+function OutcomeBadge({ outcome }: { outcome: unknown }) {
+  const normalizedOutcome = typeof outcome === "string" ? outcome : "unknown";
+  const className =
+    {
+      fulfilled: "border-emerald-400/20 bg-emerald-400/8 text-emerald-200",
+      zero_result: "border-amber-400/20 bg-amber-400/8 text-amber-200",
+      failure: "border-red-400/20 bg-red-400/8 text-red-200",
+      telemetry_missing: "border-slate-400/20 bg-slate-400/8 text-slate-300",
+    }[normalizedOutcome] ?? "border-slate-400/20 bg-slate-400/8 text-slate-300";
 
   return (
     <span
       className={`inline-flex shrink-0 rounded-full border px-2.5 py-1 text-xs font-medium ${className}`}
     >
-      {humanizeKey(outcome)}
+      {humanizeKey(normalizedOutcome)}
     </span>
   );
 }
 
 function isInternalRecord(item: QueryRecord): item is InternalQueryRecord {
-  return "api" in item && "attempts" in item;
+  return isRecord(item) && ("api" in item || "attempts" in item);
 }
 
 function InternalDetails({ item }: { item: InternalQueryRecord }) {
-  const apiEntries = Object.entries(item.api);
+  const apiEntries = Object.entries(isRecord(item.api) ? item.api : {});
+  const attempts = Array.isArray(item.attempts) ? item.attempts.filter(isRecord) : [];
 
   return (
     <details className="group mt-3">
@@ -157,10 +169,13 @@ function InternalDetails({ item }: { item: InternalQueryRecord }) {
             </div>
           ))}
         </dl>
-        <p className="mt-3 text-xs font-medium text-slate-300">Attempts: {item.attempts.length}</p>
-        {item.attempts.length > 0 && (
+        {apiEntries.length === 0 && (
+          <p className="text-xs text-slate-500">API diagnostics are unavailable for this query.</p>
+        )}
+        <p className="mt-3 text-xs font-medium text-slate-300">Attempts: {attempts.length}</p>
+        {attempts.length > 0 && (
           <ol className="mt-2 space-y-2">
-            {item.attempts.map((attempt, index) => (
+            {attempts.map((attempt, index) => (
               <li key={index} className="rounded-lg bg-black/15 p-2 text-xs text-slate-300">
                 {Object.entries(attempt)
                   .map(([key, value]) => `${humanizeKey(key)}: ${formatMetricValue(value, key)}`)
@@ -172,4 +187,32 @@ function InternalDetails({ item }: { item: InternalQueryRecord }) {
       </div>
     </details>
   );
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isQueryRecord(value: QueryRecord): value is QueryRecord {
+  return isRecord(value);
+}
+
+function stringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item) => typeof item === "string" || typeof item === "number").map(String);
+}
+
+function textValue(value: unknown, fallback = ""): string {
+  return typeof value === "string" || typeof value === "number" ? String(value) : fallback;
+}
+
+function resultCount(item: QueryRecord): number | null {
+  if (!isRecord(item.search)) return null;
+  const count = item.search.result_count;
+  return typeof count === "number" && Number.isFinite(count) ? count : null;
+}
+
+function queryKey(item: QueryRecord, index: number): string {
+  const requestId = textValue(item.request_id);
+  return requestId || `${textValue(item.search_id, "query")}-${index}`;
 }

@@ -63,7 +63,9 @@ export function QueryHistory({
         : getCompanyQueries(company, normalizedFilters, cursor, signal);
     },
     getNextPageParam: (lastPage) =>
-      lastPage.has_more && lastPage.next_cursor ? lastPage.next_cursor : undefined,
+      lastPage?.has_more && typeof lastPage.next_cursor === "string"
+        ? lastPage.next_cursor
+        : undefined,
     staleTime: 60_000,
     placeholderData: keepPreviousData,
     retry: false,
@@ -73,7 +75,8 @@ export function QueryHistory({
   const loginPath = internal ? "/internal/analytics/login" : `/analytics/${company}/login`;
   useUnauthorizedRedirect([history.error], loginPath, queryClient);
 
-  const items = history.data?.pages.flatMap((page) => page.items) ?? [];
+  const items =
+    history.data?.pages.flatMap((page) => (Array.isArray(page?.items) ? page.items : [])) ?? [];
 
   return (
     <main className="mx-auto max-w-[1480px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">

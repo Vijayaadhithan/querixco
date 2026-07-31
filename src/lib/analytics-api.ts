@@ -8,9 +8,12 @@ import type {
   QueryPage,
 } from "./analytics-types";
 
+const IS_LOCAL_BROWSER =
+  typeof window !== "undefined" &&
+  (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
 const ANALYTICS_API_BASE_URL =
   import.meta.env.VITE_ANALYTICS_API_BASE_URL ??
-  (window.location.hostname === "localhost" ? "http://localhost:8010" : "https://api.querix.co");
+  (IS_LOCAL_BROWSER ? "http://localhost:8010" : "https://api.querix.co");
 const REQUEST_TIMEOUT_MS = 15_000;
 
 export class AnalyticsApiError extends Error {
