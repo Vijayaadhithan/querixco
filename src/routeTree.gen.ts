@@ -10,22 +10,40 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as DevelopersRouteImport } from './routes/developers'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as InternalAnalyticsRouteImport } from './routes/internal.analytics'
 import { Route as DevelopersPlatformRouteImport } from './routes/developers/platform'
 import { Route as DevelopersOperationsRouteImport } from './routes/developers/operations'
 import { Route as DevelopersIntegrationRouteImport } from './routes/developers/integration'
 import { Route as DevelopersDataPipelineRouteImport } from './routes/developers/data-pipeline'
 import { Route as DevelopersArchitectureRouteImport } from './routes/developers/architecture'
 import { Route as ApiReadyRouteImport } from './routes/api/ready'
+import { Route as AnalyticsCompanyRouteImport } from './routes/analytics.$company'
+import { Route as InternalAnalyticsLoginRouteImport } from './routes/internal.analytics.login'
+import { Route as InternalAnalyticsCompanyRouteImport } from './routes/internal.analytics.$company'
+import { Route as AnalyticsCompanyQueriesRouteImport } from './routes/analytics.$company.queries'
+import { Route as AnalyticsCompanyLoginRouteImport } from './routes/analytics.$company.login'
+import { Route as InternalAnalyticsCompanyQueriesRouteImport } from './routes/internal.analytics.$company.queries'
 
 const DevelopersRoute = DevelopersRouteImport.update({
   id: '/developers',
   path: '/developers',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InternalAnalyticsRoute = InternalAnalyticsRouteImport.update({
+  id: '/internal/analytics',
+  path: '/internal/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DevelopersPlatformRoute = DevelopersPlatformRouteImport.update({
@@ -58,75 +76,157 @@ const ApiReadyRoute = ApiReadyRouteImport.update({
   path: '/api/ready',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnalyticsCompanyRoute = AnalyticsCompanyRouteImport.update({
+  id: '/$company',
+  path: '/$company',
+  getParentRoute: () => AnalyticsRoute,
+} as any)
+const InternalAnalyticsLoginRoute = InternalAnalyticsLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => InternalAnalyticsRoute,
+} as any)
+const InternalAnalyticsCompanyRoute =
+  InternalAnalyticsCompanyRouteImport.update({
+    id: '/$company',
+    path: '/$company',
+    getParentRoute: () => InternalAnalyticsRoute,
+  } as any)
+const AnalyticsCompanyQueriesRoute = AnalyticsCompanyQueriesRouteImport.update({
+  id: '/queries',
+  path: '/queries',
+  getParentRoute: () => AnalyticsCompanyRoute,
+} as any)
+const AnalyticsCompanyLoginRoute = AnalyticsCompanyLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AnalyticsCompanyRoute,
+} as any)
+const InternalAnalyticsCompanyQueriesRoute =
+  InternalAnalyticsCompanyQueriesRouteImport.update({
+    id: '/queries',
+    path: '/queries',
+    getParentRoute: () => InternalAnalyticsCompanyRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRouteWithChildren
   '/developers': typeof DevelopersRouteWithChildren
+  '/analytics/$company': typeof AnalyticsCompanyRouteWithChildren
   '/api/ready': typeof ApiReadyRoute
   '/developers/architecture': typeof DevelopersArchitectureRoute
   '/developers/data-pipeline': typeof DevelopersDataPipelineRoute
   '/developers/integration': typeof DevelopersIntegrationRoute
   '/developers/operations': typeof DevelopersOperationsRoute
   '/developers/platform': typeof DevelopersPlatformRoute
+  '/internal/analytics': typeof InternalAnalyticsRouteWithChildren
+  '/analytics/$company/login': typeof AnalyticsCompanyLoginRoute
+  '/analytics/$company/queries': typeof AnalyticsCompanyQueriesRoute
+  '/internal/analytics/$company': typeof InternalAnalyticsCompanyRouteWithChildren
+  '/internal/analytics/login': typeof InternalAnalyticsLoginRoute
+  '/internal/analytics/$company/queries': typeof InternalAnalyticsCompanyQueriesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRouteWithChildren
   '/developers': typeof DevelopersRouteWithChildren
+  '/analytics/$company': typeof AnalyticsCompanyRouteWithChildren
   '/api/ready': typeof ApiReadyRoute
   '/developers/architecture': typeof DevelopersArchitectureRoute
   '/developers/data-pipeline': typeof DevelopersDataPipelineRoute
   '/developers/integration': typeof DevelopersIntegrationRoute
   '/developers/operations': typeof DevelopersOperationsRoute
   '/developers/platform': typeof DevelopersPlatformRoute
+  '/internal/analytics': typeof InternalAnalyticsRouteWithChildren
+  '/analytics/$company/login': typeof AnalyticsCompanyLoginRoute
+  '/analytics/$company/queries': typeof AnalyticsCompanyQueriesRoute
+  '/internal/analytics/$company': typeof InternalAnalyticsCompanyRouteWithChildren
+  '/internal/analytics/login': typeof InternalAnalyticsLoginRoute
+  '/internal/analytics/$company/queries': typeof InternalAnalyticsCompanyQueriesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRouteWithChildren
   '/developers': typeof DevelopersRouteWithChildren
+  '/analytics/$company': typeof AnalyticsCompanyRouteWithChildren
   '/api/ready': typeof ApiReadyRoute
   '/developers/architecture': typeof DevelopersArchitectureRoute
   '/developers/data-pipeline': typeof DevelopersDataPipelineRoute
   '/developers/integration': typeof DevelopersIntegrationRoute
   '/developers/operations': typeof DevelopersOperationsRoute
   '/developers/platform': typeof DevelopersPlatformRoute
+  '/internal/analytics': typeof InternalAnalyticsRouteWithChildren
+  '/analytics/$company/login': typeof AnalyticsCompanyLoginRoute
+  '/analytics/$company/queries': typeof AnalyticsCompanyQueriesRoute
+  '/internal/analytics/$company': typeof InternalAnalyticsCompanyRouteWithChildren
+  '/internal/analytics/login': typeof InternalAnalyticsLoginRoute
+  '/internal/analytics/$company/queries': typeof InternalAnalyticsCompanyQueriesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/analytics'
     | '/developers'
+    | '/analytics/$company'
     | '/api/ready'
     | '/developers/architecture'
     | '/developers/data-pipeline'
     | '/developers/integration'
     | '/developers/operations'
     | '/developers/platform'
+    | '/internal/analytics'
+    | '/analytics/$company/login'
+    | '/analytics/$company/queries'
+    | '/internal/analytics/$company'
+    | '/internal/analytics/login'
+    | '/internal/analytics/$company/queries'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/analytics'
     | '/developers'
+    | '/analytics/$company'
     | '/api/ready'
     | '/developers/architecture'
     | '/developers/data-pipeline'
     | '/developers/integration'
     | '/developers/operations'
     | '/developers/platform'
+    | '/internal/analytics'
+    | '/analytics/$company/login'
+    | '/analytics/$company/queries'
+    | '/internal/analytics/$company'
+    | '/internal/analytics/login'
+    | '/internal/analytics/$company/queries'
   id:
     | '__root__'
     | '/'
+    | '/analytics'
     | '/developers'
+    | '/analytics/$company'
     | '/api/ready'
     | '/developers/architecture'
     | '/developers/data-pipeline'
     | '/developers/integration'
     | '/developers/operations'
     | '/developers/platform'
+    | '/internal/analytics'
+    | '/analytics/$company/login'
+    | '/analytics/$company/queries'
+    | '/internal/analytics/$company'
+    | '/internal/analytics/login'
+    | '/internal/analytics/$company/queries'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnalyticsRoute: typeof AnalyticsRouteWithChildren
   DevelopersRoute: typeof DevelopersRouteWithChildren
   ApiReadyRoute: typeof ApiReadyRoute
+  InternalAnalyticsRoute: typeof InternalAnalyticsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -138,11 +238,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DevelopersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/internal/analytics': {
+      id: '/internal/analytics'
+      path: '/internal/analytics'
+      fullPath: '/internal/analytics'
+      preLoaderRoute: typeof InternalAnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/developers/platform': {
@@ -187,8 +301,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiReadyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/analytics/$company': {
+      id: '/analytics/$company'
+      path: '/$company'
+      fullPath: '/analytics/$company'
+      preLoaderRoute: typeof AnalyticsCompanyRouteImport
+      parentRoute: typeof AnalyticsRoute
+    }
+    '/internal/analytics/login': {
+      id: '/internal/analytics/login'
+      path: '/login'
+      fullPath: '/internal/analytics/login'
+      preLoaderRoute: typeof InternalAnalyticsLoginRouteImport
+      parentRoute: typeof InternalAnalyticsRoute
+    }
+    '/internal/analytics/$company': {
+      id: '/internal/analytics/$company'
+      path: '/$company'
+      fullPath: '/internal/analytics/$company'
+      preLoaderRoute: typeof InternalAnalyticsCompanyRouteImport
+      parentRoute: typeof InternalAnalyticsRoute
+    }
+    '/analytics/$company/queries': {
+      id: '/analytics/$company/queries'
+      path: '/queries'
+      fullPath: '/analytics/$company/queries'
+      preLoaderRoute: typeof AnalyticsCompanyQueriesRouteImport
+      parentRoute: typeof AnalyticsCompanyRoute
+    }
+    '/analytics/$company/login': {
+      id: '/analytics/$company/login'
+      path: '/login'
+      fullPath: '/analytics/$company/login'
+      preLoaderRoute: typeof AnalyticsCompanyLoginRouteImport
+      parentRoute: typeof AnalyticsCompanyRoute
+    }
+    '/internal/analytics/$company/queries': {
+      id: '/internal/analytics/$company/queries'
+      path: '/queries'
+      fullPath: '/internal/analytics/$company/queries'
+      preLoaderRoute: typeof InternalAnalyticsCompanyQueriesRouteImport
+      parentRoute: typeof InternalAnalyticsCompanyRoute
+    }
   }
 }
+
+interface AnalyticsCompanyRouteChildren {
+  AnalyticsCompanyLoginRoute: typeof AnalyticsCompanyLoginRoute
+  AnalyticsCompanyQueriesRoute: typeof AnalyticsCompanyQueriesRoute
+}
+
+const AnalyticsCompanyRouteChildren: AnalyticsCompanyRouteChildren = {
+  AnalyticsCompanyLoginRoute: AnalyticsCompanyLoginRoute,
+  AnalyticsCompanyQueriesRoute: AnalyticsCompanyQueriesRoute,
+}
+
+const AnalyticsCompanyRouteWithChildren =
+  AnalyticsCompanyRoute._addFileChildren(AnalyticsCompanyRouteChildren)
+
+interface AnalyticsRouteChildren {
+  AnalyticsCompanyRoute: typeof AnalyticsCompanyRouteWithChildren
+}
+
+const AnalyticsRouteChildren: AnalyticsRouteChildren = {
+  AnalyticsCompanyRoute: AnalyticsCompanyRouteWithChildren,
+}
+
+const AnalyticsRouteWithChildren = AnalyticsRoute._addFileChildren(
+  AnalyticsRouteChildren,
+)
 
 interface DevelopersRouteChildren {
   DevelopersArchitectureRoute: typeof DevelopersArchitectureRoute
@@ -210,10 +391,39 @@ const DevelopersRouteWithChildren = DevelopersRoute._addFileChildren(
   DevelopersRouteChildren,
 )
 
+interface InternalAnalyticsCompanyRouteChildren {
+  InternalAnalyticsCompanyQueriesRoute: typeof InternalAnalyticsCompanyQueriesRoute
+}
+
+const InternalAnalyticsCompanyRouteChildren: InternalAnalyticsCompanyRouteChildren =
+  {
+    InternalAnalyticsCompanyQueriesRoute: InternalAnalyticsCompanyQueriesRoute,
+  }
+
+const InternalAnalyticsCompanyRouteWithChildren =
+  InternalAnalyticsCompanyRoute._addFileChildren(
+    InternalAnalyticsCompanyRouteChildren,
+  )
+
+interface InternalAnalyticsRouteChildren {
+  InternalAnalyticsCompanyRoute: typeof InternalAnalyticsCompanyRouteWithChildren
+  InternalAnalyticsLoginRoute: typeof InternalAnalyticsLoginRoute
+}
+
+const InternalAnalyticsRouteChildren: InternalAnalyticsRouteChildren = {
+  InternalAnalyticsCompanyRoute: InternalAnalyticsCompanyRouteWithChildren,
+  InternalAnalyticsLoginRoute: InternalAnalyticsLoginRoute,
+}
+
+const InternalAnalyticsRouteWithChildren =
+  InternalAnalyticsRoute._addFileChildren(InternalAnalyticsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnalyticsRoute: AnalyticsRouteWithChildren,
   DevelopersRoute: DevelopersRouteWithChildren,
   ApiReadyRoute: ApiReadyRoute,
+  InternalAnalyticsRoute: InternalAnalyticsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
