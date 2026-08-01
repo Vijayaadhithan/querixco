@@ -9,9 +9,6 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
   const performance = isRecord(item.performance) ? item.performance : null;
   const tokenUsage = isRecord(item.token_usage) ? item.token_usage : null;
   const cache = isRecord(performance?.cache) ? performance.cache : null;
-  const stages = isRecord(performance?.stages_ms)
-    ? Object.entries(performance.stages_ms).filter(([key]) => key !== "total_server_ms")
-    : [];
   const attempts = Array.isArray(item.attempts) ? item.attempts.filter(isAttempt) : [];
   const failedAttempts = attempts.filter((attempt) => isFailure(attempt.status));
   const fallbackSucceeded = attempts.some(
@@ -40,9 +37,7 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
               >
                 {formatDuration(performance?.total_server_duration_ms)}
               </p>
-              <p className="mt-1 text-xs text-slate-500">
-                Authoritative server processing time; stage timings may overlap.
-              </p>
+              <p className="mt-1 text-xs text-slate-500">Authoritative server processing time.</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <CacheBadge label="Plan cache" value={cache?.plan_hit} />
@@ -82,45 +77,6 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
               value={formatDecimal(tokenUsage?.tokens_per_result)}
             />
           </dl>
-        </section>
-
-        <section aria-labelledby={`stages-${item.request_id}`}>
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h3 id={`stages-${item.request_id}`} className="text-sm font-semibold text-slate-100">
-              Stage timings
-            </h3>
-            <p className="text-xs text-slate-500">Concurrent stages are not additive.</p>
-          </div>
-          {stages.length > 0 ? (
-            <div className="mt-2 overflow-x-auto rounded-lg border border-white/8">
-              <table className="w-full min-w-[420px] text-left text-xs">
-                <thead className="bg-black/15 text-slate-500">
-                  <tr>
-                    <th scope="col" className="px-3 py-2 font-medium">
-                      Stage
-                    </th>
-                    <th scope="col" className="px-3 py-2 text-right font-medium">
-                      Measured duration
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/6">
-                  {stages.map(([stage, duration]) => (
-                    <tr key={stage}>
-                      <th scope="row" className="px-3 py-2 font-medium text-slate-300">
-                        {humanizeKey(stage)}
-                      </th>
-                      <td className="px-3 py-2 text-right text-slate-200">
-                        {formatDuration(duration)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <p className="mt-2 text-xs text-slate-500">Stage timings are unavailable.</p>
-          )}
         </section>
 
         <section aria-labelledby={`attempts-${item.request_id}`}>
