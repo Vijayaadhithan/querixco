@@ -114,6 +114,17 @@ export function QueryHistory({
       ).sort((left, right) => left.localeCompare(right)),
     [items],
   );
+  const languageOptions = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          items.flatMap((item) =>
+            typeof item.language === "string" && item.language ? [item.language] : [],
+          ),
+        ),
+      ).sort((left, right) => left.localeCompare(right)),
+    [items],
+  );
 
   return (
     <main className="mx-auto max-w-[1480px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
@@ -137,6 +148,7 @@ export function QueryHistory({
         value={filters}
         classificationOptions={classificationOptions}
         executionPathOptions={executionPathOptions}
+        languageOptions={languageOptions}
         onChange={setFilters}
         onReset={() => setFilters(emptyFilters)}
       />

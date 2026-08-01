@@ -23,6 +23,7 @@ export function QueryFilters({
   value,
   classificationOptions,
   executionPathOptions,
+  languageOptions,
   onChange,
   onReset,
 }: {
@@ -30,6 +31,7 @@ export function QueryFilters({
   value: QueryFiltersValue;
   classificationOptions: string[];
   executionPathOptions: string[];
+  languageOptions: string[];
   onChange: (next: QueryFiltersValue) => void;
   onReset: () => void;
 }) {
@@ -37,6 +39,8 @@ export function QueryFilters({
   const availableExecutionPaths = Array.from(
     new Set([...knownExecutionPaths, ...executionPathOptions]),
   );
+  const availableClassifications = optionsWithCurrent(classificationOptions, value.category);
+  const availableLanguages = optionsWithCurrent(languageOptions, value.language);
 
   function update<Key extends keyof QueryFiltersValue>(key: Key, next: QueryFiltersValue[Key]) {
     onChange({ ...value, [key]: next });
@@ -123,32 +127,36 @@ export function QueryFilters({
             htmlFor="classification-filter"
             className="lg:col-span-3"
           >
-            <input
+            <select
               id="classification-filter"
-              list="classification-options"
-              maxLength={191}
               value={value.category}
               onChange={(event) => update("category", event.target.value)}
-              placeholder="All classifications"
               className={inputClass}
-            />
-            <datalist id="classification-options">
-              {classificationOptions.map((classification) => (
-                <option key={classification} value={classification} />
+            >
+              <option value="">All classifications</option>
+              {availableClassifications.map((classification) => (
+                <option key={classification} value={classification}>
+                  {classification}
+                </option>
               ))}
-            </datalist>
+            </select>
           </FilterField>
         )}
 
         <FilterField label="Language" htmlFor="language-filter" className="lg:col-span-2">
-          <input
+          <select
             id="language-filter"
-            maxLength={64}
             value={value.language}
             onChange={(event) => update("language", event.target.value)}
-            placeholder="All languages"
             className={inputClass}
-          />
+          >
+            <option value="">All languages</option>
+            {availableLanguages.map((language) => (
+              <option key={language} value={language}>
+                {language}
+              </option>
+            ))}
+          </select>
         </FilterField>
       </div>
 
@@ -267,6 +275,12 @@ function dateInputValue(date: Date): string {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+function optionsWithCurrent(options: string[], current: string): string[] {
+  return Array.from(new Set([...options, ...(current ? [current] : [])])).sort((left, right) =>
+    left.localeCompare(right),
+  );
 }
 
 const inputClass =
