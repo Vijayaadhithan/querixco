@@ -17,6 +17,7 @@ const outcomes: Array<{ value: QueryOutcome | ""; label: string }> = [
 ];
 
 const knownExecutionPaths = ["semantic", "direct_semantic", "deterministic_filter"];
+const knownLanguages = ["English", "Hindi", "Tamil", "Transliterated Tamil", "Unknown"];
 
 export function QueryFilters({
   audience,
@@ -40,7 +41,10 @@ export function QueryFilters({
     new Set([...knownExecutionPaths, ...executionPathOptions]),
   );
   const availableClassifications = optionsWithCurrent(classificationOptions, value.category);
-  const availableLanguages = optionsWithCurrent(languageOptions, value.language);
+  const availableLanguages = optionsWithCurrent(
+    [...knownLanguages, ...languageOptions],
+    value.language,
+  );
 
   function update<Key extends keyof QueryFiltersValue>(key: Key, next: QueryFiltersValue[Key]) {
     onChange({ ...value, [key]: next });
