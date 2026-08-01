@@ -33,19 +33,19 @@ export function AnalyticsLogin(props: AnalyticsLoginProps) {
     setDenied(false);
 
     try {
-      const session = await login(username, password);
+      const session = await login(props.audience, username, password);
       const authorized = internal
         ? session.user.role === "internal_admin"
         : session.user.role === "company_user" && session.user.company_id === props.company;
 
       if (!authorized) {
-        await logout().catch(() => undefined);
-        queryClient.removeQueries({ queryKey: ["analytics"] });
+        await logout(props.audience).catch(() => undefined);
+        queryClient.removeQueries({ queryKey: ["analytics", props.audience] });
         setDenied(true);
         return;
       }
 
-      queryClient.setQueryData(analyticsSessionKey, session);
+      queryClient.setQueryData(analyticsSessionKey(props.audience), session);
       const requested =
         typeof window === "undefined"
           ? null

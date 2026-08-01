@@ -77,7 +77,7 @@ export function QueryHistory({
   });
 
   const loginPath = internal ? "/internal/analytics/login" : `/analytics/${company}/login`;
-  useUnauthorizedRedirect([history.error], loginPath, queryClient);
+  useUnauthorizedRedirect([history.error], audience, loginPath, queryClient);
 
   const items =
     history.data?.pages.flatMap((page) => (Array.isArray(page?.items) ? page.items : [])) ?? [];

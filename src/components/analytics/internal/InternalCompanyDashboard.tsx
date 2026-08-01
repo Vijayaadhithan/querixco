@@ -31,7 +31,7 @@ function InternalCompanyDashboardContent({
     retry: false,
     refetchOnWindowFocus: false,
   });
-  useUnauthorizedRedirect([dashboard.error], "/internal/analytics/login", queryClient);
+  useUnauthorizedRedirect([dashboard.error], "internal", "/internal/analytics/login", queryClient);
 
   let content;
   if (dashboard.isPending) {

@@ -1,5 +1,6 @@
 import type {
   AnalyticsDashboard,
+  AnalyticsAudience,
   AnalyticsSession,
   CompanyInventory,
   CompanyQueryRecord,
@@ -9,20 +10,31 @@ import type {
 } from "../model/types";
 import { analyticsRequest } from "./client";
 
-export function login(username: string, password: string): Promise<AnalyticsSession> {
-  return analyticsRequest<AnalyticsSession>("/api/v1/analytics/auth/login", {
+function authEndpoint(audience: AnalyticsAudience, action: "login" | "me" | "logout"): string {
+  return `/api/v1/analytics/${audience}/auth/${action}`;
+}
+
+export function login(
+  audience: AnalyticsAudience,
+  username: string,
+  password: string,
+): Promise<AnalyticsSession> {
+  return analyticsRequest<AnalyticsSession>(authEndpoint(audience, "login"), {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ username, password }),
   });
 }
 
-export function getSession(signal?: AbortSignal): Promise<AnalyticsSession> {
-  return analyticsRequest<AnalyticsSession>("/api/v1/analytics/auth/me", { signal });
+export function getSession(
+  audience: AnalyticsAudience,
+  signal?: AbortSignal,
+): Promise<AnalyticsSession> {
+  return analyticsRequest<AnalyticsSession>(authEndpoint(audience, "me"), { signal });
 }
 
-export function logout(): Promise<{ logged_out: boolean }> {
-  return analyticsRequest<{ logged_out: boolean }>("/api/v1/analytics/auth/logout", {
+export function logout(audience: AnalyticsAudience): Promise<{ logged_out: boolean }> {
+  return analyticsRequest<{ logged_out: boolean }>(authEndpoint(audience, "logout"), {
     method: "POST",
   });
 }

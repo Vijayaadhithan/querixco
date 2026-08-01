@@ -28,7 +28,7 @@ function InternalCompanySelectorContent({ session }: { session: AnalyticsSession
     retry: false,
     refetchOnWindowFocus: false,
   });
-  useUnauthorizedRedirect([inventory.error], "/internal/analytics/login", queryClient);
+  useUnauthorizedRedirect([inventory.error], "internal", "/internal/analytics/login", queryClient);
 
   const companies = useMemo(() => {
     const needle = search.trim().toLowerCase();

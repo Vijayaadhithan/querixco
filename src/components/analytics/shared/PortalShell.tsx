@@ -79,7 +79,7 @@ export function PortalShell({ audience, company, username, current, children }: 
             )}
             <button
               type="button"
-              onClick={() => void endAnalyticsSession(queryClient, logoutDestination)}
+              onClick={() => void endAnalyticsSession(queryClient, audience, logoutDestination)}
               className={navClass(false)}
             >
               <LogOut className="h-4 w-4" aria-hidden="true" />

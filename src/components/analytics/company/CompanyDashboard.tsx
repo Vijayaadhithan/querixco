@@ -45,6 +45,7 @@ function CompanyDashboardContent({
 
   useUnauthorizedRedirect(
     [dashboard.error, status.error],
+    "company",
     `/analytics/${company}/login`,
     queryClient,
   );

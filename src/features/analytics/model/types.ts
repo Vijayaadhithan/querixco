@@ -1,5 +1,7 @@
 type AnalyticsRole = "company_user" | "internal_admin";
 
+export type AnalyticsAudience = "company" | "internal";
+
 type AnalyticsPrincipal = {
   username: string;
   role: AnalyticsRole;
@@ -101,9 +103,70 @@ export type CompanyQueryRecord = {
   ai_enrichment?: Record<string, unknown>;
 };
 
+type InternalQueryCache = {
+  plan_hit: boolean | null;
+  result_hit: boolean | null;
+};
+
+type InternalStageTimings = Record<string, number | null>;
+
+type InternalQueryPerformance = {
+  server_duration_ms: number | null;
+  total_server_duration_ms: number | null;
+  measurement_scope: string | null;
+  timing_semantics: string | null;
+  execution_path: string | null;
+  cache: InternalQueryCache | null;
+  stages_ms: InternalStageTimings | null;
+  downstream_api_calls: number | null;
+  attempt_count: number | null;
+  successful_attempt_count: number | null;
+  failed_attempt_count: number | null;
+};
+
+type InternalTokenUsage = {
+  input_tokens: number | null;
+  output_tokens: number | null;
+  thought_tokens: number | null;
+  total_tokens: number | null;
+  tokens_per_result: number | null;
+};
+
+type InternalApiTelemetry = {
+  status?: string | null;
+  execution_path?: string | null;
+  result_count?: number | null;
+  total_results?: number | null;
+  duration_ms?: number | null;
+  api_call_count?: number | null;
+  input_tokens?: number | null;
+  output_tokens?: number | null;
+  thought_tokens?: number | null;
+  total_tokens?: number | null;
+  tokens_per_result?: number | null;
+  [key: string]: unknown;
+};
+
+export type InternalQueryAttempt = {
+  attempt_number?: number | null;
+  provider?: string | null;
+  model?: string | null;
+  operation?: string | null;
+  status?: string | null;
+  api_calls?: number | null;
+  input_tokens?: number | null;
+  output_tokens?: number | null;
+  thought_tokens?: number | null;
+  total_tokens?: number | null;
+  duration_ms?: number | null;
+  failure_reason?: string | null;
+};
+
 export type InternalQueryRecord = CompanyQueryRecord & {
-  api: Record<string, unknown>;
-  attempts: Array<Record<string, unknown>>;
+  performance: InternalQueryPerformance | null;
+  token_usage: InternalTokenUsage | null;
+  api: InternalApiTelemetry | null;
+  attempts: InternalQueryAttempt[];
 };
 
 export type QueryPage<T> = {

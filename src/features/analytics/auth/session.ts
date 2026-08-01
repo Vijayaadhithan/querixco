@@ -2,8 +2,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useSyncExternalStore } from "react";
 
 import { getSession, isAnalyticsApiError, logout } from "../api";
+import type { AnalyticsAudience } from "../model/types";
 
-export const analyticsSessionKey = ["analytics", "session"] as const;
+export function analyticsSessionKey(audience: AnalyticsAudience) {
+  return ["analytics", audience, "session"] as const;
+}
 
 const subscribeToClientReady = () => () => undefined;
 
@@ -15,10 +18,10 @@ export function useClientReady(): boolean {
   );
 }
 
-export function useAnalyticsSession(enabled = true) {
+export function useAnalyticsSession(audience: AnalyticsAudience, enabled = true) {
   return useQuery({
-    queryKey: analyticsSessionKey,
-    queryFn: ({ signal }) => getSession(signal),
+    queryKey: analyticsSessionKey(audience),
+    queryFn: ({ signal }) => getSession(audience, signal),
     enabled,
     staleTime: 30_000,
     retry: false,
@@ -54,6 +57,7 @@ export function openPortalLogin(loginPath: string): void {
 
 export function useUnauthorizedRedirect(
   errors: unknown[],
+  audience: AnalyticsAudience,
   loginPath: string,
   queryClient: ReturnType<typeof useQueryClient>,
 ): void {
@@ -62,24 +66,25 @@ export function useUnauthorizedRedirect(
 
   useEffect(() => {
     if (!shouldRedirect) return;
-    queryClient.removeQueries({ queryKey: ["analytics"] });
+    queryClient.removeQueries({ queryKey: ["analytics", audience] });
     window.location.replace(loginPathWithReturn(loginPath));
-  }, [loginPath, queryClient, shouldRedirect]);
+  }, [audience, loginPath, queryClient, shouldRedirect]);
 
   useEffect(() => {
     if (!shouldRefreshPrincipal) return;
-    void queryClient.invalidateQueries({ queryKey: analyticsSessionKey });
-  }, [queryClient, shouldRefreshPrincipal]);
+    void queryClient.invalidateQueries({ queryKey: analyticsSessionKey(audience) });
+  }, [audience, queryClient, shouldRefreshPrincipal]);
 }
 
 export async function endAnalyticsSession(
   queryClient: ReturnType<typeof useQueryClient>,
+  audience: AnalyticsAudience,
   destination: string,
 ): Promise<void> {
   try {
-    await logout();
+    await logout(audience);
   } finally {
-    queryClient.removeQueries({ queryKey: ["analytics"] });
+    queryClient.removeQueries({ queryKey: ["analytics", audience] });
     window.location.assign(destination);
   }
 }

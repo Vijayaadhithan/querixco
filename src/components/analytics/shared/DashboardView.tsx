@@ -25,9 +25,7 @@ function modulePayload(
 }
 
 export function DashboardView({ dashboard, company, audience, status }: DashboardViewProps) {
-  const modules = dashboard.metadata.modules.filter(
-    (module) => audience === "internal" || module !== "api_performance",
-  );
+  const modules = dashboard.metadata.modules;
   const queryHref =
     audience === "internal"
       ? `/internal/analytics/${company}/queries`
@@ -44,7 +42,9 @@ export function DashboardView({ dashboard, company, audience, status }: Dashboar
             {formatCompanyName(company)} analytics
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-            Snapshot-based search and market intelligence for this company workspace.
+            {audience === "internal"
+              ? "Operational API performance and individual query diagnostics for this company."
+              : "Snapshot-based search and market intelligence for this company workspace."}
           </p>
         </div>
         <div className="rounded-xl border border-white/8 bg-white/[0.035] px-4 py-3 text-sm text-slate-300">

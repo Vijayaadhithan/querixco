@@ -16,7 +16,7 @@ type GuardProps = {
 
 export function CompanyRouteGuard({ company, children }: GuardProps & { company: string }) {
   const ready = useClientReady();
-  const session = useAnalyticsSession(ready);
+  const session = useAnalyticsSession("company", ready);
 
   useEffect(() => {
     if (!ready || !isAnalyticsApiError(session.error, 401)) return;
@@ -65,7 +65,7 @@ export function CompanyRouteGuard({ company, children }: GuardProps & { company:
 
 export function InternalRouteGuard({ children }: GuardProps) {
   const ready = useClientReady();
-  const session = useAnalyticsSession(ready);
+  const session = useAnalyticsSession("internal", ready);
 
   useEffect(() => {
     if (!ready || !isAnalyticsApiError(session.error, 401)) return;
