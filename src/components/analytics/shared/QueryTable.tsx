@@ -44,7 +44,7 @@ export function QueryTable({ items, internal }: { items: QueryRecord[]; internal
               {internalItem ? (
                 <>
                   <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
-                    <MobileMetric label="Status" value={statusText(item)} />
+                    <MobileMetric label="Status" value={internalStatusText(internalItem)} />
                     <MobileMetric
                       label="Execution path"
                       value={textValue(internalItem.performance?.execution_path, "Unavailable")}
@@ -53,7 +53,10 @@ export function QueryTable({ items, internal }: { items: QueryRecord[]; internal
                       label="Server duration"
                       value={formatDuration(internalItem.performance?.total_server_duration_ms)}
                     />
-                    <MobileMetric label="Results (returned / total)" value={formatResults(item)} />
+                    <MobileMetric
+                      label="Results (returned / total)"
+                      value={formatInternalResults(internalItem)}
+                    />
                     <MobileMetric
                       label="Total tokens"
                       value={formatCount(internalItem.token_usage?.total_tokens)}
@@ -208,7 +211,7 @@ function InternalQueryTableRow({ item }: { item: InternalQueryRecord }) {
         </td>
         <td className="px-4 py-4">
           <OutcomeBadge outcome={item.outcome} />
-          <p className="mt-1 text-xs text-slate-500">{statusText(item)}</p>
+          <p className="mt-1 text-xs text-slate-500">{internalStatusText(item)}</p>
         </td>
         <td className="px-4 py-4 text-slate-300">
           {textValue(item.performance?.execution_path, "Unavailable")}
@@ -223,7 +226,7 @@ function InternalQueryTableRow({ item }: { item: InternalQueryRecord }) {
           </div>
         </td>
         <td className="whitespace-nowrap px-4 py-4 text-right font-medium text-slate-200">
-          {formatResults(item)}
+          {formatInternalResults(item)}
         </td>
         <td className="px-4 py-4 text-right font-medium text-slate-200">
           {formatCount(item.token_usage?.total_tokens)}
@@ -311,19 +314,13 @@ function textValue(value: unknown, fallback = ""): string {
 }
 
 function resultCount(item: QueryRecord): number | null {
-  if (!isRecord(item.search)) return null;
+  if (!("search" in item) || !isRecord(item.search)) return null;
   const count = item.search.result_count;
   return typeof count === "number" && Number.isFinite(count) ? count : null;
 }
 
-function totalResultCount(item: QueryRecord): number | null {
-  if (!isRecord(item.search)) return null;
-  const count = item.search.total_results;
-  return typeof count === "number" && Number.isFinite(count) ? count : null;
-}
-
-function formatResults(item: QueryRecord): string {
-  return `${formatCount(resultCount(item))} / ${formatCount(totalResultCount(item))}`;
+function formatInternalResults(item: InternalQueryRecord): string {
+  return `${formatCount(item.api?.result_count)} / ${formatCount(item.api?.total_results)}`;
 }
 
 function formatCount(value: unknown): string {
@@ -338,8 +335,8 @@ function formatDuration(value: unknown): string {
     : "Unavailable";
 }
 
-function statusText(item: QueryRecord): string {
-  const status = isRecord(item.search) ? item.search.status : null;
+function internalStatusText(item: InternalQueryRecord): string {
+  const status = item.api?.status;
   return typeof status === "string" && status ? humanizeKey(status) : "Unavailable";
 }
 

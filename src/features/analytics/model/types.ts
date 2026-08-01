@@ -81,7 +81,7 @@ export type CompanyInventory = {
   refresh_schedule: string;
 };
 
-export type CompanyQueryRecord = {
+type QueryRecordBase = {
   search_id: number | string | null;
   request_id: string;
   query: string;
@@ -95,12 +95,15 @@ export type CompanyQueryRecord = {
   rental_duration: string | null;
   flags: Record<string, boolean | string | number | null>;
   outcome: "fulfilled" | "zero_result" | "failure" | "telemetry_missing";
+  ai_enrichment?: Record<string, unknown>;
+};
+
+export type CompanyQueryRecord = QueryRecordBase & {
   search: {
     status: string | null;
     result_count: number | null;
     total_results: number | null;
   };
-  ai_enrichment?: Record<string, unknown>;
 };
 
 type InternalQueryCache = {
@@ -162,7 +165,7 @@ export type InternalQueryAttempt = {
   failure_reason?: string | null;
 };
 
-export type InternalQueryRecord = CompanyQueryRecord & {
+export type InternalQueryRecord = QueryRecordBase & {
   performance: InternalQueryPerformance | null;
   token_usage: InternalTokenUsage | null;
   api: InternalApiTelemetry | null;

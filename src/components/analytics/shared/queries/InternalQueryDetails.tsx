@@ -19,7 +19,7 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
       isSuccessful(attempt.status) &&
       attempts.slice(0, index).some((earlier) => isFailure(earlier.status)),
   );
-  const attemptApiCalls = nullableSum(attempts.map((attempt) => attempt.api_calls));
+  const api = isRecord(item.api) ? item.api : null;
 
   return (
     <details className="group mt-3">
@@ -56,7 +56,7 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
               label="Downstream API calls"
               value={formatCount(performance?.downstream_api_calls)}
             />
-            <Metric label="Attempt API calls" value={formatCount(attemptApiCalls)} />
+            <Metric label="API call count" value={formatCount(api?.api_call_count)} />
             <Metric
               label="Successful attempts"
               value={formatCount(performance?.successful_attempt_count)}
@@ -303,13 +303,6 @@ function isSuccessful(value: unknown): boolean {
 
 function isFailure(value: unknown): boolean {
   return typeof value === "string" && value.length > 0 && !isSuccessful(value);
-}
-
-function nullableSum(values: unknown[]): number | null {
-  const measured = values.filter(
-    (value): value is number => typeof value === "number" && Number.isFinite(value),
-  );
-  return measured.length > 0 ? measured.reduce((sum, value) => sum + value, 0) : null;
 }
 
 function formatLabel(value: unknown): string {
