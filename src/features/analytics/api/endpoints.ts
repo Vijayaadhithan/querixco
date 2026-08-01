@@ -80,11 +80,19 @@ function queryString(filters: QueryFilters, cursor: string | null): string {
   if (filters.query) params.set("query", filters.query.slice(0, 1000));
   if (filters.outcome) params.set("outcome", filters.outcome);
   if (filters.category) params.set("category", filters.category.slice(0, 191));
+  if (filters.executionPath) {
+    params.set("execution_path", filters.executionPath.slice(0, 128));
+  }
   if (filters.language) params.set("language", filters.language.slice(0, 64));
-  if (filters.from) params.set("from", new Date(filters.from).toISOString());
-  if (filters.to) params.set("to", new Date(filters.to).toISOString());
+  if (filters.from) params.set("from", dateBoundary(filters.from, "start"));
+  if (filters.to) params.set("to", dateBoundary(filters.to, "end"));
 
   return params.toString();
+}
+
+function dateBoundary(value: string, boundary: "start" | "end"): string {
+  const time = boundary === "start" ? "00:00:00.000" : "23:59:59.999";
+  return new Date(`${value}T${time}`).toISOString();
 }
 
 export function getCompanyQueries(

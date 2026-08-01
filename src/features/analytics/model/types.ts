@@ -186,6 +186,7 @@ export type QueryFilters = {
   query: string;
   outcome: QueryOutcome | "";
   category: string;
+  executionPath: string;
   language: string;
   from: string;
   to: string;

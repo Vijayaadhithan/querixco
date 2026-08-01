@@ -23,6 +23,7 @@ const emptyFilters: QueryFiltersValue = {
   query: "",
   outcome: "",
   category: "",
+  executionPath: "",
   language: "",
   from: "",
   to: "",
@@ -45,6 +46,7 @@ export function QueryHistory({
       ...filters,
       query: debouncedQuery.trim(),
       category: filters.category.trim(),
+      executionPath: filters.executionPath.trim(),
       language: filters.language.trim(),
     }),
     [debouncedQuery, filters],
@@ -79,8 +81,39 @@ export function QueryHistory({
   const loginPath = internal ? "/internal/analytics/login" : `/analytics/${company}/login`;
   useUnauthorizedRedirect([history.error], audience, loginPath, queryClient);
 
-  const items =
-    history.data?.pages.flatMap((page) => (Array.isArray(page?.items) ? page.items : [])) ?? [];
+  const items = useMemo(
+    () =>
+      history.data?.pages.flatMap((page) => (Array.isArray(page?.items) ? page.items : [])) ?? [],
+    [history.data],
+  );
+  const classificationOptions = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          items.flatMap((item) =>
+            Array.isArray(item.categories)
+              ? item.categories.filter(
+                  (category): category is string => typeof category === "string",
+                )
+              : [],
+          ),
+        ),
+      ).sort((left, right) => left.localeCompare(right)),
+    [items],
+  );
+  const executionPathOptions = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          items.flatMap((item) => {
+            if (!("performance" in item)) return [];
+            const path = item.performance?.execution_path;
+            return typeof path === "string" && path && path !== "missing" ? [path] : [];
+          }),
+        ),
+      ).sort((left, right) => left.localeCompare(right)),
+    [items],
+  );
 
   return (
     <main className="mx-auto max-w-[1480px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
@@ -92,12 +125,18 @@ export function QueryHistory({
           Individual query history
         </h1>
         <p className="mt-2 text-sm leading-6 text-slate-400">
-          Inspect query outcomes and classifications. Filters reset cursor pagination automatically.
+          {internal
+            ? "Inspect API outcomes, execution paths, and operational diagnostics."
+            : "Inspect query outcomes and classifications."}{" "}
+          Filters reset cursor pagination automatically.
         </p>
       </div>
 
       <QueryFilters
+        audience={audience}
         value={filters}
+        classificationOptions={classificationOptions}
+        executionPathOptions={executionPathOptions}
         onChange={setFilters}
         onReset={() => setFilters(emptyFilters)}
       />
