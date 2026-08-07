@@ -1,4 +1,4 @@
-import { Activity, CheckCircle2, Clock3, SearchX, Zap } from "lucide-react";
+import { Activity, CheckCircle2, ChevronDown, Clock3, SearchX, Zap } from "lucide-react";
 
 import { DashboardModule } from "./DashboardModule";
 import { formatMetricValue, humanizeKey } from "@/features/analytics/lib/format";
@@ -53,19 +53,35 @@ export function DashboardActivityOverview({
         <TokenUsage overview={dashboard.filtered_overview as InternalDashboardOverview} />
       )}
 
-      <DashboardModule
-        title="Activity breakdowns"
-        eyebrow="Current filters"
-        metrics={{
-          ...dashboard.filtered_overview.breakdowns,
-          ...(internal
-            ? {
-                stage_latency: (dashboard.filtered_overview as InternalDashboardOverview)
-                  .stage_latency,
-              }
-            : {}),
-        }}
-      />
+      <details className="group rounded-2xl border border-white/8 bg-white/[0.025]">
+        <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/[0.035] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 sm:px-5 [&::-webkit-details-marker]:hidden">
+          <span>
+            Detailed breakdowns
+            <span className="ml-2 text-xs font-normal text-slate-500">
+              Categories, languages, outcomes{internal ? ", and stage latency" : ""}
+            </span>
+          </span>
+          <ChevronDown
+            className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180"
+            aria-hidden="true"
+          />
+        </summary>
+        <div className="border-t border-white/8 p-4 sm:p-5">
+          <DashboardModule
+            title="Activity breakdowns"
+            eyebrow="Current filters"
+            metrics={{
+              ...dashboard.filtered_overview.breakdowns,
+              ...(internal
+                ? {
+                    stage_latency: (dashboard.filtered_overview as InternalDashboardOverview)
+                      .stage_latency,
+                  }
+                : {}),
+            }}
+          />
+        </div>
+      </details>
     </section>
   );
 }
@@ -260,6 +276,29 @@ function ActivityGraph({ graph }: { graph: DashboardMainGraph }) {
               );
             })}
           </svg>
+          <table className="sr-only">
+            <caption>{graph.title} values</caption>
+            <thead>
+              <tr>
+                <th scope="col">Interval</th>
+                {series.map((item) => (
+                  <th key={item.name} scope="col">
+                    {humanizeKey(item.name)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {graph.labels.map((label, index) => (
+                <tr key={`${label}-${index}`}>
+                  <th scope="row">{label}</th>
+                  {series.map((item) => (
+                    <td key={item.name}>{formatMetricValue(item.values[index] ?? null)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       ) : (
         <p className="mt-5 rounded-xl border border-dashed border-white/10 p-6 text-sm text-slate-500">
@@ -286,6 +325,11 @@ function TokenUsage({ overview }: { overview: InternalDashboardOverview }) {
         {usage.note && <p className="mt-1 text-xs leading-5 text-slate-500">{usage.note}</p>}
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
+        {operations.length === 0 && (
+          <p className="rounded-2xl border border-dashed border-white/10 p-5 text-sm text-slate-500 lg:col-span-3">
+            No provider token usage matches the current filters.
+          </p>
+        )}
         {operations.map(([operation, row]) => {
           const coverage = row.attempts ? row.attempts_with_reported_tokens / row.attempts : null;
           return (

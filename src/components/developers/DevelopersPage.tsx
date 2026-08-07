@@ -73,6 +73,29 @@ const essentials = [
   },
 ];
 
+const launchSteps = [
+  {
+    title: "Provision the tenant contract",
+    body: "Agree the tenant slug, public response fields, source mapping, limits, and any compatibility adapter required by an established client.",
+  },
+  {
+    title: "Prepare and publish the catalog",
+    body: "Run tenant normalization and validation, then atomically promote a complete retrieval dataset.",
+  },
+  {
+    title: "Integrate through your backend",
+    body: "Keep the tenant key server-side and expose only the search behavior your web or mobile client needs.",
+  },
+  {
+    title: "Accept relevance with real demand",
+    body: "Exercise exact, semantic, multilingual, zero-result, cursor, fallback, and concurrency cases from representative customer queries.",
+  },
+  {
+    title: "Launch with measurable operations",
+    body: "Gate traffic on readiness, monitor authenticated tenant health, and review separate company and internal daily analytics.",
+  },
+];
+
 const endpoints = [
   {
     method: "POST",
@@ -237,6 +260,42 @@ export function DevelopersPage() {
               <p className="mt-2 text-sm leading-6 text-muted-foreground">{body}</p>
             </div>
           ))}
+        </section>
+      </Reveal>
+
+      <Reveal>
+        <section className="mt-16 max-w-6xl" aria-labelledby="launch-path-heading">
+          <div className="max-w-3xl">
+            <p className="text-xs font-medium uppercase tracking-[0.15em] text-brand-blue">
+              Tenant onboarding
+            </p>
+            <h2
+              id="launch-path-heading"
+              className="mt-3 font-display text-3xl font-semibold text-white"
+            >
+              From provisioned tenant to measured launch.
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              The integration is small, but a reliable launch also covers catalog quality, relevance
+              acceptance, and operational ownership.
+            </p>
+          </div>
+          <ol className="reveal-stagger mt-7 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+            {launchSteps.map((step, index) => (
+              <li
+                key={step.title}
+                className="rounded-lg border border-white/10 bg-white/[0.025] p-5"
+              >
+                <span className="font-mono text-xs text-brand-blue">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3 className="mt-4 font-display text-base font-semibold text-white">
+                  {step.title}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{step.body}</p>
+              </li>
+            ))}
+          </ol>
         </section>
       </Reveal>
 

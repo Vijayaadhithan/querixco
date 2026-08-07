@@ -1,3 +1,5 @@
+import type { ResponseDecoder } from "./validate";
+
 const isLocalBrowser =
   typeof window !== "undefined" &&
   (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
@@ -50,6 +52,7 @@ function isTransientNetworkError(error: unknown): boolean {
 
 export async function analyticsRequest<T>(
   path: string,
+  decode: ResponseDecoder<T>,
   init: RequestInit = {},
   retryCount = 0,
 ): Promise<T> {
@@ -70,15 +73,15 @@ export async function analyticsRequest<T>(
     const payload: unknown = await response.json().catch(() => null);
     if (!response.ok) {
       if (method === "GET" && response.status === 503 && retryCount === 0) {
-        return analyticsRequest<T>(path, init, 1);
+        return analyticsRequest(path, decode, init, 1);
       }
       throw new AnalyticsApiError(response.status, payload);
     }
 
-    return payload as T;
+    return decode(payload);
   } catch (error) {
     if (method === "GET" && retryCount === 0 && isTransientNetworkError(error)) {
-      return analyticsRequest<T>(path, init, 1);
+      return analyticsRequest(path, decode, init, 1);
     }
     throw error;
   }

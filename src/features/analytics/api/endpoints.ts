@@ -10,6 +10,15 @@ import type {
   QueryPage,
 } from "../model/types";
 import { analyticsRequest } from "./client";
+import {
+  decodeAnalyticsSession,
+  decodeCompanyInventory,
+  decodeCompanyQueryPage,
+  decodeDashboard,
+  decodeInternalQueryPage,
+  decodeLogout,
+  decodeRecord,
+} from "./validate";
 
 function authEndpoint(audience: AnalyticsAudience, action: "login" | "me" | "logout"): string {
   return `/api/v1/analytics/${audience}/auth/${action}`;
@@ -20,22 +29,28 @@ export function login(
   username: string,
   password: string,
 ): Promise<AnalyticsSession> {
-  return analyticsRequest<AnalyticsSession>(authEndpoint(audience, "login"), {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ username, password }),
-  });
+  return analyticsRequest<AnalyticsSession>(
+    authEndpoint(audience, "login"),
+    decodeAnalyticsSession,
+    {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    },
+  );
 }
 
 export function getSession(
   audience: AnalyticsAudience,
   signal?: AbortSignal,
 ): Promise<AnalyticsSession> {
-  return analyticsRequest<AnalyticsSession>(authEndpoint(audience, "me"), { signal });
+  return analyticsRequest<AnalyticsSession>(authEndpoint(audience, "me"), decodeAnalyticsSession, {
+    signal,
+  });
 }
 
 export function logout(audience: AnalyticsAudience): Promise<{ logged_out: boolean }> {
-  return analyticsRequest<{ logged_out: boolean }>(authEndpoint(audience, "logout"), {
+  return analyticsRequest<{ logged_out: boolean }>(authEndpoint(audience, "logout"), decodeLogout, {
     method: "POST",
   });
 }
@@ -47,6 +62,7 @@ export function getCompanyDashboard(
 ): Promise<AnalyticsDashboard> {
   return analyticsRequest<AnalyticsDashboard>(
     `/api/v1/${encodeURIComponent(company)}/analytics/dashboard?${dashboardQueryString(filters, false)}`,
+    decodeDashboard,
     { signal },
   );
 }
@@ -57,12 +73,17 @@ export function getCompanyStatus(
 ): Promise<Record<string, unknown>> {
   return analyticsRequest<Record<string, unknown>>(
     `/api/v1/${encodeURIComponent(company)}/analytics/status`,
+    decodeRecord,
     { signal },
   );
 }
 
 export function getInternalCompanies(signal?: AbortSignal): Promise<CompanyInventory> {
-  return analyticsRequest<CompanyInventory>("/api/v1/admin/analytics/companies", { signal });
+  return analyticsRequest<CompanyInventory>(
+    "/api/v1/admin/analytics/companies",
+    decodeCompanyInventory,
+    { signal },
+  );
 }
 
 export function getInternalDashboard(
@@ -72,6 +93,7 @@ export function getInternalDashboard(
 ): Promise<AnalyticsDashboard> {
   return analyticsRequest<AnalyticsDashboard>(
     `/api/v1/admin/analytics/${encodeURIComponent(company)}/dashboard?${dashboardQueryString(filters, true)}`,
+    decodeDashboard,
     { signal },
   );
 }
@@ -127,6 +149,7 @@ export function getCompanyQueries(
 ): Promise<QueryPage<CompanyQueryRecord>> {
   return analyticsRequest<QueryPage<CompanyQueryRecord>>(
     `/api/v1/${encodeURIComponent(company)}/analytics/queries?${queryString(filters, cursor)}`,
+    decodeCompanyQueryPage,
     { signal },
   );
 }
@@ -139,6 +162,7 @@ export function getInternalQueries(
 ): Promise<QueryPage<InternalQueryRecord>> {
   return analyticsRequest<QueryPage<InternalQueryRecord>>(
     `/api/v1/admin/analytics/${encodeURIComponent(company)}/queries?${queryString(filters, cursor)}`,
+    decodeInternalQueryPage,
     { signal },
   );
 }

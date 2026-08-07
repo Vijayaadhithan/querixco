@@ -5,6 +5,7 @@ import { useApiHealth } from "@/lib/use-api-health";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
+  BarChart3,
   BrainCircuit,
   Check,
   CheckCircle2,
@@ -813,12 +814,12 @@ function Platform() {
       <div className="mx-auto max-w-7xl px-6">
         <SectionIntro
           eyebrow="The Querix platform"
-          title="Two systems. One reliable discovery experience."
-          body="Querix connects a controlled data lifecycle with an intent-aware serving layer, so search quality starts before the first customer query."
+          title="Three connected layers. One reliable discovery experience."
+          body="Querix connects a controlled data lifecycle, an intent-aware serving layer, and audience-specific analytics so teams can improve search from ingestion through outcome."
         />
 
-        <div className="platform-pair reveal-stagger mt-14 grid gap-5 lg:grid-cols-2">
-          <article className="rounded-[1.75rem] border border-white/10 bg-[#081522] p-7 sm:p-9">
+        <div className="platform-pair reveal-stagger mt-14 grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
+          <article className="rounded-[1.75rem] border border-white/10 bg-[#081522] p-7">
             <div className="flex items-center justify-between">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-violet-300/20 bg-violet-300/[0.08]">
                 <Workflow className="h-6 w-6 text-violet-200" />
@@ -855,7 +856,7 @@ function Platform() {
             </a>
           </article>
 
-          <article className="rounded-[1.75rem] border border-brand-blue/20 bg-gradient-to-br from-brand-blue/[0.09] to-[#081522] p-7 sm:p-9">
+          <article className="rounded-[1.75rem] border border-brand-blue/20 bg-gradient-to-br from-brand-blue/[0.09] to-[#081522] p-7">
             <div className="flex items-center justify-between">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-brand-blue/25 bg-brand-blue/10">
                 <BrainCircuit className="h-6 w-6 text-[#9ed1ff]" />
@@ -889,6 +890,43 @@ function Platform() {
               className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-[#9ed1ff] transition hover:text-white"
             >
               Explore the architecture <ArrowRight className="h-4 w-4" />
+            </a>
+          </article>
+
+          <article className="rounded-[1.75rem] border border-emerald-300/15 bg-gradient-to-br from-emerald-300/[0.06] to-[#081522] p-7 lg:col-span-2 xl:col-span-1">
+            <div className="flex items-center justify-between">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.08]">
+                <BarChart3 className="h-6 w-6 text-emerald-200" />
+              </div>
+              <span className="rounded-full border border-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.12em] text-[#74889f]">
+                Outcome intelligence
+              </span>
+            </div>
+            <h3 className="mt-7 font-display text-2xl font-semibold text-white">
+              Audience-specific analytics
+            </h3>
+            <p className="mt-3 text-sm leading-6 text-[#91a2b7]">
+              Gives company teams focused demand and marketplace insight while keeping provider,
+              token, latency, and query diagnostics inside the internal operations boundary.
+            </p>
+            <ul className="mt-6 space-y-3 text-sm text-[#b2c0d0]">
+              {[
+                "Atomic daily snapshots",
+                "Filterable search activity",
+                "Company and internal separation",
+                "Query and provider diagnostics",
+              ].map((item) => (
+                <li key={item} className="flex items-center gap-3">
+                  <BarChart3 className="h-4 w-4 text-emerald-300" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <a
+              href="/developers/operations"
+              className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-emerald-200 transition hover:text-white"
+            >
+              Review operations <ArrowRight className="h-4 w-4" />
             </a>
           </article>
         </div>

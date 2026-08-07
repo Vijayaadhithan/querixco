@@ -1,5 +1,11 @@
-import { CalendarDays, LoaderCircle, RotateCcw } from "lucide-react";
-import type { ReactNode } from "react";
+import {
+  CalendarDays,
+  ChevronDown,
+  LoaderCircle,
+  RotateCcw,
+  SlidersHorizontal,
+} from "lucide-react";
+import { useState, type ReactNode } from "react";
 
 import { humanizeKey } from "@/features/analytics/lib/format";
 import type {
@@ -34,6 +40,17 @@ export function DashboardFilters({
   onReset: () => void;
 }) {
   const internal = audience === "internal";
+  const activeAdvancedFilters = [
+    value.category,
+    value.language,
+    value.adType,
+    value.executionPath,
+    value.provider,
+    value.operation,
+    value.from,
+    value.to,
+  ].filter(Boolean).length;
+  const [advancedOpen, setAdvancedOpen] = useState(activeAdvancedFilters > 0);
 
   function update<Key extends keyof DashboardFilterValue>(
     key: Key,
@@ -106,7 +123,7 @@ export function DashboardFilters({
         </div>
       </div>
 
-      <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <FilterField label="Outcome" htmlFor={`${audience}-dashboard-outcome`}>
           <select
             id={`${audience}-dashboard-outcome`}
@@ -118,38 +135,6 @@ export function DashboardFilters({
             {outcomes.map((option) => (
               <option key={option} value={option}>
                 {humanizeKey(option)}
-              </option>
-            ))}
-          </select>
-        </FilterField>
-
-        <FilterField label="Category" htmlFor={`${audience}-dashboard-category`}>
-          <select
-            id={`${audience}-dashboard-category`}
-            value={value.category}
-            onChange={(event) => update("category", event.target.value)}
-            className={inputClass}
-          >
-            <option value="">All categories</option>
-            {categories.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        </FilterField>
-
-        <FilterField label="Language" htmlFor={`${audience}-dashboard-language`}>
-          <select
-            id={`${audience}-dashboard-language`}
-            value={value.language}
-            onChange={(event) => update("language", event.target.value)}
-            className={inputClass}
-          >
-            <option value="">All languages</option>
-            {languages.map((option) => (
-              <option key={option} value={option}>
-                {option}
               </option>
             ))}
           </select>
@@ -170,104 +155,165 @@ export function DashboardFilters({
             ))}
           </select>
         </FilterField>
-
-        <FilterField label="Ad type" htmlFor={`${audience}-dashboard-ad-type`}>
-          <select
-            id={`${audience}-dashboard-ad-type`}
-            value={value.adType}
-            onChange={(event) => update("adType", event.target.value)}
-            className={inputClass}
-          >
-            <option value="">All ad types</option>
-            {adTypes.map((option) => (
-              <option key={option} value={option}>
-                {humanizeKey(option)}
-              </option>
-            ))}
-          </select>
-        </FilterField>
-
-        {internal && (
-          <>
-            <FilterField label="Execution path" htmlFor="internal-dashboard-path">
-              <select
-                id="internal-dashboard-path"
-                value={value.executionPath}
-                onChange={(event) => update("executionPath", event.target.value)}
-                className={inputClass}
-              >
-                <option value="">All execution paths</option>
-                {executionPaths.map((option) => (
-                  <option key={option} value={option}>
-                    {humanizeKey(option)}
-                  </option>
-                ))}
-              </select>
-            </FilterField>
-
-            <FilterField label="Provider" htmlFor="internal-dashboard-provider">
-              <select
-                id="internal-dashboard-provider"
-                value={value.provider}
-                onChange={(event) => update("provider", event.target.value)}
-                className={inputClass}
-              >
-                <option value="">All providers</option>
-                {providers.map((option) => (
-                  <option key={option} value={option}>
-                    {humanizeKey(option)}
-                  </option>
-                ))}
-              </select>
-            </FilterField>
-
-            <FilterField label="Operation" htmlFor="internal-dashboard-operation">
-              <select
-                id="internal-dashboard-operation"
-                value={value.operation}
-                onChange={(event) => update("operation", event.target.value)}
-                className={inputClass}
-              >
-                <option value="">All operations</option>
-                {operations.map((option) => (
-                  <option key={option} value={option}>
-                    {humanizeKey(option)}
-                  </option>
-                ))}
-              </select>
-            </FilterField>
-          </>
-        )}
       </div>
 
-      <div className="mt-5 grid gap-4 border-t border-white/8 pt-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-        <FilterField label="Custom start date" htmlFor={`${audience}-dashboard-from`}>
-          <DateInput
-            id={`${audience}-dashboard-from`}
-            value={value.from}
-            max={value.to || undefined}
-            onChange={(next) => setDate("from", next)}
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/8 pt-4">
+        <button
+          type="button"
+          onClick={() => setAdvancedOpen((open) => !open)}
+          aria-expanded={advancedOpen}
+          aria-controls={`${audience}-advanced-filters`}
+          className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-white/10 px-3.5 text-sm font-medium text-slate-300 transition hover:bg-white/6 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+        >
+          <SlidersHorizontal className="h-4 w-4 text-blue-300" aria-hidden="true" />
+          {advancedOpen ? "Hide advanced filters" : "More filters"}
+          {activeAdvancedFilters > 0 && (
+            <span className="rounded-full bg-blue-400/15 px-2 py-0.5 text-xs text-blue-200">
+              {activeAdvancedFilters}
+            </span>
+          )}
+          <ChevronDown
+            className={`h-4 w-4 transition-transform ${advancedOpen ? "rotate-180" : ""}`}
+            aria-hidden="true"
           />
-        </FilterField>
-        <FilterField label="Custom end date" htmlFor={`${audience}-dashboard-to`}>
-          <DateInput
-            id={`${audience}-dashboard-to`}
-            value={value.to}
-            min={value.from || undefined}
-            onChange={(next) => setDate("to", next)}
-          />
-        </FilterField>
-        <div className="flex items-end sm:col-span-2 lg:col-span-1">
-          <button
-            type="button"
-            onClick={onReset}
-            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-white/10 px-4 text-sm font-medium text-slate-300 transition hover:bg-white/6 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 lg:w-auto"
-          >
-            <RotateCcw className="h-4 w-4" aria-hidden="true" />
-            Reset filters
-          </button>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            onReset();
+            setAdvancedOpen(false);
+          }}
+          className="inline-flex min-h-10 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-400 transition hover:bg-white/6 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+        >
+          <RotateCcw className="h-4 w-4" aria-hidden="true" />
+          Reset
+        </button>
+      </div>
+
+      {advancedOpen && (
+        <div
+          id={`${audience}-advanced-filters`}
+          className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          <FilterField label="Category" htmlFor={`${audience}-dashboard-category`}>
+            <select
+              id={`${audience}-dashboard-category`}
+              value={value.category}
+              onChange={(event) => update("category", event.target.value)}
+              className={inputClass}
+            >
+              <option value="">All categories</option>
+              {categories.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </FilterField>
+
+          <FilterField label="Language" htmlFor={`${audience}-dashboard-language`}>
+            <select
+              id={`${audience}-dashboard-language`}
+              value={value.language}
+              onChange={(event) => update("language", event.target.value)}
+              className={inputClass}
+            >
+              <option value="">All languages</option>
+              {languages.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </FilterField>
+
+          <FilterField label="Ad type" htmlFor={`${audience}-dashboard-ad-type`}>
+            <select
+              id={`${audience}-dashboard-ad-type`}
+              value={value.adType}
+              onChange={(event) => update("adType", event.target.value)}
+              className={inputClass}
+            >
+              <option value="">All ad types</option>
+              {adTypes.map((option) => (
+                <option key={option} value={option}>
+                  {humanizeKey(option)}
+                </option>
+              ))}
+            </select>
+          </FilterField>
+
+          {internal && (
+            <>
+              <FilterField label="Execution path" htmlFor="internal-dashboard-path">
+                <select
+                  id="internal-dashboard-path"
+                  value={value.executionPath}
+                  onChange={(event) => update("executionPath", event.target.value)}
+                  className={inputClass}
+                >
+                  <option value="">All execution paths</option>
+                  {executionPaths.map((option) => (
+                    <option key={option} value={option}>
+                      {humanizeKey(option)}
+                    </option>
+                  ))}
+                </select>
+              </FilterField>
+
+              <FilterField label="Provider" htmlFor="internal-dashboard-provider">
+                <select
+                  id="internal-dashboard-provider"
+                  value={value.provider}
+                  onChange={(event) => update("provider", event.target.value)}
+                  className={inputClass}
+                >
+                  <option value="">All providers</option>
+                  {providers.map((option) => (
+                    <option key={option} value={option}>
+                      {humanizeKey(option)}
+                    </option>
+                  ))}
+                </select>
+              </FilterField>
+
+              <FilterField label="Operation" htmlFor="internal-dashboard-operation">
+                <select
+                  id="internal-dashboard-operation"
+                  value={value.operation}
+                  onChange={(event) => update("operation", event.target.value)}
+                  className={inputClass}
+                >
+                  <option value="">All operations</option>
+                  {operations.map((option) => (
+                    <option key={option} value={option}>
+                      {humanizeKey(option)}
+                    </option>
+                  ))}
+                </select>
+              </FilterField>
+            </>
+          )}
+
+          <FilterField label="Custom start date" htmlFor={`${audience}-dashboard-from`}>
+            <DateInput
+              id={`${audience}-dashboard-from`}
+              value={value.from}
+              max={value.to || undefined}
+              onChange={(next) => setDate("from", next)}
+            />
+          </FilterField>
+          <FilterField label="Custom end date" htmlFor={`${audience}-dashboard-to`}>
+            <DateInput
+              id={`${audience}-dashboard-to`}
+              value={value.to}
+              min={value.from || undefined}
+              onChange={(next) => setDate("to", next)}
+            />
+          </FilterField>
         </div>
-      </div>
+      )}
     </form>
   );
 }
