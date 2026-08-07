@@ -1,4 +1,5 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 import { InternalAnalyticsShell } from "./InternalAnalyticsShell";
 import { DashboardView } from "../shared/DashboardView";
@@ -6,6 +7,7 @@ import { PortalState } from "../shared/PortalState";
 import { getInternalDashboard, isAnalyticsApiError } from "@/features/analytics/api";
 import { InternalRouteGuard } from "@/components/analytics/shared/RouteGuards";
 import { useUnauthorizedRedirect } from "@/features/analytics/auth/session";
+import { createDashboardFilters } from "@/features/analytics/lib/dashboard";
 import type { AnalyticsSession } from "@/features/analytics/model/types";
 
 export function InternalCompanyDashboard({ company }: { company: string }) {
@@ -24,9 +26,11 @@ function InternalCompanyDashboardContent({
   session: AnalyticsSession;
 }) {
   const queryClient = useQueryClient();
+  const [filters, setFilters] = useState(createDashboardFilters);
   const dashboard = useQuery({
-    queryKey: ["analytics", "internal", company, "dashboard"],
-    queryFn: ({ signal }) => getInternalDashboard(company, signal),
+    queryKey: ["analytics", "internal", company, "dashboard", filters],
+    queryFn: ({ signal }) => getInternalDashboard(company, filters, signal),
+    placeholderData: keepPreviousData,
     staleTime: 5 * 60_000,
     retry: false,
     refetchOnWindowFocus: false,
@@ -83,7 +87,15 @@ function InternalCompanyDashboardContent({
             The saved snapshot remains visible, but a fresh request was unavailable.
           </div>
         )}
-        <DashboardView dashboard={dashboard.data} company={company} audience="internal" />
+        <DashboardView
+          dashboard={dashboard.data}
+          company={company}
+          audience="internal"
+          filters={filters}
+          isFetching={dashboard.isFetching}
+          onFiltersChange={setFilters}
+          onFiltersReset={() => setFilters(createDashboardFilters())}
+        />
       </>
     );
   }

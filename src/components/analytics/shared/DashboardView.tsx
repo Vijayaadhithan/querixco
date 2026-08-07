@@ -1,6 +1,8 @@
 import { ArrowRight, BarChart3, Boxes, Globe2, Search } from "lucide-react";
 import { useState, type ComponentType } from "react";
 
+import { DashboardActivityOverview } from "./DashboardActivityOverview";
+import { DashboardFilters } from "./DashboardFilters";
 import { DashboardModule } from "./DashboardModule";
 import { SnapshotBadge } from "./SnapshotBadge";
 import { formatCompanyName, formatMetricValue, humanizeKey } from "@/features/analytics/lib/format";
@@ -9,6 +11,7 @@ import type {
   AnalyticsModule,
   MetricModulePayload,
   MetricPayload,
+  DashboardFilterValue,
 } from "@/features/analytics/model/types";
 
 type DashboardViewProps = {
@@ -16,6 +19,10 @@ type DashboardViewProps = {
   company: string;
   audience: "company" | "internal";
   status?: Record<string, unknown>;
+  filters: DashboardFilterValue;
+  isFetching: boolean;
+  onFiltersChange: (next: DashboardFilterValue) => void;
+  onFiltersReset: () => void;
 };
 
 const moduleIcons: Partial<Record<AnalyticsModule, ComponentType<{ className?: string }>>> = {
@@ -41,7 +48,15 @@ export function DashboardView(props: DashboardViewProps) {
   );
 }
 
-function CompanyDashboardView({ dashboard, company, status }: DashboardViewProps) {
+function CompanyDashboardView({
+  dashboard,
+  company,
+  status,
+  filters,
+  isFetching,
+  onFiltersChange,
+  onFiltersReset,
+}: DashboardViewProps) {
   const queryHref = `/analytics/${company}/queries`;
   const analyticsModules = dashboard.metadata.modules.filter(
     (module) => module !== "individual_queries" && Boolean(modulePayload(dashboard, module)),
@@ -59,11 +74,21 @@ function CompanyDashboardView({ dashboard, company, status }: DashboardViewProps
     <main className="mx-auto max-w-[1480px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <DashboardHeader dashboard={dashboard} company={company} audience="company" compact />
 
-      <section aria-labelledby="company-overview-heading">
+      <DashboardFilters
+        audience="company"
+        value={filters}
+        available={dashboard.filtering.available}
+        isFetching={isFetching}
+        onChange={onFiltersChange}
+        onReset={onFiltersReset}
+      />
+      <DashboardActivityOverview dashboard={dashboard} audience="company" />
+
+      <section className="mt-10" aria-labelledby="company-overview-heading">
         <div className="mb-3 flex items-end justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-300">
-              At a glance
+              Daily snapshot
             </p>
             <h2 id="company-overview-heading" className="sr-only">
               Company analytics overview
@@ -115,20 +140,44 @@ function CompanyDashboardView({ dashboard, company, status }: DashboardViewProps
               </button>
             ))}
           </div>
-          <DashboardModule title={humanizeKey(activeModule)} metrics={activePayload} />
+          <DashboardModule
+            title={humanizeKey(activeModule)}
+            metrics={activePayload}
+            eyebrow="Daily snapshot questions"
+          />
         </section>
       )}
     </main>
   );
 }
 
-function InternalDashboardView({ dashboard, company, status }: DashboardViewProps) {
+function InternalDashboardView({
+  dashboard,
+  company,
+  status,
+  filters,
+  isFetching,
+  onFiltersChange,
+  onFiltersReset,
+}: DashboardViewProps) {
   const queryHref = `/internal/analytics/${company}/queries`;
 
   return (
     <main className="mx-auto max-w-[1480px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
       <DashboardHeader dashboard={dashboard} company={company} audience="internal" />
       <SnapshotBadge snapshot={dashboard.snapshot} status={status} />
+
+      <div className="mt-6">
+        <DashboardFilters
+          audience="internal"
+          value={filters}
+          available={dashboard.filtering.available}
+          isFetching={isFetching}
+          onChange={onFiltersChange}
+          onReset={onFiltersReset}
+        />
+      </div>
+      <DashboardActivityOverview dashboard={dashboard} audience="internal" />
 
       <div className="mt-10 space-y-12">
         {dashboard.metadata.modules.map((module) => {
@@ -145,7 +194,14 @@ function InternalDashboardView({ dashboard, company, status }: DashboardViewProp
 
           const payload = modulePayload(dashboard, module);
           if (!payload) return null;
-          return <DashboardModule key={module} title={humanizeKey(module)} metrics={payload} />;
+          return (
+            <DashboardModule
+              key={module}
+              title={humanizeKey(module)}
+              metrics={payload}
+              eyebrow="Daily snapshot questions"
+            />
+          );
         })}
       </div>
     </main>

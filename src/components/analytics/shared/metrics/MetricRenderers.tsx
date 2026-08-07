@@ -124,6 +124,57 @@ function ListMetric({ metric, title }: { metric: MetricPayload; title: string })
   );
 }
 
+function ComparisonTableMetric({ metric, title }: { metric: MetricPayload; title: string }) {
+  if (!isObject(metric.data)) return <GenericMetric metric={metric} title={title} />;
+  const rows = Object.entries(metric.data).filter(
+    (entry): entry is [string, Record<string, unknown>] => isObject(entry[1]),
+  );
+  if (!rows.length) return <MetricEmpty />;
+
+  const columns = Array.from(
+    new Set(rows.flatMap(([, row]) => Object.keys(row).filter((key) => isPrimitive(row[key])))),
+  );
+
+  return (
+    <>
+      <div className="mt-5 overflow-x-auto">
+        <table className="w-full min-w-[680px] text-left text-sm">
+          <caption className="sr-only">{title}</caption>
+          <thead>
+            <tr className="border-b border-white/8 text-xs uppercase tracking-wide text-slate-500">
+              <th scope="col" className="pb-3 pr-5 font-medium">
+                Item
+              </th>
+              {columns.map((column) => (
+                <th key={column} scope="col" className="px-3 pb-3 text-right font-medium">
+                  {humanizeKey(column)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(([label, row]) => (
+              <tr key={label} className="border-b border-white/5 last:border-0">
+                <th scope="row" className="py-3 pr-5 font-medium text-slate-200">
+                  {humanizeKey(label)}
+                </th>
+                {columns.map((column) => (
+                  <td key={column} className="px-3 py-3 text-right text-slate-300">
+                    {formatMetricValue(row[column], column)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {typeof metric.note === "string" && metric.note && (
+        <p className="mt-3 text-xs leading-5 text-slate-500">{metric.note}</p>
+      )}
+    </>
+  );
+}
+
 function GenericMetric({ metric, title }: { metric: MetricPayload; title: string }) {
   const entries = Object.entries(metric).filter(([key]) => !["title", "chart_type"].includes(key));
   if (!entries.length) return <MetricEmpty />;
@@ -178,6 +229,14 @@ function compactObject(value: unknown): string {
     .join(", ");
 }
 
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isPrimitive(value: unknown): boolean {
+  return value === null || ["string", "number", "boolean"].includes(typeof value);
+}
+
 function MetricEmpty() {
   return <p className="mt-5 text-sm text-slate-500">No data is available for this metric yet.</p>;
 }
@@ -193,7 +252,7 @@ const metricRenderers: Record<string, MetricRenderer> = {
   list: ListMetric,
   table: GenericMetric,
   tables: GenericMetric,
-  comparison_table: GenericMetric,
+  comparison_table: ComparisonTableMetric,
 };
 
 class MetricBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {

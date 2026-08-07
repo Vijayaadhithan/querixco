@@ -1,4 +1,5 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 import { CompanyAnalyticsShell } from "./CompanyAnalyticsShell";
 import { DashboardView } from "../shared/DashboardView";
@@ -10,6 +11,7 @@ import {
 } from "@/features/analytics/api";
 import { CompanyRouteGuard } from "@/components/analytics/shared/RouteGuards";
 import { useUnauthorizedRedirect } from "@/features/analytics/auth/session";
+import { createDashboardFilters } from "@/features/analytics/lib/dashboard";
 import type { AnalyticsSession } from "@/features/analytics/model/types";
 
 export function CompanyDashboard({ company }: { company: string }) {
@@ -28,9 +30,11 @@ function CompanyDashboardContent({
   session: AnalyticsSession;
 }) {
   const queryClient = useQueryClient();
+  const [filters, setFilters] = useState(createDashboardFilters);
   const dashboard = useQuery({
-    queryKey: ["analytics", "company", company, "dashboard"],
-    queryFn: ({ signal }) => getCompanyDashboard(company, signal),
+    queryKey: ["analytics", "company", company, "dashboard", filters],
+    queryFn: ({ signal }) => getCompanyDashboard(company, filters, signal),
+    placeholderData: keepPreviousData,
     staleTime: 5 * 60_000,
     retry: false,
     refetchOnWindowFocus: false,
@@ -102,6 +106,10 @@ function CompanyDashboardContent({
           company={company}
           audience="company"
           status={status.data}
+          filters={filters}
+          isFetching={dashboard.isFetching}
+          onFiltersChange={setFilters}
+          onFiltersReset={() => setFilters(createDashboardFilters())}
         />
       </>
     );

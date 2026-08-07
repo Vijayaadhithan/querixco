@@ -64,7 +64,131 @@ export type AnalyticsDashboard = {
   deep_analytics?: MetricModulePayload;
   market_intelligence?: MetricModulePayload;
   api_performance?: MetricModulePayload;
+  filtering: DashboardFiltering;
+  filtered_overview: CompanyDashboardOverview | InternalDashboardOverview;
   snapshot: SnapshotSummary;
+};
+
+export type DashboardPeriod = "24h" | "7d" | "30d" | "90d" | "all" | "custom";
+
+export type DashboardFilterValue = {
+  period: DashboardPeriod;
+  outcome: QueryOutcome | "";
+  category: string;
+  language: string;
+  cityId: string;
+  adType: string;
+  executionPath: string;
+  provider: string;
+  operation: string;
+  from: string;
+  to: string;
+};
+
+type DashboardAppliedFilters = {
+  period: DashboardPeriod;
+  from: string | null;
+  to: string | null;
+  timezone: string;
+  outcome: QueryOutcome | null;
+  category: string | null;
+  language: string | null;
+  city: string | null;
+  city_id: number | null;
+  ad_type: string | null;
+  execution_path?: string | null;
+  provider?: string | null;
+  operation?: string | null;
+};
+
+type DashboardCityOption = { id: number; label: string };
+
+export type DashboardAvailableFilters = {
+  periods: DashboardPeriod[];
+  outcomes: string[];
+  categories: string[];
+  languages: string[];
+  cities: string[];
+  city_options: DashboardCityOption[];
+  ad_types: string[];
+  execution_paths?: string[];
+  providers?: string[];
+  operations?: string[];
+};
+
+type DashboardFiltering = {
+  applied: DashboardAppliedFilters;
+  available: DashboardAvailableFilters;
+  scope: {
+    filtered_overview: string;
+    snapshot_modules: string;
+    city_semantics: string;
+  };
+  matched_records: number;
+  total_records: number;
+};
+
+type DashboardGraphSeries = { name: string; values: number[] };
+
+export type DashboardMainGraph = {
+  title: string;
+  chart_type: "line";
+  granularity: "hour" | "day" | "week";
+  timezone: string;
+  labels: string[];
+  values: number[];
+  series: DashboardGraphSeries[];
+};
+
+type DashboardBreakdowns = Record<string, MetricPayload>;
+
+export type CompanyDashboardOverview = {
+  summary: {
+    searches: number;
+    fulfilled: number;
+    zero_results: number;
+    failures: number;
+    fulfillment_rate: number;
+    average_returned_results: number;
+    average_total_results: number;
+  };
+  breakdowns: DashboardBreakdowns;
+  main_graph: DashboardMainGraph;
+};
+
+type OperationTokenUsage = {
+  attempts: number;
+  api_calls: number;
+  attempts_with_reported_tokens: number;
+  input_tokens: number;
+  output_tokens: number;
+  thought_tokens: number;
+  total_tokens: number;
+};
+
+export type InternalDashboardOverview = {
+  summary: {
+    requests: number;
+    successful: number;
+    failed: number;
+    success_rate: number;
+    average_latency_ms: number;
+    p50_latency_ms: number;
+    p95_latency_ms: number;
+    p99_latency_ms: number;
+    downstream_api_calls: number;
+    plan_cache_hit_rate: number | null;
+    result_cache_hit_rate: number | null;
+  };
+  token_usage_by_operation: {
+    title: string;
+    chart_type: "comparison_table";
+    note: string;
+    data: Record<string, OperationTokenUsage>;
+  };
+  breakdowns: DashboardBreakdowns;
+  stage_latency: MetricPayload;
+  main_graph: DashboardMainGraph;
 };
 
 type CompanyInventoryItem = {
@@ -94,6 +218,7 @@ type QueryRecordBase = {
   language: string | null;
   rental_duration: string | null;
   flags: Record<string, boolean | string | number | null>;
+  filters?: Record<string, string | number | boolean | null>;
   outcome: "fulfilled" | "zero_result" | "failure" | "telemetry_missing";
   ai_enrichment?: Record<string, unknown>;
 };

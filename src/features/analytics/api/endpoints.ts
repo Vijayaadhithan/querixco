@@ -4,6 +4,7 @@ import type {
   AnalyticsSession,
   CompanyInventory,
   CompanyQueryRecord,
+  DashboardFilterValue,
   InternalQueryRecord,
   QueryFilters,
   QueryPage,
@@ -41,10 +42,11 @@ export function logout(audience: AnalyticsAudience): Promise<{ logged_out: boole
 
 export function getCompanyDashboard(
   company: string,
+  filters: DashboardFilterValue,
   signal?: AbortSignal,
 ): Promise<AnalyticsDashboard> {
   return analyticsRequest<AnalyticsDashboard>(
-    `/api/v1/${encodeURIComponent(company)}/analytics/dashboard`,
+    `/api/v1/${encodeURIComponent(company)}/analytics/dashboard?${dashboardQueryString(filters, false)}`,
     { signal },
   );
 }
@@ -65,12 +67,34 @@ export function getInternalCompanies(signal?: AbortSignal): Promise<CompanyInven
 
 export function getInternalDashboard(
   company: string,
+  filters: DashboardFilterValue,
   signal?: AbortSignal,
 ): Promise<AnalyticsDashboard> {
   return analyticsRequest<AnalyticsDashboard>(
-    `/api/v1/admin/analytics/${encodeURIComponent(company)}/dashboard`,
+    `/api/v1/admin/analytics/${encodeURIComponent(company)}/dashboard?${dashboardQueryString(filters, true)}`,
     { signal },
   );
+}
+
+function dashboardQueryString(filters: DashboardFilterValue, internal: boolean): string {
+  const params = new URLSearchParams({ period: filters.period });
+
+  if (filters.outcome) params.set("outcome", filters.outcome);
+  if (filters.category) params.set("category", filters.category.slice(0, 191));
+  if (filters.language) params.set("language", filters.language.slice(0, 64));
+  if (filters.cityId) params.set("city_id", filters.cityId);
+  if (filters.adType) params.set("ad_type", filters.adType.slice(0, 64));
+  if (filters.from) params.set("from", dateBoundary(filters.from, "start"));
+  if (filters.to) params.set("to", dateBoundary(filters.to, "end"));
+  if (internal) {
+    if (filters.executionPath) {
+      params.set("execution_path", filters.executionPath.slice(0, 128));
+    }
+    if (filters.provider) params.set("provider", filters.provider.slice(0, 128));
+    if (filters.operation) params.set("operation", filters.operation.slice(0, 128));
+  }
+
+  return params.toString();
 }
 
 function queryString(filters: QueryFilters, cursor: string | null): string {
