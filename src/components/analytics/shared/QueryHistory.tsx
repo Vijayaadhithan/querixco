@@ -25,6 +25,7 @@ const emptyFilters: QueryFiltersValue = {
   category: "",
   executionPath: "",
   language: "",
+  includeFilteredResults: false,
   from: "",
   to: "",
 };

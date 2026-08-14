@@ -130,6 +130,7 @@ function queryString(filters: QueryFilters, cursor: string | null): string {
     params.set("execution_path", filters.executionPath.slice(0, 128));
   }
   if (filters.language) params.set("language", filters.language.slice(0, 64));
+  if (filters.includeFilteredResults) params.set("include_filtered_results", "true");
   if (filters.from) params.set("from", dateBoundary(filters.from, "start"));
   if (filters.to) params.set("to", dateBoundary(filters.to, "end"));
 

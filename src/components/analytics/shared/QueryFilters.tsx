@@ -164,6 +164,23 @@ export function QueryFilters({
         </FilterField>
       </div>
 
+      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-white/8 bg-black/10 px-4 py-3">
+        <input
+          type="checkbox"
+          checked={value.includeFilteredResults}
+          onChange={(event) => update("includeFilteredResults", event.target.checked)}
+          className="mt-0.5 h-4 w-4 rounded border-white/20 bg-slate-950 text-blue-500 focus:ring-blue-300"
+        />
+        <span>
+          <span className="block text-sm font-medium text-slate-200">
+            Include filtered and catalogue browse results
+          </span>
+          <span className="mt-0.5 block text-xs leading-5 text-slate-500">
+            Off by default so query history and zero-result review contain original text searches.
+          </span>
+        </span>
+      </label>
+
       <fieldset className="mt-5 border-t border-white/8 pt-4">
         <legend className="sr-only">Date range</legend>
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">

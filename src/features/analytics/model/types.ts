@@ -313,6 +313,7 @@ export type QueryFilters = {
   category: string;
   executionPath: string;
   language: string;
+  includeFilteredResults: boolean;
   from: string;
   to: string;
 };

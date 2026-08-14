@@ -62,6 +62,7 @@ describe("analytics API contract", () => {
         category: "Vehicles",
         executionPath: "semantic",
         language: "en",
+        includeFilteredResults: true,
         from: "2026-08-01",
         to: "2026-08-09",
       },
@@ -79,6 +80,7 @@ describe("analytics API contract", () => {
       category: "Vehicles",
       execution_path: "semantic",
       language: "en",
+      include_filtered_results: "true",
       from: new Date("2026-08-01T00:00:00.000").toISOString(),
       to: new Date("2026-08-09T23:59:59.999").toISOString(),
     });
@@ -107,6 +109,7 @@ describe("analytics API contract", () => {
         category: "",
         executionPath: "",
         language: "",
+        includeFilteredResults: false,
         from: "",
         to: "",
       },
