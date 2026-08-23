@@ -5,6 +5,7 @@ import { DashboardActivityOverview } from "./DashboardActivityOverview";
 import { DashboardFilters } from "./DashboardFilters";
 import { DashboardModule } from "./DashboardModule";
 import { SnapshotBadge } from "./SnapshotBadge";
+import { CompanyBusinessOverview } from "@/components/analytics/company/CompanyBusinessOverview";
 import { formatCompanyName, humanizeKey } from "@/features/analytics/lib/format";
 import type {
   AnalyticsDashboard,
@@ -45,14 +46,9 @@ export function DashboardView({
   const analyticsModules = dashboard.metadata.modules.filter(
     (module) => module !== "individual_queries" && Boolean(modulePayload(dashboard, module)),
   );
-  const [selectedModule, setSelectedModule] = useState<AnalyticsModule | null>(
-    analyticsModules[0] ?? null,
-  );
-  const activeModule =
-    selectedModule && analyticsModules.includes(selectedModule)
-      ? selectedModule
-      : (analyticsModules[0] ?? null);
-  const activePayload = activeModule ? modulePayload(dashboard, activeModule) : undefined;
+  const reportGroups = groupedReports(dashboard, analyticsModules);
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(reportGroups[0]?.id ?? null);
+  const activeGroup = reportGroups.find((group) => group.id === selectedGroup) ?? reportGroups[0];
   const queryHref =
     audience === "internal"
       ? `/internal/analytics/${company}/queries`
@@ -61,6 +57,10 @@ export function DashboardView({
   return (
     <main className="mx-auto max-w-[1480px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <DashboardHeader dashboard={dashboard} company={company} audience={audience} />
+
+      {audience === "company" && dashboard.business_overview && (
+        <CompanyBusinessOverview overview={dashboard.business_overview} />
+      )}
 
       <DashboardFilters
         audience={audience}
@@ -90,8 +90,8 @@ export function DashboardView({
               {audience === "internal" ? "Operational reports" : "Marketplace reports"}
             </h2>
             <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-500">
-              Select one report for a focused view. These questions use the latest completed daily
-              snapshot and are not affected by the activity filters above.
+              Choose a business area for a focused, question-led view. Snapshot questions are not
+              affected by the search-activity filters above.
             </p>
           </div>
           <a
@@ -104,30 +104,31 @@ export function DashboardView({
           </a>
         </div>
 
-        {activeModule && activePayload ? (
+        {activeGroup ? (
           <>
             <div className="mt-5 flex gap-2 overflow-x-auto pb-2" aria-label="Analytics reports">
-              {analyticsModules.map((module) => (
+              {reportGroups.map((group) => (
                 <button
-                  key={module}
+                  key={group.id}
                   type="button"
-                  onClick={() => setSelectedModule(module)}
-                  aria-pressed={module === activeModule}
+                  onClick={() => setSelectedGroup(group.id)}
+                  aria-pressed={group.id === activeGroup.id}
                   className={`min-h-10 shrink-0 rounded-xl border px-4 text-sm font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 ${
-                    module === activeModule
+                    group.id === activeGroup.id
                       ? "border-blue-400/30 bg-blue-400/12 text-blue-100"
                       : "border-white/8 bg-white/[0.025] text-slate-400 hover:bg-white/6 hover:text-white"
                   }`}
                 >
-                  {humanizeKey(module)}
+                  {group.label}
                 </button>
               ))}
             </div>
             <div className="mt-3">
               <DashboardModule
-                title={humanizeKey(activeModule)}
-                metrics={activePayload}
-                eyebrow="Daily snapshot questions"
+                title={activeGroup.label}
+                metrics={activeGroup.metrics}
+                eyebrow={audience === "company" ? "Business questions" : "Operational questions"}
+                definitions={dashboard.metadata.metric_definitions}
               />
             </div>
           </>
@@ -139,6 +140,27 @@ export function DashboardView({
       </section>
     </main>
   );
+}
+
+function groupedReports(
+  dashboard: AnalyticsDashboard,
+  modules: AnalyticsModule[],
+): Array<{ id: string; label: string; metrics: MetricModulePayload }> {
+  const definitions = dashboard.metadata.metric_definitions ?? {};
+  const groups = new Map<string, { id: string; label: string; metrics: MetricModulePayload }>();
+  for (const module of modules) {
+    const payload = modulePayload(dashboard, module);
+    if (!payload) continue;
+    for (const [metricId, metric] of Object.entries(payload)) {
+      const definition = definitions[metricId];
+      const id = definition?.group || module;
+      const label = definition?.group_label || humanizeKey(module);
+      const group = groups.get(id) ?? { id, label, metrics: {} };
+      group.metrics[metricId] = metric;
+      groups.set(id, group);
+    }
+  }
+  return Array.from(groups.values());
 }
 
 function DashboardHeader({

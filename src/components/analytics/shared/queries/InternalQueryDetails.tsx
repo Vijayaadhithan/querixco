@@ -17,6 +17,17 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
       attempts.slice(0, index).some((earlier) => isFailure(earlier.status)),
   );
   const api = isRecord(item.api) ? item.api : null;
+  const diagnostics = isRecord(item.diagnostics) ? item.diagnostics : null;
+  const appliedFilters = isRecord(item.filters) ? item.filters : {};
+  const explicitFilters = isRecord(diagnostics?.explicit_filters)
+    ? diagnostics.explicit_filters
+    : {};
+  const inferredFilters = isRecord(diagnostics?.inferred_filters)
+    ? diagnostics.inferred_filters
+    : {};
+  const candidateFunnel = isRecord(diagnostics?.candidate_funnel)
+    ? diagnostics.candidate_funnel
+    : {};
 
   return (
     <details className="group mt-3">
@@ -25,6 +36,62 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
         <ChevronDown className="h-3.5 w-3.5 transition group-open:rotate-180" aria-hidden="true" />
       </summary>
       <div className="mt-3 space-y-5 rounded-xl border border-violet-400/12 bg-violet-400/[0.045] p-4">
+        <section
+          aria-labelledby={`diagnosis-${item.request_id}`}
+          className="rounded-xl border border-white/8 bg-black/10 p-4"
+        >
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+            Observed result diagnosis
+          </p>
+          <h3
+            id={`diagnosis-${item.request_id}`}
+            className="mt-1 text-base font-semibold text-white"
+          >
+            {formatLabel(diagnostics?.code)}
+          </h3>
+          <p className="mt-1 text-sm leading-6 text-slate-300">
+            {formatRawText(diagnostics?.explanation)}
+          </p>
+          {diagnostics?.evidence_complete !== true && (
+            <p className="mt-2 text-xs text-amber-200">
+              Candidate-stage evidence was not recorded for this historical request; the diagnosis
+              is limited to the observed outcome and filters.
+            </p>
+          )}
+        </section>
+
+        <section aria-labelledby={`filters-${item.request_id}`}>
+          <h3 id={`filters-${item.request_id}`} className="text-sm font-semibold text-slate-100">
+            Search and filter context
+          </h3>
+          <div className="mt-3 grid gap-3 lg:grid-cols-3">
+            <FilterContext title="Applied filters" values={appliedFilters} />
+            <FilterContext title="Explicit client filters" values={explicitFilters} />
+            <FilterContext title="Planner-inferred filters" values={inferredFilters} />
+          </div>
+          {Array.isArray(diagnostics?.ignored_filter_names) &&
+            diagnostics.ignored_filter_names.length > 0 && (
+              <p className="mt-3 text-xs text-slate-400">
+                Overridden or ignored planner filters: {diagnostics.ignored_filter_names.join(", ")}
+              </p>
+            )}
+        </section>
+
+        <section aria-labelledby={`funnel-${item.request_id}`}>
+          <h3 id={`funnel-${item.request_id}`} className="text-sm font-semibold text-slate-100">
+            Candidate funnel
+          </h3>
+          {Object.keys(candidateFunnel).length > 0 ? (
+            <dl className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {Object.entries(candidateFunnel).map(([name, value]) => (
+                <Metric key={name} label={humanizeKey(name)} value={formatCount(value)} />
+              ))}
+            </dl>
+          ) : (
+            <p className="mt-2 text-xs text-slate-500">Candidate-stage counts are unavailable.</p>
+          )}
+        </section>
+
         <section aria-labelledby={`performance-${item.request_id}`}>
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
@@ -198,6 +265,37 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
       </div>
     </details>
   );
+}
+
+function FilterContext({ title, values }: { title: string; values: Record<string, unknown> }) {
+  const entries = Object.entries(values).filter(([, value]) => value !== null && value !== "");
+  return (
+    <article className="rounded-lg border border-white/6 bg-black/10 p-3">
+      <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500">{title}</h4>
+      {entries.length > 0 ? (
+        <dl className="mt-2 space-y-2">
+          {entries.map(([name, value]) => (
+            <div key={name} className="flex items-start justify-between gap-3 text-xs">
+              <dt className="text-slate-500">{humanizeKey(name)}</dt>
+              <dd className="max-w-[65%] break-words text-right font-medium text-slate-200">
+                {formatFilterValue(value)}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      ) : (
+        <p className="mt-2 text-xs text-slate-500">None recorded</p>
+      )}
+    </article>
+  );
+}
+
+function formatFilterValue(value: unknown): string {
+  if (Array.isArray(value)) return value.map(String).join(", ");
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+  return "Unavailable";
 }
 
 function Metric({ label, value }: { label: string; value: string }) {

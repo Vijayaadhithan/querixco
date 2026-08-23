@@ -59,7 +59,9 @@ export type AnalyticsDashboard = {
     modules: AnalyticsModule[];
     metric_counts: Record<string, number>;
     individual_query_count: number;
+    metric_definitions?: Record<string, MetricDefinition>;
   };
+  business_overview?: CompanyBusinessOverview;
   search_intelligence?: MetricModulePayload;
   deep_analytics?: MetricModulePayload;
   market_intelligence?: MetricModulePayload;
@@ -67,6 +69,32 @@ export type AnalyticsDashboard = {
   filtering: DashboardFiltering;
   filtered_overview: CompanyDashboardOverview | InternalDashboardOverview;
   snapshot: SnapshotSummary;
+};
+
+export type MetricDefinition = {
+  question: string;
+  description: string;
+  group: string;
+  group_label: string;
+  scope: "company_snapshot" | "internal_telemetry" | string;
+  sources: string[];
+  available: boolean;
+  unavailable_reason: string | null;
+};
+
+export type CompanyBusinessOverview = {
+  scope: string;
+  total_users: number;
+  active_users: number;
+  total_listings: number;
+  active_listings: number;
+  active_sellers: number;
+  cities_with_active_supply: number;
+  recorded_demand: number;
+  fulfilled_demand: number;
+  zero_result_demand: number;
+  failed_requests: number;
+  fulfillment_rate: number;
 };
 
 export type DashboardPeriod = "24h" | "7d" | "30d" | "90d" | "all" | "custom";
@@ -171,6 +199,7 @@ export type InternalDashboardOverview = {
     requests: number;
     successful: number;
     failed: number;
+    zero_results: number;
     success_rate: number;
     average_latency_ms: number;
     p50_latency_ms: number;
@@ -210,6 +239,7 @@ type QueryRecordBase = {
   request_id: string;
   query: string;
   normalized_query: string;
+  request_kind: "text_search" | "filtered_browse" | "catalogue_browse";
   created_at: string;
   word_count: number;
   categories: string[];
@@ -295,6 +325,28 @@ export type InternalQueryRecord = QueryRecordBase & {
   token_usage: InternalTokenUsage | null;
   api: InternalApiTelemetry | null;
   attempts: InternalQueryAttempt[];
+  diagnostics?: InternalQueryDiagnostics;
+};
+
+type InternalQueryDiagnostics = {
+  code: string;
+  explanation: string;
+  route_reason: string | null;
+  explicit_filters: Record<string, unknown>;
+  inferred_filters: Record<string, unknown>;
+  ignored_filter_names: string[];
+  candidate_funnel: Record<string, number>;
+  evidence_complete: boolean;
+};
+
+type QueryFacetOption = { id: number; label: string };
+
+export type QueryFacets = {
+  request_kinds: string[];
+  cities: QueryFacetOption[];
+  subcategories: QueryFacetOption[];
+  ad_types: string[];
+  diagnostic_codes: string[];
 };
 
 export type QueryPage<T> = {
@@ -303,6 +355,7 @@ export type QueryPage<T> = {
   returned: number;
   has_more: boolean;
   next_cursor: string | null;
+  facets?: QueryFacets;
 };
 
 export type QueryOutcome = CompanyQueryRecord["outcome"];
@@ -314,6 +367,12 @@ export type QueryFilters = {
   executionPath: string;
   language: string;
   includeFilteredResults: boolean;
+  requestKind: string;
+  cityId: string;
+  subcategoryId: string;
+  adType: string;
+  diagnosticCode: string;
+  hasFilters: boolean;
   from: string;
   to: string;
 };

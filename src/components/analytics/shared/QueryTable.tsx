@@ -41,6 +41,7 @@ export function QueryTable({ items, internal }: { items: QueryRecord[]; internal
                 <OutcomeBadge outcome={item.outcome} />
               </div>
               <p className="mt-2 text-xs text-slate-500">{formatDateTime(item.created_at)}</p>
+              <FilterChips filters={item.filters} requestKind={item.request_kind} />
               {internalItem ? (
                 <>
                   <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
@@ -113,6 +114,7 @@ function QueryTableRow({ item, internal }: { item: QueryRecord; internal: boolea
           {normalizedQuery && normalizedQuery !== query && (
             <p className="mt-1 break-words text-xs text-slate-500">{normalizedQuery}</p>
           )}
+          <FilterChips filters={item.filters} requestKind={item.request_kind} />
         </td>
         <td className="whitespace-nowrap px-4 py-4 text-slate-400">
           {formatDateTime(item.created_at)}
@@ -205,6 +207,7 @@ function InternalQueryTableRow({ item }: { item: InternalQueryRecord }) {
           {normalizedQuery && normalizedQuery !== query && (
             <p className="mt-1 break-words text-xs text-slate-500">{normalizedQuery}</p>
           )}
+          <FilterChips filters={item.filters} requestKind={item.request_kind} />
         </td>
         <td className="whitespace-nowrap px-4 py-4 text-slate-400">
           {formatDateTime(item.created_at)}
@@ -246,6 +249,38 @@ function MobileMetric({ label, value }: { label: string; value: string }) {
     <div>
       <dt className="text-slate-500">{label}</dt>
       <dd className="mt-0.5 text-slate-200">{value}</dd>
+    </div>
+  );
+}
+
+function FilterChips({
+  filters,
+  requestKind,
+}: {
+  filters: QueryRecord["filters"];
+  requestKind: QueryRecord["request_kind"];
+}) {
+  const values = isRecord(filters) ? filters : {};
+  const chips = [
+    requestKind !== "text_search" ? humanizeKey(requestKind) : null,
+    values.city,
+    values.locality,
+    values.subcategory ?? values.main_category,
+    values.target_ad_type ? humanizeKey(String(values.target_ad_type)) : null,
+  ].filter(
+    (value): value is string | number => typeof value === "string" || typeof value === "number",
+  );
+  if (chips.length === 0) return null;
+  return (
+    <div className="mt-2 flex flex-wrap gap-1.5">
+      {chips.map((value, index) => (
+        <span
+          key={`${String(value)}-${index}`}
+          className="rounded-full border border-blue-400/15 bg-blue-400/8 px-2 py-0.5 text-[11px] text-blue-200"
+        >
+          {String(value)}
+        </span>
+      ))}
     </div>
   );
 }

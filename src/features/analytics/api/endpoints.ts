@@ -131,6 +131,14 @@ function queryString(filters: QueryFilters, cursor: string | null): string {
   }
   if (filters.language) params.set("language", filters.language.slice(0, 64));
   if (filters.includeFilteredResults) params.set("include_filtered_results", "true");
+  if (filters.requestKind) params.set("request_kind", filters.requestKind.slice(0, 64));
+  if (filters.cityId) params.set("city_id", filters.cityId);
+  if (filters.subcategoryId) params.set("subcategory_id", filters.subcategoryId);
+  if (filters.adType) params.set("ad_type", filters.adType.slice(0, 64));
+  if (filters.diagnosticCode) {
+    params.set("diagnostic_code", filters.diagnosticCode.slice(0, 128));
+  }
+  if (filters.hasFilters) params.set("has_filters", "true");
   if (filters.from) params.set("from", dateBoundary(filters.from, "start"));
   if (filters.to) params.set("to", dateBoundary(filters.to, "end"));
 

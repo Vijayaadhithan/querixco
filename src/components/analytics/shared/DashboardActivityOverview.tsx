@@ -1,4 +1,4 @@
-import { Activity, CheckCircle2, ChevronDown, Clock3, SearchX, Zap } from "lucide-react";
+import { Activity, CheckCircle2, ChevronDown, CircleX, Clock3, SearchX, Zap } from "lucide-react";
 
 import { DashboardModule } from "./DashboardModule";
 import { formatMetricValue, humanizeKey } from "@/features/analytics/lib/format";
@@ -89,7 +89,7 @@ export function DashboardActivityOverview({
 function CompanySummary({ overview }: { overview: CompanyDashboardOverview }) {
   const summary = overview.summary;
   return (
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
       <SummaryCard label="Searches" value={summary.searches} icon={Activity} />
       <SummaryCard label="Fulfilled" value={summary.fulfilled} icon={CheckCircle2} />
       <SummaryCard
@@ -131,6 +131,8 @@ function InternalSummary({ overview }: { overview: InternalDashboardOverview }) 
         valueKey="latency_ms"
         icon={Clock3}
       />
+      <SummaryCard label="Zero results" value={summary.zero_results} icon={SearchX} />
+      <SummaryCard label="Failed requests" value={summary.failed} icon={CircleX} />
       <SummaryCard label="API calls" value={summary.downstream_api_calls} icon={Zap} />
     </div>
   );

@@ -1,17 +1,19 @@
 import { MetricCardContent } from "./metrics/MetricRenderers";
 import { humanizeKey } from "@/features/analytics/lib/format";
-import type { MetricModulePayload } from "@/features/analytics/model/types";
+import type { MetricDefinition, MetricModulePayload } from "@/features/analytics/model/types";
 
 type DashboardModuleProps = {
   title: string;
   metrics: MetricModulePayload;
   eyebrow?: string;
+  definitions?: Record<string, MetricDefinition>;
 };
 
 export function DashboardModule({
   title,
   metrics,
   eyebrow = "Analytics module",
+  definitions = {},
 }: DashboardModuleProps) {
   const entries = Object.entries(metrics);
   const headingId = `module-${title.replaceAll(" ", "-").toLowerCase()}`;
@@ -36,6 +38,7 @@ export function DashboardModule({
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {entries.map(([metricId, metric]) => {
             const metricTitle = metric.title || humanizeKey(metricId);
+            const definition = definitions[metricId];
             return (
               <article
                 key={metricId}
@@ -43,8 +46,25 @@ export function DashboardModule({
                   metric.chart_type === "comparison_table" ? "md:col-span-2 xl:col-span-3" : ""
                 }`}
               >
-                <h3 className="text-base font-semibold text-slate-100">{metricTitle}</h3>
-                <MetricCardContent metric={metric} title={metricTitle} />
+                <h3 className="text-base font-semibold text-slate-100">
+                  {definition?.question || metricTitle}
+                </h3>
+                {definition?.description && (
+                  <p className="mt-1 text-xs leading-5 text-slate-500">{definition.description}</p>
+                )}
+                {definition?.available === false ? (
+                  <p className="mt-4 rounded-xl border border-dashed border-amber-400/20 p-4 text-sm text-amber-100">
+                    {definition.unavailable_reason || "Required source data is unavailable."}
+                  </p>
+                ) : (
+                  <MetricCardContent metric={metric} title={metricTitle} />
+                )}
+                {definition && (
+                  <p className="mt-4 border-t border-white/6 pt-3 text-[11px] text-slate-600">
+                    Sources: {definition.sources.join(", ").replaceAll("_", " ")} · Latest completed
+                    snapshot
+                  </p>
+                )}
               </article>
             );
           })}

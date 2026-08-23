@@ -40,6 +40,12 @@ export function decodeDashboard(value: unknown): AnalyticsDashboard {
     ),
   );
   finiteNumber(metadata.individual_query_count, "dashboard query count");
+  if (metadata.metric_definitions !== undefined) {
+    record(metadata.metric_definitions, "dashboard metric definitions");
+  }
+  if (metadata.audience === "company" && root.business_overview !== undefined) {
+    record(root.business_overview, "company business overview");
+  }
 
   const snapshot = record(root.snapshot, "dashboard snapshot");
   string(snapshot.generated_at, "snapshot generated time");
@@ -110,6 +116,19 @@ function decodeQueryPage(value: unknown): QueryPage<Record<string, unknown>> {
   boolean(root.has_more, "query pagination state");
   nullableString(root.next_cursor, "next query cursor");
   const items = array(root.items, "query items");
+  if (root.facets !== undefined) {
+    const facets = record(root.facets, "query facets");
+    stringArray(facets.request_kinds, "query request kinds");
+    stringArray(facets.ad_types, "query ad types");
+    stringArray(facets.diagnostic_codes, "query diagnostic codes");
+    for (const key of ["cities", "subcategories"]) {
+      array(facets[key], `query ${key}`).forEach((option, index) => {
+        const facet = record(option, `${key} option ${index + 1}`);
+        finiteNumber(facet.id, `${key} id`);
+        string(facet.label, `${key} label`);
+      });
+    }
+  }
   items.forEach((item, index) => {
     const query = record(item, `query item ${index + 1}`);
     string(query.request_id, "query request id");

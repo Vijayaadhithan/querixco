@@ -26,6 +26,12 @@ const emptyFilters: QueryFiltersValue = {
   executionPath: "",
   language: "",
   includeFilteredResults: false,
+  requestKind: "",
+  cityId: "",
+  subcategoryId: "",
+  adType: "",
+  diagnosticCode: "",
+  hasFilters: false,
   from: "",
   to: "",
 };
@@ -49,6 +55,11 @@ export function QueryHistory({
       category: filters.category.trim(),
       executionPath: filters.executionPath.trim(),
       language: filters.language.trim(),
+      requestKind: filters.requestKind.trim(),
+      cityId: filters.cityId.trim(),
+      subcategoryId: filters.subcategoryId.trim(),
+      adType: filters.adType.trim(),
+      diagnosticCode: filters.diagnosticCode.trim(),
     }),
     [debouncedQuery, filters],
   );
@@ -126,6 +137,7 @@ export function QueryHistory({
       ).sort((left, right) => left.localeCompare(right)),
     [items],
   );
+  const facets = history.data?.pages[0]?.facets;
 
   return (
     <main className="mx-auto max-w-[1480px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
@@ -150,6 +162,7 @@ export function QueryHistory({
         classificationOptions={classificationOptions}
         executionPathOptions={executionPathOptions}
         languageOptions={languageOptions}
+        facets={facets}
         onChange={setFilters}
         onReset={() => setFilters(emptyFilters)}
       />

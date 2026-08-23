@@ -1,10 +1,11 @@
-import { CalendarDays, RotateCcw, Search } from "lucide-react";
+import { CalendarDays, ChevronDown, RotateCcw, Search, SlidersHorizontal } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { humanizeKey } from "@/features/analytics/lib/format";
 import type {
   AnalyticsAudience,
   QueryFilters as QueryFiltersValue,
+  QueryFacets,
   QueryOutcome,
 } from "@/features/analytics/model/types";
 
@@ -25,6 +26,7 @@ export function QueryFilters({
   classificationOptions,
   executionPathOptions,
   languageOptions,
+  facets,
   onChange,
   onReset,
 }: {
@@ -33,6 +35,7 @@ export function QueryFilters({
   classificationOptions: string[];
   executionPathOptions: string[];
   languageOptions: string[];
+  facets?: QueryFacets;
   onChange: (next: QueryFiltersValue) => void;
   onReset: () => void;
 }) {
@@ -69,7 +72,7 @@ export function QueryFilters({
       aria-label="Filter query history"
     >
       <div className="grid gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-4">
           <label htmlFor="query-filter" className="text-xs font-medium text-slate-300">
             Search query text
           </label>
@@ -100,6 +103,22 @@ export function QueryFilters({
             {outcomes.map((outcome) => (
               <option key={outcome.value} value={outcome.value}>
                 {outcome.label}
+              </option>
+            ))}
+          </select>
+        </FilterField>
+
+        <FilterField label="City" htmlFor="city-filter" className="lg:col-span-3">
+          <select
+            id="city-filter"
+            value={value.cityId}
+            onChange={(event) => update("cityId", event.target.value)}
+            className={inputClass}
+          >
+            <option value="">All cities</option>
+            {(facets?.cities ?? []).map((city) => (
+              <option key={city.id} value={city.id}>
+                {city.label}
               </option>
             ))}
           </select>
@@ -146,22 +165,6 @@ export function QueryFilters({
             </select>
           </FilterField>
         )}
-
-        <FilterField label="Language" htmlFor="language-filter" className="lg:col-span-2">
-          <select
-            id="language-filter"
-            value={value.language}
-            onChange={(event) => update("language", event.target.value)}
-            className={inputClass}
-          >
-            <option value="">All languages</option>
-            {availableLanguages.map((language) => (
-              <option key={language} value={language}>
-                {language}
-              </option>
-            ))}
-          </select>
-        </FilterField>
       </div>
 
       <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-white/8 bg-black/10 px-4 py-3">
@@ -180,6 +183,109 @@ export function QueryFilters({
           </span>
         </span>
       </label>
+
+      <details className="group mt-4 rounded-xl border border-white/8 bg-black/10">
+        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-medium text-slate-300 [&::-webkit-details-marker]:hidden">
+          <span className="inline-flex items-center gap-2">
+            <SlidersHorizontal className="h-4 w-4 text-blue-300" aria-hidden="true" />
+            Advanced filters
+          </span>
+          <ChevronDown className="h-4 w-4 transition group-open:rotate-180" aria-hidden="true" />
+        </summary>
+        <div className="grid gap-4 border-t border-white/8 p-4 sm:grid-cols-2 lg:grid-cols-4">
+          <FilterField label="Request type" htmlFor="request-kind-filter">
+            <select
+              id="request-kind-filter"
+              value={value.requestKind}
+              onChange={(event) => update("requestKind", event.target.value)}
+              className={inputClass}
+            >
+              <option value="">All request types</option>
+              {(facets?.request_kinds ?? []).map((kind) => (
+                <option key={kind} value={kind}>
+                  {humanizeKey(kind)}
+                </option>
+              ))}
+            </select>
+          </FilterField>
+
+          <FilterField label="Subcategory" htmlFor="subcategory-filter">
+            <select
+              id="subcategory-filter"
+              value={value.subcategoryId}
+              onChange={(event) => update("subcategoryId", event.target.value)}
+              className={inputClass}
+            >
+              <option value="">All subcategories</option>
+              {(facets?.subcategories ?? []).map((subcategory) => (
+                <option key={subcategory.id} value={subcategory.id}>
+                  {subcategory.label}
+                </option>
+              ))}
+            </select>
+          </FilterField>
+
+          <FilterField label="Ad type" htmlFor="ad-type-filter">
+            <select
+              id="ad-type-filter"
+              value={value.adType}
+              onChange={(event) => update("adType", event.target.value)}
+              className={inputClass}
+            >
+              <option value="">All ad types</option>
+              {(facets?.ad_types ?? []).map((adType) => (
+                <option key={adType} value={adType}>
+                  {humanizeKey(adType)}
+                </option>
+              ))}
+            </select>
+          </FilterField>
+
+          <FilterField label="Language" htmlFor="language-filter">
+            <select
+              id="language-filter"
+              value={value.language}
+              onChange={(event) => update("language", event.target.value)}
+              className={inputClass}
+            >
+              <option value="">All languages</option>
+              {availableLanguages.map((language) => (
+                <option key={language} value={language}>
+                  {language}
+                </option>
+              ))}
+            </select>
+          </FilterField>
+
+          {internal && (
+            <FilterField label="Observed diagnosis" htmlFor="diagnostic-filter">
+              <select
+                id="diagnostic-filter"
+                value={value.diagnosticCode}
+                onChange={(event) => update("diagnosticCode", event.target.value)}
+                className={inputClass}
+              >
+                <option value="">All diagnoses</option>
+                {(facets?.diagnostic_codes ?? []).map((code) => (
+                  <option key={code} value={code}>
+                    {humanizeKey(code)}
+                  </option>
+                ))}
+              </select>
+            </FilterField>
+          )}
+
+          <label className="flex items-center gap-3 rounded-xl border border-white/8 px-3 py-2 text-sm text-slate-300">
+            <input
+              type="checkbox"
+              checked={value.hasFilters}
+              onChange={(event) => update("hasFilters", event.target.checked)}
+              className="h-4 w-4 rounded border-white/20 bg-slate-950 text-blue-500"
+            />
+            Only requests with applied filters
+          </label>
+        </div>
+      </details>
 
       <fieldset className="mt-5 border-t border-white/8 pt-4">
         <legend className="sr-only">Date range</legend>

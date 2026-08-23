@@ -2,6 +2,18 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { getInternalQueries, login } from "./endpoints";
 
+const emptyFacets = {
+  request_kinds: [],
+  outcomes: [],
+  categories: [],
+  cities: [],
+  subcategories: [],
+  ad_types: [],
+  execution_paths: [],
+  languages: [],
+  diagnostic_codes: [],
+};
+
 function jsonResponse(payload: unknown, status = 200): Response {
   return new Response(JSON.stringify(payload), {
     status,
@@ -42,6 +54,7 @@ describe("analytics API contract", () => {
         returned: 1,
         has_more: false,
         next_cursor: null,
+        facets: emptyFacets,
         items: [
           {
             request_id: "req-1",
@@ -60,8 +73,14 @@ describe("analytics API contract", () => {
         query: "bike & car",
         outcome: "fulfilled",
         category: "Vehicles",
+        requestKind: "search",
+        cityId: "12",
+        subcategoryId: "34",
+        adType: "offer",
         executionPath: "semantic",
         language: "en",
+        diagnosticCode: "city_filter_no_candidates",
+        hasFilters: true,
         includeFilteredResults: true,
         from: "2026-08-01",
         to: "2026-08-09",
@@ -78,8 +97,14 @@ describe("analytics API contract", () => {
       query: "bike & car",
       outcome: "fulfilled",
       category: "Vehicles",
+      request_kind: "search",
+      city_id: "12",
+      subcategory_id: "34",
+      ad_type: "offer",
       execution_path: "semantic",
       language: "en",
+      diagnostic_code: "city_filter_no_candidates",
+      has_filters: "true",
       include_filtered_results: "true",
       from: new Date("2026-08-01T00:00:00.000").toISOString(),
       to: new Date("2026-08-09T23:59:59.999").toISOString(),
@@ -96,6 +121,7 @@ describe("analytics API contract", () => {
           returned: 0,
           has_more: false,
           next_cursor: null,
+          facets: emptyFacets,
           items: [],
         }),
       );
@@ -107,8 +133,14 @@ describe("analytics API contract", () => {
         query: "",
         outcome: "",
         category: "",
+        requestKind: "",
+        cityId: "",
+        subcategoryId: "",
+        adType: "",
         executionPath: "",
         language: "",
+        diagnosticCode: "",
+        hasFilters: false,
         includeFilteredResults: false,
         from: "",
         to: "",
