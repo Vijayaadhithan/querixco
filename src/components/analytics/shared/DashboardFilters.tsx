@@ -101,7 +101,8 @@ export function DashboardFilters({
             )}
           </div>
           <p className="mt-1 text-xs leading-5 text-slate-500">
-            Filters update the live activity overview. Daily snapshot questions remain unchanged.
+            Filters update activity and demand insights. Company-wide inventory reports remain a
+            latest-snapshot view.
           </p>
         </div>
         <div className="flex flex-wrap gap-2" aria-label="Dashboard period">

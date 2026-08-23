@@ -66,6 +66,7 @@ export type AnalyticsDashboard = {
   deep_analytics?: MetricModulePayload;
   market_intelligence?: MetricModulePayload;
   api_performance?: MetricModulePayload;
+  filtered_insights?: MetricModulePayload;
   filtering: DashboardFiltering;
   filtered_overview: CompanyDashboardOverview | InternalDashboardOverview;
   snapshot: SnapshotSummary;
@@ -336,6 +337,12 @@ type InternalQueryDiagnostics = {
   inferred_filters: Record<string, unknown>;
   ignored_filter_names: string[];
   candidate_funnel: Record<string, number>;
+  filter_attribution?: {
+    evidence_complete: boolean;
+    diagnosis: string;
+    counterfactual_counts: Record<string, number>;
+    blocking_filters: string[];
+  };
   evidence_complete: boolean;
 };
 

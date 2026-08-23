@@ -73,6 +73,16 @@ export function DashboardView({
 
       <DashboardActivityOverview dashboard={dashboard} audience={audience} />
 
+      {audience === "company" && dashboard.filtered_insights && (
+        <div className="mt-8">
+          <DashboardModule
+            title="Filtered demand insights"
+            metrics={dashboard.filtered_insights}
+            eyebrow="Current filter selection"
+          />
+        </div>
+      )}
+
       <div className="mt-8">
         <SnapshotBadge snapshot={dashboard.snapshot} status={status} />
       </div>
@@ -81,7 +91,7 @@ export function DashboardView({
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-300">
-              Daily snapshot
+              Latest snapshot
             </p>
             <h2
               id={`${audience}-reports-heading`}
@@ -90,8 +100,9 @@ export function DashboardView({
               {audience === "internal" ? "Operational reports" : "Marketplace reports"}
             </h2>
             <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-500">
-              Choose a business area for a focused, question-led view. Snapshot questions are not
-              affected by the search-activity filters above.
+              Choose a business area for a focused, question-led view. These company-wide inventory
+              reports use the latest completed snapshot; the filtered demand section above follows
+              your activity filters.
             </p>
           </div>
           <a
@@ -134,7 +145,7 @@ export function DashboardView({
           </>
         ) : (
           <p className="mt-5 rounded-2xl border border-dashed border-white/10 p-6 text-sm text-slate-500">
-            No daily report is available for this company yet.
+            No completed report is available for this company yet.
           </p>
         )}
       </section>

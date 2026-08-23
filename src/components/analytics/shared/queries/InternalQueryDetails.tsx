@@ -28,6 +28,12 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
   const candidateFunnel = isRecord(diagnostics?.candidate_funnel)
     ? diagnostics.candidate_funnel
     : {};
+  const filterAttribution = isRecord(diagnostics?.filter_attribution)
+    ? diagnostics.filter_attribution
+    : null;
+  const counterfactualCounts = isRecord(filterAttribution?.counterfactual_counts)
+    ? filterAttribution.counterfactual_counts
+    : {};
 
   return (
     <details className="group mt-3">
@@ -54,8 +60,8 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
           </p>
           {diagnostics?.evidence_complete !== true && (
             <p className="mt-2 text-xs text-amber-200">
-              Candidate-stage evidence was not recorded for this historical request; the diagnosis
-              is limited to the observed outcome and filters.
+              Exact per-filter evidence was not recorded for this historical request; the diagnosis
+              is limited to the observed outcome, applied filters, and any candidate-stage counts.
             </p>
           )}
         </section>
@@ -75,6 +81,41 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
                 Overridden or ignored planner filters: {diagnostics.ignored_filter_names.join(", ")}
               </p>
             )}
+        </section>
+
+        <section aria-labelledby={`filter-attribution-${item.request_id}`}>
+          <h3
+            id={`filter-attribution-${item.request_id}`}
+            className="text-sm font-semibold text-slate-100"
+          >
+            Why filters returned no results
+          </h3>
+          {filterAttribution?.evidence_complete === true ? (
+            <>
+              {Array.isArray(filterAttribution.blocking_filters) &&
+              filterAttribution.blocking_filters.length > 0 ? (
+                <p className="mt-2 text-xs text-slate-300">
+                  Removing these filter groups recovered candidates:{" "}
+                  {filterAttribution.blocking_filters.map(humanizeKey).join(", ")}.
+                </p>
+              ) : (
+                <p className="mt-2 text-xs text-slate-400">
+                  Removing any one captured filter group did not recover candidates.
+                </p>
+              )}
+              {Object.keys(counterfactualCounts).length > 0 && (
+                <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  {Object.entries(counterfactualCounts).map(([name, value]) => (
+                    <Metric key={name} label={humanizeKey(name)} value={formatCount(value)} />
+                  ))}
+                </dl>
+              )}
+            </>
+          ) : (
+            <p className="mt-2 text-xs text-slate-500">
+              Per-filter counterfactual counts are unavailable for this request.
+            </p>
+          )}
         </section>
 
         <section aria-labelledby={`funnel-${item.request_id}`}>
