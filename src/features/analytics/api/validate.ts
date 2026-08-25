@@ -53,9 +53,18 @@ export function decodeDashboard(value: unknown): AnalyticsDashboard {
   string(snapshot.refresh_schedule, "snapshot refresh schedule");
 
   const filtering = record(root.filtering, "dashboard filtering");
-  record(filtering.applied, "applied dashboard filters");
+  const applied = record(filtering.applied, "applied dashboard filters");
+  oneOf(applied.request_scope, ["all", "text_search", "browse"], "dashboard request scope");
   const available = record(filtering.available, "available dashboard filters");
-  for (const key of ["periods", "outcomes", "categories", "languages", "cities", "ad_types"]) {
+  for (const key of [
+    "periods",
+    "request_scopes",
+    "outcomes",
+    "categories",
+    "languages",
+    "cities",
+    "ad_types",
+  ]) {
     stringArray(available[key], `available ${key}`);
   }
   const cityOptions = array(available.city_options, "available cities");
@@ -115,6 +124,15 @@ function decodeQueryPage(value: unknown): QueryPage<Record<string, unknown>> {
   finiteNumber(root.returned, "returned query count");
   boolean(root.has_more, "query pagination state");
   nullableString(root.next_cursor, "next query cursor");
+  if (root.sorting !== undefined) {
+    const sorting = record(root.sorting, "query sorting");
+    oneOf(
+      sorting.sort_by,
+      ["created_at", "results", "outcome", "execution_path", "duration", "tokens"],
+      "query sort field",
+    );
+    oneOf(sorting.sort_direction, ["asc", "desc"], "query sort direction");
+  }
   const items = array(root.items, "query items");
   if (root.facets !== undefined) {
     const facets = record(root.facets, "query facets");

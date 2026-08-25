@@ -20,6 +20,8 @@ import type {
 } from "@/features/analytics/model/types";
 
 const emptyFilters: QueryFiltersValue = {
+  sortBy: "created_at",
+  sortDirection: "desc",
   query: "",
   outcome: "",
   category: "",

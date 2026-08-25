@@ -99,7 +99,10 @@ export function getInternalDashboard(
 }
 
 function dashboardQueryString(filters: DashboardFilterValue, internal: boolean): string {
-  const params = new URLSearchParams({ period: filters.period });
+  const params = new URLSearchParams({
+    period: filters.period,
+    request_scope: filters.requestScope,
+  });
 
   if (filters.outcome) params.set("outcome", filters.outcome);
   if (filters.category) params.set("category", filters.category.slice(0, 191));
@@ -120,7 +123,11 @@ function dashboardQueryString(filters: DashboardFilterValue, internal: boolean):
 }
 
 function queryString(filters: QueryFilters, cursor: string | null): string {
-  const params = new URLSearchParams({ limit: "50" });
+  const params = new URLSearchParams({
+    limit: "50",
+    sort_by: filters.sortBy,
+    sort_direction: filters.sortDirection,
+  });
 
   if (cursor) params.set("cursor", cursor);
   if (filters.query) params.set("query", filters.query.slice(0, 1000));

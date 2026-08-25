@@ -22,6 +22,7 @@ export type AnalyticsModule =
 
 type MetricChartType =
   | "bar"
+  | "classification_coverage"
   | "comparison_table"
   | "doughnut"
   | "grouped_bar"
@@ -99,9 +100,11 @@ export type CompanyBusinessOverview = {
 };
 
 export type DashboardPeriod = "24h" | "7d" | "30d" | "90d" | "all" | "custom";
+export type DashboardRequestScope = "all" | "text_search" | "browse";
 
 export type DashboardFilterValue = {
   period: DashboardPeriod;
+  requestScope: DashboardRequestScope;
   outcome: QueryOutcome | "";
   category: string;
   language: string;
@@ -116,6 +119,7 @@ export type DashboardFilterValue = {
 
 type DashboardAppliedFilters = {
   period: DashboardPeriod;
+  request_scope: DashboardRequestScope;
   from: string | null;
   to: string | null;
   timezone: string;
@@ -134,6 +138,7 @@ type DashboardCityOption = { id: number; label: string };
 
 export type DashboardAvailableFilters = {
   periods: DashboardPeriod[];
+  request_scopes: DashboardRequestScope[];
   outcomes: string[];
   categories: string[];
   languages: string[];
@@ -362,12 +367,21 @@ export type QueryPage<T> = {
   returned: number;
   has_more: boolean;
   next_cursor: string | null;
+  sorting?: {
+    sort_by: QuerySortBy;
+    sort_direction: QuerySortDirection;
+  };
   facets?: QueryFacets;
 };
 
 export type QueryOutcome = CompanyQueryRecord["outcome"];
+export type QuerySortBy =
+  "created_at" | "results" | "outcome" | "execution_path" | "duration" | "tokens";
+export type QuerySortDirection = "asc" | "desc";
 
 export type QueryFilters = {
+  sortBy: QuerySortBy;
+  sortDirection: QuerySortDirection;
   query: string;
   outcome: QueryOutcome | "";
   category: string;

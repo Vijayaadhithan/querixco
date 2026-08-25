@@ -3,6 +3,7 @@ import type { DashboardFilterValue } from "../model/types";
 export function createDashboardFilters(): DashboardFilterValue {
   return {
     period: "30d",
+    requestScope: "all",
     outcome: "",
     category: "",
     language: "",

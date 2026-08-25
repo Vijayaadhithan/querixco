@@ -99,6 +99,9 @@ function BarMetric({ metric, title }: { metric: MetricPayload; title: string }) 
           ))}
         </tbody>
       </table>
+      {typeof metric.note === "string" && metric.note && (
+        <p className="text-xs leading-5 text-slate-500">{metric.note}</p>
+      )}
     </div>
   );
 }
@@ -175,6 +178,122 @@ function ComparisonTableMetric({ metric, title }: { metric: MetricPayload; title
   );
 }
 
+function TableMetric({ metric, title }: { metric: MetricPayload; title: string }) {
+  if (!Array.isArray(metric.data)) return <GenericMetric metric={metric} title={title} />;
+  const rows = metric.data.filter(isObject);
+  if (!rows.length) return <MetricEmpty />;
+  const columns = Array.from(
+    new Set(rows.flatMap((row) => Object.keys(row).filter((key) => isPrimitive(row[key])))),
+  );
+
+  return (
+    <>
+      <div className="mt-5 overflow-x-auto">
+        <table className="w-full min-w-[560px] text-left text-sm">
+          <caption className="sr-only">{title}</caption>
+          <thead>
+            <tr className="border-b border-white/8 text-xs uppercase tracking-wide text-slate-500">
+              {columns.map((column) => (
+                <th key={column} scope="col" className="pb-3 pr-5 font-medium">
+                  {humanizeKey(column)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.slice(0, 20).map((row, index) => (
+              <tr key={index} className="border-b border-white/5 last:border-0">
+                {columns.map((column) => (
+                  <td key={column} className="py-3 pr-5 text-slate-200">
+                    {tableCellValue(row[column], column)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {typeof metric.note === "string" && metric.note && (
+        <p className="mt-3 text-xs leading-5 text-slate-500">{metric.note}</p>
+      )}
+    </>
+  );
+}
+
+function ClassificationCoverageMetric({ metric, title }: { metric: MetricPayload; title: string }) {
+  const coverage = finiteNumber(metric.coverage_rate) ?? 0;
+  const percent = Math.max(0, Math.min(100, coverage <= 1 ? coverage * 100 : coverage));
+  const rows = Array.isArray(metric.top_unclassified)
+    ? metric.top_unclassified.filter(isObject)
+    : [];
+
+  return (
+    <>
+      <div className="mt-5">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <p className="text-3xl font-semibold tracking-tight text-white">
+              {formatMetricValue(coverage, "coverage_rate")}
+            </p>
+            <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">
+              Searches matched to a category
+            </p>
+          </div>
+          <dl className="text-right text-xs text-slate-400">
+            <div>
+              <dt className="inline">Matched: </dt>
+              <dd className="inline font-medium text-slate-100">
+                {formatMetricValue(metric.classified)}
+              </dd>
+            </div>
+            <div>
+              <dt className="inline">Not matched: </dt>
+              <dd className="inline font-medium text-slate-100">
+                {formatMetricValue(metric.unclassified)}
+              </dd>
+            </div>
+          </dl>
+        </div>
+        <div
+          className="mt-4 h-3 overflow-hidden rounded-full bg-white/6"
+          role="progressbar"
+          aria-label={title}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(percent)}
+        >
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-blue-400 to-violet-400"
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+      </div>
+      {rows.length > 0 && (
+        <div className="mt-5 border-t border-white/8 pt-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Common unmatched searches
+          </p>
+          <ol className="mt-3 space-y-2">
+            {rows.slice(0, 8).map((row, index) => (
+              <li key={index} className="flex items-start justify-between gap-4 text-sm">
+                <span className="min-w-0 break-words text-slate-300">
+                  {formatMetricValue(row.query)}
+                </span>
+                <span className="shrink-0 font-medium text-white">
+                  {formatMetricValue(row.searches)}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+      {typeof metric.note === "string" && metric.note && (
+        <p className="mt-3 text-xs leading-5 text-slate-500">{metric.note}</p>
+      )}
+    </>
+  );
+}
+
 function GenericMetric({ metric, title }: { metric: MetricPayload; title: string }) {
   const entries = Object.entries(metric).filter(([key]) => !["title", "chart_type"].includes(key));
   if (!entries.length) return <MetricEmpty />;
@@ -229,6 +348,17 @@ function compactObject(value: unknown): string {
     .join(", ");
 }
 
+function tableCellValue(value: unknown, key: string): string {
+  if (typeof value === "string" && ["ad_type", "outcome", "request_kind"].includes(key)) {
+    return humanizeKey(value);
+  }
+  return formatMetricValue(value, key);
+}
+
+function finiteNumber(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -250,8 +380,9 @@ const metricRenderers: Record<string, MetricRenderer> = {
   doughnut: BarMetric,
   line: BarMetric,
   list: ListMetric,
-  table: GenericMetric,
-  tables: GenericMetric,
+  table: TableMetric,
+  tables: TableMetric,
+  classification_coverage: ClassificationCoverageMetric,
   comparison_table: ComparisonTableMetric,
 };
 

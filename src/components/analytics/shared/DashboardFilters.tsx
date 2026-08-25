@@ -13,6 +13,7 @@ import type {
   DashboardAvailableFilters,
   DashboardFilterValue,
   DashboardPeriod,
+  DashboardRequestScope,
   QueryOutcome,
 } from "@/features/analytics/model/types";
 
@@ -23,6 +24,35 @@ const periodOptions: Array<{ value: Exclude<DashboardPeriod, "custom">; label: s
   { value: "90d", label: "90 days" },
   { value: "all", label: "All time" },
 ];
+
+const requestScopeOptions: Array<{
+  value: DashboardRequestScope;
+  label: string;
+  description: string;
+}> = [
+  {
+    value: "all",
+    label: "All activity",
+    description: "Text searches and catalogue/filter browsing",
+  },
+  {
+    value: "text_search",
+    label: "Text searches",
+    description: "Queries typed into the search box",
+  },
+  {
+    value: "browse",
+    label: "Browse activity",
+    description: "Catalogue and filter-only requests",
+  },
+];
+
+const outcomeLabels: Record<string, string> = {
+  fulfilled: "Results found",
+  zero_result: "No results",
+  failure: "System error",
+  telemetry_missing: "Telemetry unavailable",
+};
 
 export function DashboardFilters({
   audience,
@@ -124,6 +154,30 @@ export function DashboardFilters({
         </div>
       </div>
 
+      <fieldset className="mt-5">
+        <legend className="text-xs font-medium text-slate-300">Search scope</legend>
+        <div className="mt-2 grid gap-2 md:grid-cols-3">
+          {requestScopeOptions.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => update("requestScope", option.value)}
+              aria-pressed={value.requestScope === option.value}
+              className={`rounded-xl border px-3 py-2.5 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 ${
+                value.requestScope === option.value
+                  ? "border-blue-400/35 bg-blue-400/12"
+                  : "border-white/8 bg-black/10 hover:bg-white/5"
+              }`}
+            >
+              <span className="block text-sm font-medium text-slate-100">{option.label}</span>
+              <span className="mt-0.5 block text-xs leading-5 text-slate-500">
+                {option.description}
+              </span>
+            </button>
+          ))}
+        </div>
+      </fieldset>
+
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <FilterField label="Outcome" htmlFor={`${audience}-dashboard-outcome`}>
           <select
@@ -135,7 +189,7 @@ export function DashboardFilters({
             <option value="">All outcomes</option>
             {outcomes.map((option) => (
               <option key={option} value={option}>
-                {humanizeKey(option)}
+                {outcomeLabels[option] ?? humanizeKey(option)}
               </option>
             ))}
           </select>

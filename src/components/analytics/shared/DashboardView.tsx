@@ -76,9 +76,9 @@ export function DashboardView({
       {audience === "company" && dashboard.filtered_insights && (
         <div className="mt-8">
           <DashboardModule
-            title="Filtered demand insights"
+            title="Demand for current selection"
             metrics={dashboard.filtered_insights}
-            eyebrow="Current filter selection"
+            eyebrow="Matches activity filters"
           />
         </div>
       )}

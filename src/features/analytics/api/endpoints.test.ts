@@ -70,6 +70,8 @@ describe("analytics API contract", () => {
     await getInternalQueries(
       "gainr/company",
       {
+        sortBy: "results",
+        sortDirection: "desc",
         query: "bike & car",
         outcome: "fulfilled",
         category: "Vehicles",
@@ -93,6 +95,8 @@ describe("analytics API contract", () => {
     expect(url.pathname).toBe("/api/v1/admin/analytics/gainr%2Fcompany/queries");
     expect(Object.fromEntries(url.searchParams)).toMatchObject({
       limit: "50",
+      sort_by: "results",
+      sort_direction: "desc",
       cursor: "next token",
       query: "bike & car",
       outcome: "fulfilled",
@@ -130,6 +134,8 @@ describe("analytics API contract", () => {
     const result = await getInternalQueries(
       "gainr",
       {
+        sortBy: "created_at",
+        sortDirection: "desc",
         query: "",
         outcome: "",
         category: "",

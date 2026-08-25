@@ -262,7 +262,7 @@ function FilterChips({
 }) {
   const values = isRecord(filters) ? filters : {};
   const chips = [
-    requestKind !== "text_search" ? humanizeKey(requestKind) : null,
+    requestKind !== "text_search" ? `Request type: ${humanizeKey(requestKind)}` : null,
     values.city,
     values.locality,
     values.subcategory ?? values.main_category,
@@ -314,6 +314,13 @@ function classification(item: QueryRecord): string[] {
 
 function OutcomeBadge({ outcome }: { outcome: unknown }) {
   const normalizedOutcome = typeof outcome === "string" ? outcome : "unknown";
+  const label =
+    {
+      fulfilled: "Results found",
+      zero_result: "No results",
+      failure: "System error",
+      telemetry_missing: "Telemetry unavailable",
+    }[normalizedOutcome] ?? humanizeKey(normalizedOutcome);
   const className =
     {
       fulfilled: "border-emerald-400/20 bg-emerald-400/8 text-emerald-200",
@@ -326,7 +333,7 @@ function OutcomeBadge({ outcome }: { outcome: unknown }) {
     <span
       className={`inline-flex shrink-0 rounded-full border px-2.5 py-1 text-xs font-medium ${className}`}
     >
-      {humanizeKey(normalizedOutcome)}
+      {label}
     </span>
   );
 }

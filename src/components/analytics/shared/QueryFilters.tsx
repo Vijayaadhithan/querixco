@@ -7,18 +7,33 @@ import type {
   QueryFilters as QueryFiltersValue,
   QueryFacets,
   QueryOutcome,
+  QuerySortBy,
+  QuerySortDirection,
 } from "@/features/analytics/model/types";
 
 const outcomes: Array<{ value: QueryOutcome | ""; label: string }> = [
   { value: "", label: "All outcomes" },
-  { value: "fulfilled", label: "Fulfilled" },
-  { value: "zero_result", label: "Zero result" },
-  { value: "failure", label: "Failure" },
-  { value: "telemetry_missing", label: "Telemetry missing" },
+  { value: "fulfilled", label: "Results found" },
+  { value: "zero_result", label: "No results" },
+  { value: "failure", label: "System error" },
+  { value: "telemetry_missing", label: "Telemetry unavailable" },
 ];
 
 const knownExecutionPaths = ["semantic", "direct_semantic", "deterministic_filter"];
-const knownLanguages = ["English", "Hindi", "Tamil", "Transliterated Tamil", "Unknown"];
+const knownLanguages = ["English", "Hindi", "Tamil", "Likely Tamil (Latin script)", "Unknown"];
+
+const commonSortOptions: Array<{ value: QuerySortBy; label: string }> = [
+  { value: "created_at", label: "Time" },
+  { value: "results", label: "Results" },
+  { value: "outcome", label: "Outcome" },
+];
+
+const internalSortOptions: Array<{ value: QuerySortBy; label: string }> = [
+  ...commonSortOptions,
+  { value: "execution_path", label: "Execution path" },
+  { value: "duration", label: "Server duration" },
+  { value: "tokens", label: "Total tokens" },
+];
 
 export function QueryFilters({
   audience,
@@ -48,6 +63,7 @@ export function QueryFilters({
     [...knownLanguages, ...languageOptions],
     value.language,
   );
+  const sortOptions = internal ? internalSortOptions : commonSortOptions;
 
   function update<Key extends keyof QueryFiltersValue>(key: Key, next: QueryFiltersValue[Key]) {
     onChange({ ...value, [key]: next });
@@ -165,6 +181,34 @@ export function QueryFilters({
             </select>
           </FilterField>
         )}
+      </div>
+
+      <div className="mt-4 grid gap-4 rounded-xl border border-white/8 bg-black/10 p-4 sm:grid-cols-2">
+        <FilterField label="Sort results by" htmlFor="query-sort-field">
+          <select
+            id="query-sort-field"
+            value={value.sortBy}
+            onChange={(event) => update("sortBy", event.target.value as QuerySortBy)}
+            className={inputClass}
+          >
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </FilterField>
+        <FilterField label="Order" htmlFor="query-sort-direction">
+          <select
+            id="query-sort-direction"
+            value={value.sortDirection}
+            onChange={(event) => update("sortDirection", event.target.value as QuerySortDirection)}
+            className={inputClass}
+          >
+            <option value="desc">{sortDirectionLabel(value.sortBy, "desc")}</option>
+            <option value="asc">{sortDirectionLabel(value.sortBy, "asc")}</option>
+          </select>
+        </FilterField>
       </div>
 
       <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-white/8 bg-black/10 px-4 py-3">
@@ -330,6 +374,14 @@ export function QueryFilters({
       </fieldset>
     </form>
   );
+}
+
+function sortDirectionLabel(sortBy: QuerySortBy, direction: QuerySortDirection): string {
+  if (sortBy === "created_at") return direction === "desc" ? "Newest first" : "Oldest first";
+  if (["results", "duration", "tokens"].includes(sortBy)) {
+    return direction === "desc" ? "Highest first" : "Lowest first";
+  }
+  return direction === "desc" ? "Z to A" : "A to Z";
 }
 
 function FilterField({
