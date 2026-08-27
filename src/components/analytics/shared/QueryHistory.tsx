@@ -1,4 +1,4 @@
-import { keepPreviousData, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { LoaderCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -12,6 +12,11 @@ import {
 } from "@/features/analytics/api";
 import { useUnauthorizedRedirect } from "@/features/analytics/auth/session";
 import { formatCompanyName } from "@/features/analytics/lib/format";
+import {
+  AnalyticsCompanyMismatchError,
+  queryPagesMatchCompany,
+  retainMatchingCompanyData,
+} from "@/features/analytics/lib/query-isolation";
 import type {
   CompanyQueryRecord,
   InternalQueryRecord,
@@ -87,18 +92,24 @@ export function QueryHistory({
         ? lastPage.next_cursor
         : undefined,
     staleTime: 60_000,
-    placeholderData: keepPreviousData,
+    placeholderData: retainMatchingCompanyData(company),
     retry: false,
     refetchOnWindowFocus: false,
   });
 
   const loginPath = internal ? "/internal/analytics/login" : `/analytics/${company}/login`;
   useUnauthorizedRedirect([history.error], audience, loginPath, queryClient);
+  const companyMismatch =
+    history.error instanceof AnalyticsCompanyMismatchError ||
+    !queryPagesMatchCompany(history.data, company);
 
   const items = useMemo(
     () =>
-      history.data?.pages.flatMap((page) => (Array.isArray(page?.items) ? page.items : [])) ?? [],
-    [history.data],
+      companyMismatch
+        ? []
+        : (history.data?.pages.flatMap((page) => (Array.isArray(page?.items) ? page.items : [])) ??
+          []),
+    [companyMismatch, history.data],
   );
   const classificationOptions = useMemo(
     () =>
@@ -175,6 +186,13 @@ export function QueryHistory({
             kind="loading"
             title="Loading query history"
             message="Retrieving the first page of private query data."
+            internal={internal}
+          />
+        ) : companyMismatch ? (
+          <PortalState
+            kind="forbidden"
+            title="Workspace mismatch"
+            message="The query response did not match the selected company workspace."
             internal={internal}
           />
         ) : history.isError && !history.data ? (

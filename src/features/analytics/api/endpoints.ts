@@ -9,6 +9,7 @@ import type {
   QueryFilters,
   QueryPage,
 } from "../model/types";
+import { AnalyticsCompanyMismatchError } from "../lib/query-isolation";
 import { analyticsRequest } from "./client";
 import {
   decodeAnalyticsSession,
@@ -28,16 +29,20 @@ export function login(
   audience: AnalyticsAudience,
   username: string,
   password: string,
+  company?: string,
 ): Promise<AnalyticsSession> {
-  return analyticsRequest<AnalyticsSession>(
-    authEndpoint(audience, "login"),
-    decodeAnalyticsSession,
-    {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    },
-  );
+  if (audience === "company" && !company) {
+    throw new Error("A company endpoint is required for company analytics login.");
+  }
+  const endpoint =
+    audience === "company"
+      ? `/api/v1/${encodeURIComponent(company ?? "")}/analytics/auth/login`
+      : authEndpoint(audience, "login");
+  return analyticsRequest<AnalyticsSession>(endpoint, decodeAnalyticsSession, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
 }
 
 export function getSession(
@@ -165,7 +170,7 @@ export function getCompanyQueries(
 ): Promise<QueryPage<CompanyQueryRecord>> {
   return analyticsRequest<QueryPage<CompanyQueryRecord>>(
     `/api/v1/${encodeURIComponent(company)}/analytics/queries?${queryString(filters, cursor)}`,
-    decodeCompanyQueryPage,
+    companyQueryDecoder(company, decodeCompanyQueryPage),
     { signal },
   );
 }
@@ -178,7 +183,20 @@ export function getInternalQueries(
 ): Promise<QueryPage<InternalQueryRecord>> {
   return analyticsRequest<QueryPage<InternalQueryRecord>>(
     `/api/v1/admin/analytics/${encodeURIComponent(company)}/queries?${queryString(filters, cursor)}`,
-    decodeInternalQueryPage,
+    companyQueryDecoder(company, decodeInternalQueryPage),
     { signal },
   );
+}
+
+function companyQueryDecoder<T>(
+  company: string,
+  decode: (value: unknown) => QueryPage<T>,
+): (value: unknown) => QueryPage<T> {
+  return (value) => {
+    const page = decode(value);
+    if (page.company_id !== company) {
+      throw new AnalyticsCompanyMismatchError();
+    }
+    return page;
+  };
 }

@@ -33,7 +33,12 @@ export function AnalyticsLogin(props: AnalyticsLoginProps) {
     setDenied(false);
 
     try {
-      const session = await login(props.audience, username, password);
+      const session = await login(
+        props.audience,
+        username,
+        password,
+        internal ? undefined : props.company,
+      );
       const authorized = internal
         ? session.user.role === "internal_admin"
         : session.user.role === "company_user" && session.user.company_id === props.company;

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { getInternalQueries, login } from "./endpoints";
+import { getCompanyQueries, getInternalQueries, login } from "./endpoints";
 
 const emptyFacets = {
   request_kinds: [],
@@ -47,10 +47,64 @@ describe("analytics API contract", () => {
     });
   });
 
+  it("binds company login to the encoded company endpoint", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonResponse({
+        user: { username: "owner", role: "company_user", company_id: "gainr/company" },
+        expires_at: "2026-08-10T00:00:00Z",
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await login("company", "owner", "secret", "gainr/company");
+
+    const [rawUrl] = fetchMock.mock.calls[0] as [string];
+    expect(new URL(rawUrl).pathname).toBe("/api/v1/gainr%2Fcompany/analytics/auth/login");
+  });
+
+  it("rejects a query page returned for a different company", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonResponse({
+        company_id: "acme",
+        returned: 0,
+        has_more: false,
+        next_cursor: null,
+        facets: emptyFacets,
+        items: [],
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      getCompanyQueries(
+        "gainr",
+        {
+          sortBy: "created_at",
+          sortDirection: "desc",
+          query: "",
+          outcome: "",
+          category: "",
+          executionPath: "",
+          language: "",
+          includeFilteredResults: false,
+          requestKind: "",
+          cityId: "",
+          subcategoryId: "",
+          adType: "",
+          diagnosticCode: "",
+          hasFilters: false,
+          from: "",
+          to: "",
+        },
+        null,
+      ),
+    ).rejects.toThrow("different company");
+  });
+
   it("encodes internal query filters, UTC day boundaries, and cursor", async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       jsonResponse({
-        company_id: "gainr",
+        company_id: "gainr/company",
         returned: 1,
         has_more: false,
         next_cursor: null,
