@@ -134,7 +134,10 @@ function queryString(filters: QueryFilters, cursor: string | null): string {
     sort_direction: filters.sortDirection,
   });
 
-  if (cursor) params.set("cursor", cursor);
+  if (cursor) {
+    params.set("cursor", cursor);
+    params.set("include_facets", "false");
+  }
   if (filters.query) params.set("query", filters.query.slice(0, 1000));
   if (filters.outcome) params.set("outcome", filters.outcome);
   if (filters.category) params.set("category", filters.category.slice(0, 191));

@@ -152,6 +152,7 @@ describe("analytics API contract", () => {
       sort_by: "results",
       sort_direction: "desc",
       cursor: "next token",
+      include_facets: "false",
       query: "bike & car",
       outcome: "fulfilled",
       category: "Vehicles",
