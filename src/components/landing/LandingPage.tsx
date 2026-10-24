@@ -256,6 +256,7 @@ function Nav() {
     ["Why Querix", "#why-querix"],
     ["How it works", "#how-it-works"],
     ["Platform", "#platform"],
+    ["Commerce demo", "/use-cases/conversational-commerce"],
     ["Developers", "/developers"],
   ] as const;
 
@@ -280,10 +281,10 @@ function Nav() {
 
           <div className="flex items-center gap-2">
             <a
-              href="mailto:hello@querix.co?subject=Querix%20AI%20Demo"
+              href="/demo/commerce"
               className="hidden min-h-10 items-center gap-2 rounded-xl bg-white px-4 text-sm font-semibold text-[#071525] transition hover:bg-[#dceeff] sm:inline-flex"
             >
-              Book a demo <ArrowRight className="h-4 w-4" />
+              Try the demo <ArrowRight className="h-4 w-4" />
             </a>
             <button
               type="button"
@@ -316,10 +317,10 @@ function Nav() {
                 </a>
               ))}
               <a
-                href="mailto:hello@querix.co?subject=Querix%20AI%20Demo"
+                href="/demo/commerce"
                 className="mt-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-white px-4 text-sm font-semibold text-[#071525]"
               >
-                Book a demo <ArrowRight className="h-4 w-4" />
+                Try the demo <ArrowRight className="h-4 w-4" />
               </a>
             </div>
           </nav>

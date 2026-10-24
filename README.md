@@ -80,3 +80,11 @@ npm run build
 
 The site is built with TanStack Start, React, TypeScript, Tailwind CSS, and the Cloudflare Vite
 plugin.
+
+## Conversational commerce
+
+The use-case page at `/use-cases/conversational-commerce` links to the shopping
+workspace at `/demo/commerce`. A labelled fictional catalog makes the sample
+walkthrough usable immediately; optional live mode connects through a server-only
+commerce gateway. See [the demo guide](docs/commerce-demo.md) for supported sample
+journeys, local setup, session isolation, and public-launch requirements.

@@ -9,15 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as FootwearRouteImport } from './routes/footwear'
+import { Route as FashionRouteImport } from './routes/fashion'
 import { Route as DevelopersRouteImport } from './routes/developers'
+import { Route as ClothingRouteImport } from './routes/clothing'
+import { Route as BeautyRouteImport } from './routes/beauty'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UseCasesConversationalCommerceRouteImport } from './routes/use-cases.conversational-commerce'
 import { Route as InternalAnalyticsRouteImport } from './routes/internal.analytics'
 import { Route as DevelopersPlatformRouteImport } from './routes/developers/platform'
 import { Route as DevelopersOperationsRouteImport } from './routes/developers/operations'
 import { Route as DevelopersIntegrationRouteImport } from './routes/developers/integration'
 import { Route as DevelopersDataPipelineRouteImport } from './routes/developers/data-pipeline'
 import { Route as DevelopersArchitectureRouteImport } from './routes/developers/architecture'
+import { Route as DemoCommerceRouteImport } from './routes/demo.commerce'
 import { Route as ApiReadyRouteImport } from './routes/api/ready'
 import { Route as AnalyticsCompanyRouteImport } from './routes/analytics.$company'
 import { Route as InternalAnalyticsLoginRouteImport } from './routes/internal.analytics.login'
@@ -26,9 +32,29 @@ import { Route as AnalyticsCompanyQueriesRouteImport } from './routes/analytics.
 import { Route as AnalyticsCompanyLoginRouteImport } from './routes/analytics.$company.login'
 import { Route as InternalAnalyticsCompanyQueriesRouteImport } from './routes/internal.analytics.$company.queries'
 
+const FootwearRoute = FootwearRouteImport.update({
+  id: '/footwear',
+  path: '/footwear',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FashionRoute = FashionRouteImport.update({
+  id: '/fashion',
+  path: '/fashion',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DevelopersRoute = DevelopersRouteImport.update({
   id: '/developers',
   path: '/developers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClothingRoute = ClothingRouteImport.update({
+  id: '/clothing',
+  path: '/clothing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BeautyRoute = BeautyRouteImport.update({
+  id: '/beauty',
+  path: '/beauty',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnalyticsRoute = AnalyticsRouteImport.update({
@@ -41,6 +67,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UseCasesConversationalCommerceRoute =
+  UseCasesConversationalCommerceRouteImport.update({
+    id: '/use-cases/conversational-commerce',
+    path: '/use-cases/conversational-commerce',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const InternalAnalyticsRoute = InternalAnalyticsRouteImport.update({
   id: '/internal/analytics',
   path: '/internal/analytics',
@@ -70,6 +102,11 @@ const DevelopersArchitectureRoute = DevelopersArchitectureRouteImport.update({
   id: '/architecture',
   path: '/architecture',
   getParentRoute: () => DevelopersRoute,
+} as any)
+const DemoCommerceRoute = DemoCommerceRouteImport.update({
+  id: '/demo/commerce',
+  path: '/demo/commerce',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiReadyRoute = ApiReadyRouteImport.update({
   id: '/api/ready',
@@ -112,15 +149,21 @@ const InternalAnalyticsCompanyQueriesRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRouteWithChildren
+  '/beauty': typeof BeautyRoute
+  '/clothing': typeof ClothingRoute
   '/developers': typeof DevelopersRouteWithChildren
+  '/fashion': typeof FashionRoute
+  '/footwear': typeof FootwearRoute
   '/analytics/$company': typeof AnalyticsCompanyRouteWithChildren
   '/api/ready': typeof ApiReadyRoute
+  '/demo/commerce': typeof DemoCommerceRoute
   '/developers/architecture': typeof DevelopersArchitectureRoute
   '/developers/data-pipeline': typeof DevelopersDataPipelineRoute
   '/developers/integration': typeof DevelopersIntegrationRoute
   '/developers/operations': typeof DevelopersOperationsRoute
   '/developers/platform': typeof DevelopersPlatformRoute
   '/internal/analytics': typeof InternalAnalyticsRouteWithChildren
+  '/use-cases/conversational-commerce': typeof UseCasesConversationalCommerceRoute
   '/analytics/$company/login': typeof AnalyticsCompanyLoginRoute
   '/analytics/$company/queries': typeof AnalyticsCompanyQueriesRoute
   '/internal/analytics/$company': typeof InternalAnalyticsCompanyRouteWithChildren
@@ -130,15 +173,21 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRouteWithChildren
+  '/beauty': typeof BeautyRoute
+  '/clothing': typeof ClothingRoute
   '/developers': typeof DevelopersRouteWithChildren
+  '/fashion': typeof FashionRoute
+  '/footwear': typeof FootwearRoute
   '/analytics/$company': typeof AnalyticsCompanyRouteWithChildren
   '/api/ready': typeof ApiReadyRoute
+  '/demo/commerce': typeof DemoCommerceRoute
   '/developers/architecture': typeof DevelopersArchitectureRoute
   '/developers/data-pipeline': typeof DevelopersDataPipelineRoute
   '/developers/integration': typeof DevelopersIntegrationRoute
   '/developers/operations': typeof DevelopersOperationsRoute
   '/developers/platform': typeof DevelopersPlatformRoute
   '/internal/analytics': typeof InternalAnalyticsRouteWithChildren
+  '/use-cases/conversational-commerce': typeof UseCasesConversationalCommerceRoute
   '/analytics/$company/login': typeof AnalyticsCompanyLoginRoute
   '/analytics/$company/queries': typeof AnalyticsCompanyQueriesRoute
   '/internal/analytics/$company': typeof InternalAnalyticsCompanyRouteWithChildren
@@ -149,15 +198,21 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRouteWithChildren
+  '/beauty': typeof BeautyRoute
+  '/clothing': typeof ClothingRoute
   '/developers': typeof DevelopersRouteWithChildren
+  '/fashion': typeof FashionRoute
+  '/footwear': typeof FootwearRoute
   '/analytics/$company': typeof AnalyticsCompanyRouteWithChildren
   '/api/ready': typeof ApiReadyRoute
+  '/demo/commerce': typeof DemoCommerceRoute
   '/developers/architecture': typeof DevelopersArchitectureRoute
   '/developers/data-pipeline': typeof DevelopersDataPipelineRoute
   '/developers/integration': typeof DevelopersIntegrationRoute
   '/developers/operations': typeof DevelopersOperationsRoute
   '/developers/platform': typeof DevelopersPlatformRoute
   '/internal/analytics': typeof InternalAnalyticsRouteWithChildren
+  '/use-cases/conversational-commerce': typeof UseCasesConversationalCommerceRoute
   '/analytics/$company/login': typeof AnalyticsCompanyLoginRoute
   '/analytics/$company/queries': typeof AnalyticsCompanyQueriesRoute
   '/internal/analytics/$company': typeof InternalAnalyticsCompanyRouteWithChildren
@@ -169,15 +224,21 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/analytics'
+    | '/beauty'
+    | '/clothing'
     | '/developers'
+    | '/fashion'
+    | '/footwear'
     | '/analytics/$company'
     | '/api/ready'
+    | '/demo/commerce'
     | '/developers/architecture'
     | '/developers/data-pipeline'
     | '/developers/integration'
     | '/developers/operations'
     | '/developers/platform'
     | '/internal/analytics'
+    | '/use-cases/conversational-commerce'
     | '/analytics/$company/login'
     | '/analytics/$company/queries'
     | '/internal/analytics/$company'
@@ -187,15 +248,21 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/analytics'
+    | '/beauty'
+    | '/clothing'
     | '/developers'
+    | '/fashion'
+    | '/footwear'
     | '/analytics/$company'
     | '/api/ready'
+    | '/demo/commerce'
     | '/developers/architecture'
     | '/developers/data-pipeline'
     | '/developers/integration'
     | '/developers/operations'
     | '/developers/platform'
     | '/internal/analytics'
+    | '/use-cases/conversational-commerce'
     | '/analytics/$company/login'
     | '/analytics/$company/queries'
     | '/internal/analytics/$company'
@@ -205,15 +272,21 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/analytics'
+    | '/beauty'
+    | '/clothing'
     | '/developers'
+    | '/fashion'
+    | '/footwear'
     | '/analytics/$company'
     | '/api/ready'
+    | '/demo/commerce'
     | '/developers/architecture'
     | '/developers/data-pipeline'
     | '/developers/integration'
     | '/developers/operations'
     | '/developers/platform'
     | '/internal/analytics'
+    | '/use-cases/conversational-commerce'
     | '/analytics/$company/login'
     | '/analytics/$company/queries'
     | '/internal/analytics/$company'
@@ -224,18 +297,52 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRouteWithChildren
+  BeautyRoute: typeof BeautyRoute
+  ClothingRoute: typeof ClothingRoute
   DevelopersRoute: typeof DevelopersRouteWithChildren
+  FashionRoute: typeof FashionRoute
+  FootwearRoute: typeof FootwearRoute
   ApiReadyRoute: typeof ApiReadyRoute
+  DemoCommerceRoute: typeof DemoCommerceRoute
   InternalAnalyticsRoute: typeof InternalAnalyticsRouteWithChildren
+  UseCasesConversationalCommerceRoute: typeof UseCasesConversationalCommerceRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/footwear': {
+      id: '/footwear'
+      path: '/footwear'
+      fullPath: '/footwear'
+      preLoaderRoute: typeof FootwearRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fashion': {
+      id: '/fashion'
+      path: '/fashion'
+      fullPath: '/fashion'
+      preLoaderRoute: typeof FashionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/developers': {
       id: '/developers'
       path: '/developers'
       fullPath: '/developers'
       preLoaderRoute: typeof DevelopersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clothing': {
+      id: '/clothing'
+      path: '/clothing'
+      fullPath: '/clothing'
+      preLoaderRoute: typeof ClothingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/beauty': {
+      id: '/beauty'
+      path: '/beauty'
+      fullPath: '/beauty'
+      preLoaderRoute: typeof BeautyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/analytics': {
@@ -250,6 +357,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/use-cases/conversational-commerce': {
+      id: '/use-cases/conversational-commerce'
+      path: '/use-cases/conversational-commerce'
+      fullPath: '/use-cases/conversational-commerce'
+      preLoaderRoute: typeof UseCasesConversationalCommerceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/internal/analytics': {
@@ -293,6 +407,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/developers/architecture'
       preLoaderRoute: typeof DevelopersArchitectureRouteImport
       parentRoute: typeof DevelopersRoute
+    }
+    '/demo/commerce': {
+      id: '/demo/commerce'
+      path: '/demo/commerce'
+      fullPath: '/demo/commerce'
+      preLoaderRoute: typeof DemoCommerceRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/ready': {
       id: '/api/ready'
@@ -421,9 +542,15 @@ const InternalAnalyticsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRouteWithChildren,
+  BeautyRoute: BeautyRoute,
+  ClothingRoute: ClothingRoute,
   DevelopersRoute: DevelopersRouteWithChildren,
+  FashionRoute: FashionRoute,
+  FootwearRoute: FootwearRoute,
   ApiReadyRoute: ApiReadyRoute,
+  DemoCommerceRoute: DemoCommerceRoute,
   InternalAnalyticsRoute: InternalAnalyticsRouteWithChildren,
+  UseCasesConversationalCommerceRoute: UseCasesConversationalCommerceRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
