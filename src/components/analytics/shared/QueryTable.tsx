@@ -9,15 +9,15 @@ export function QueryTable({ items, internal }: { items: QueryRecord[]; internal
 
   return (
     <>
-      <div className="hidden overflow-x-auto rounded-2xl border border-white/8 md:block">
+      <div className="hidden overflow-x-auto rounded-lg border border-workspace-line md:block">
         <table
           className={`w-full text-left text-sm ${internal ? "min-w-[1280px]" : "min-w-[900px]"}`}
         >
           <caption className="sr-only">Individual query history</caption>
-          <thead className="bg-white/[0.045] text-xs uppercase tracking-wide text-slate-500">
+          <thead className="bg-workspace-wash text-xs uppercase tracking-wide text-workspace-muted">
             {internal ? <InternalTableHeaders /> : <CompanyTableHeaders />}
           </thead>
-          <tbody className="divide-y divide-white/6">
+          <tbody className="divide-y divide-workspace-line">
             {safeItems.map((item, index) => (
               <QueryTableRow key={queryKey(item, index)} item={item} internal={internal} />
             ))}
@@ -32,15 +32,15 @@ export function QueryTable({ items, internal }: { items: QueryRecord[]; internal
           return (
             <article
               key={queryKey(item, index)}
-              className="rounded-2xl border border-white/8 bg-white/[0.035] p-4"
+              className="rounded-lg border border-workspace-line bg-workspace-surface p-4"
             >
               <div className="flex items-start justify-between gap-3">
-                <p className="min-w-0 break-words text-sm font-medium text-white">
+                <p className="min-w-0 break-words text-sm font-medium text-workspace-ink">
                   {textValue(item.query, "Query unavailable")}
                 </p>
                 <OutcomeBadge outcome={item.outcome} />
               </div>
-              <p className="mt-2 text-xs text-slate-500">{formatDateTime(item.created_at)}</p>
+              <p className="mt-2 text-xs text-workspace-muted">{formatDateTime(item.created_at)}</p>
               <FilterChips filters={item.filters} requestKind={item.request_kind} />
               {internalItem ? (
                 <>
@@ -78,13 +78,13 @@ export function QueryTable({ items, internal }: { items: QueryRecord[]; internal
                     {classification(item).map((value, valueIndex) => (
                       <span
                         key={`${value}-${valueIndex}`}
-                        className="rounded-full border border-white/8 bg-white/5 px-2 py-1 text-xs text-slate-300"
+                        className="rounded-full border border-workspace-line bg-workspace-wash px-2 py-1 text-xs text-workspace-body"
                       >
                         {value}
                       </span>
                     ))}
                   </div>
-                  <p className="mt-3 text-xs text-slate-400">
+                  <p className="mt-3 text-xs text-workspace-muted">
                     {count === null
                       ? "Result count unavailable"
                       : `${count.toLocaleString()} results`}
@@ -108,15 +108,15 @@ function QueryTableRow({ item, internal }: { item: QueryRecord; internal: boolea
 
   return (
     <>
-      <tr className="align-top transition hover:bg-white/[0.025]">
+      <tr className="align-top transition hover:bg-workspace-wash">
         <td className="max-w-md px-4 py-4">
-          <p className="break-words font-medium text-slate-100">{query}</p>
+          <p className="break-words font-medium text-workspace-ink">{query}</p>
           {normalizedQuery && normalizedQuery !== query && (
-            <p className="mt-1 break-words text-xs text-slate-500">{normalizedQuery}</p>
+            <p className="mt-1 break-words text-xs text-workspace-muted">{normalizedQuery}</p>
           )}
           <FilterChips filters={item.filters} requestKind={item.request_kind} />
         </td>
-        <td className="whitespace-nowrap px-4 py-4 text-slate-400">
+        <td className="whitespace-nowrap px-4 py-4 text-workspace-muted">
           {formatDateTime(item.created_at)}
         </td>
         <td className="max-w-xs px-4 py-4">
@@ -124,7 +124,7 @@ function QueryTableRow({ item, internal }: { item: QueryRecord; internal: boolea
             {classification(item).map((value, valueIndex) => (
               <span
                 key={`${value}-${valueIndex}`}
-                className="rounded-full border border-white/8 bg-white/5 px-2 py-1 text-xs text-slate-300"
+                className="rounded-full border border-workspace-line bg-workspace-wash px-2 py-1 text-xs text-workspace-body"
               >
                 {value}
               </span>
@@ -134,7 +134,7 @@ function QueryTableRow({ item, internal }: { item: QueryRecord; internal: boolea
         <td className="px-4 py-4">
           <OutcomeBadge outcome={item.outcome} />
         </td>
-        <td className="px-4 py-4 text-right font-medium text-slate-200">
+        <td className="px-4 py-4 text-right font-medium text-workspace-ink">
           {count === null ? "—" : count.toLocaleString()}
         </td>
       </tr>
@@ -201,25 +201,25 @@ function InternalQueryTableRow({ item }: { item: InternalQueryRecord }) {
 
   return (
     <>
-      <tr className="align-top transition hover:bg-white/[0.025]">
+      <tr className="align-top transition hover:bg-workspace-wash">
         <td className="max-w-md px-4 py-4">
-          <p className="break-words font-medium text-slate-100">{query}</p>
+          <p className="break-words font-medium text-workspace-ink">{query}</p>
           {normalizedQuery && normalizedQuery !== query && (
-            <p className="mt-1 break-words text-xs text-slate-500">{normalizedQuery}</p>
+            <p className="mt-1 break-words text-xs text-workspace-muted">{normalizedQuery}</p>
           )}
           <FilterChips filters={item.filters} requestKind={item.request_kind} />
         </td>
-        <td className="whitespace-nowrap px-4 py-4 text-slate-400">
+        <td className="whitespace-nowrap px-4 py-4 text-workspace-muted">
           {formatDateTime(item.created_at)}
         </td>
         <td className="px-4 py-4">
           <OutcomeBadge outcome={item.outcome} />
-          <p className="mt-1 text-xs text-slate-500">{internalStatusText(item)}</p>
+          <p className="mt-1 text-xs text-workspace-muted">{internalStatusText(item)}</p>
         </td>
-        <td className="px-4 py-4 text-slate-300">
+        <td className="px-4 py-4 text-workspace-body">
           {textValue(item.performance?.execution_path, "Unavailable")}
         </td>
-        <td className="whitespace-nowrap px-4 py-4 text-right font-medium text-slate-100">
+        <td className="whitespace-nowrap px-4 py-4 text-right font-medium text-workspace-ink">
           {formatDuration(item.performance?.total_server_duration_ms)}
         </td>
         <td className="px-4 py-4">
@@ -228,10 +228,10 @@ function InternalQueryTableRow({ item }: { item: InternalQueryRecord }) {
             <CacheBadge label="Result" value={item.performance?.cache?.result_hit} />
           </div>
         </td>
-        <td className="whitespace-nowrap px-4 py-4 text-right font-medium text-slate-200">
+        <td className="whitespace-nowrap px-4 py-4 text-right font-medium text-workspace-ink">
           {formatInternalResults(item)}
         </td>
-        <td className="px-4 py-4 text-right font-medium text-slate-200">
+        <td className="px-4 py-4 text-right font-medium text-workspace-ink">
           {formatCount(item.token_usage?.total_tokens)}
         </td>
       </tr>
@@ -247,8 +247,8 @@ function InternalQueryTableRow({ item }: { item: InternalQueryRecord }) {
 function MobileMetric({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-slate-500">{label}</dt>
-      <dd className="mt-0.5 text-slate-200">{value}</dd>
+      <dt className="text-workspace-muted">{label}</dt>
+      <dd className="mt-0.5 text-workspace-ink">{value}</dd>
     </div>
   );
 }
@@ -276,7 +276,7 @@ function FilterChips({
       {chips.map((value, index) => (
         <span
           key={`${String(value)}-${index}`}
-          className="rounded-full border border-blue-400/15 bg-blue-400/8 px-2 py-0.5 text-[11px] text-blue-200"
+          className="rounded-full border border-workspace-blue-line bg-workspace-tint px-2 py-0.5 text-[11px] text-workspace-blue"
         >
           {String(value)}
         </span>
@@ -289,10 +289,10 @@ function CacheBadge({ label, value }: { label: string; value: unknown }) {
   const state = typeof value === "boolean" ? (value ? "Hit" : "Miss") : "Unavailable";
   const className =
     value === true
-      ? "border-emerald-400/20 bg-emerald-400/8 text-emerald-200"
+      ? "border-workspace-success-line bg-workspace-success-tint text-workspace-success"
       : value === false
-        ? "border-slate-400/20 bg-slate-400/8 text-slate-300"
-        : "border-amber-400/20 bg-amber-400/8 text-amber-200";
+        ? "border-workspace-line bg-workspace-wash text-workspace-body"
+        : "border-workspace-warning-line bg-workspace-warning-tint text-workspace-warning";
 
   return (
     <span
@@ -323,11 +323,11 @@ function OutcomeBadge({ outcome }: { outcome: unknown }) {
     }[normalizedOutcome] ?? humanizeKey(normalizedOutcome);
   const className =
     {
-      fulfilled: "border-emerald-400/20 bg-emerald-400/8 text-emerald-200",
-      zero_result: "border-amber-400/20 bg-amber-400/8 text-amber-200",
-      failure: "border-red-400/20 bg-red-400/8 text-red-200",
-      telemetry_missing: "border-slate-400/20 bg-slate-400/8 text-slate-300",
-    }[normalizedOutcome] ?? "border-slate-400/20 bg-slate-400/8 text-slate-300";
+      fulfilled: "border-workspace-success-line bg-workspace-success-tint text-workspace-success",
+      zero_result: "border-workspace-warning-line bg-workspace-warning-tint text-workspace-warning",
+      failure: "border-workspace-danger-line bg-workspace-danger-tint text-workspace-danger",
+      telemetry_missing: "border-workspace-line bg-workspace-wash text-workspace-body",
+    }[normalizedOutcome] ?? "border-workspace-line bg-workspace-wash text-workspace-body";
 
   return (
     <span

@@ -10,7 +10,7 @@ import type {
   InternalDashboardOverview,
 } from "@/features/analytics/model/types";
 
-const graphColors = ["#60a5fa", "#a78bfa", "#34d399", "#fb7185"];
+const graphColors = ["#275fe8", "#7b51b5", "#23755a", "#b84853"];
 
 export function DashboardActivityOverview({
   dashboard,
@@ -26,15 +26,18 @@ export function DashboardActivityOverview({
     <section className="mt-6 space-y-5" aria-labelledby="filtered-activity-heading">
       <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-300">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-workspace-blue">
             Filtered activity
           </p>
-          <h2 id="filtered-activity-heading" className="mt-2 text-2xl font-semibold text-white">
+          <h2
+            id="filtered-activity-heading"
+            className="mt-2 text-2xl font-semibold text-workspace-ink"
+          >
             Search activity overview
           </h2>
         </div>
-        <p className="text-sm text-slate-400">
-          <span className="font-semibold text-slate-200">
+        <p className="text-sm text-workspace-muted">
+          <span className="font-semibold text-workspace-ink">
             {filtering.matched_records.toLocaleString()}
           </span>{" "}
           of {filtering.total_records.toLocaleString()} records
@@ -53,11 +56,11 @@ export function DashboardActivityOverview({
         <TokenUsage overview={dashboard.filtered_overview as InternalDashboardOverview} />
       )}
 
-      <details className="group rounded-2xl border border-white/8 bg-white/[0.025]">
-        <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/[0.035] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 sm:px-5 [&::-webkit-details-marker]:hidden">
+      <details className="group rounded-lg border border-workspace-line bg-workspace-surface">
+        <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 text-sm font-medium text-workspace-body transition hover:bg-workspace-wash hover:text-workspace-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 sm:px-5 [&::-webkit-details-marker]:hidden">
           <span>
             Detailed breakdowns
-            <span className="ml-2 text-xs font-normal text-slate-500">
+            <span className="ml-2 text-xs font-normal text-workspace-muted">
               Categories, languages, outcomes{internal ? ", and stage latency" : ""}
             </span>
           </span>
@@ -66,7 +69,7 @@ export function DashboardActivityOverview({
             aria-hidden="true"
           />
         </summary>
-        <div className="border-t border-white/8 p-4 sm:p-5">
+        <div className="border-t border-workspace-line p-4 sm:p-5">
           <DashboardModule
             title="Activity breakdowns"
             eyebrow="Current filters"
@@ -150,12 +153,12 @@ function SummaryCard({
   icon: typeof Activity;
 }) {
   return (
-    <article className="rounded-2xl border border-white/8 bg-white/[0.035] p-4">
+    <article className="qx-summary-card rounded-lg border border-workspace-line bg-workspace-surface p-4">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</p>
-        <Icon className="h-4 w-4 text-blue-300" aria-hidden="true" />
+        <p className="text-xs font-medium uppercase tracking-wide text-workspace-muted">{label}</p>
+        <Icon className="h-4 w-4 text-workspace-blue" aria-hidden="true" />
       </div>
-      <p className="mt-3 text-2xl font-semibold tracking-tight text-white">
+      <p className="mt-3 text-2xl font-semibold tracking-tight text-workspace-ink">
         {formatMetricValue(value, valueKey)}
       </p>
     </article>
@@ -186,11 +189,11 @@ function ActivityGraph({ graph }: { graph: DashboardMainGraph }) {
   }
 
   return (
-    <article className="rounded-2xl border border-white/8 bg-white/[0.035] p-4 sm:p-5">
+    <article className="rounded-lg border border-workspace-line bg-workspace-surface p-4 sm:p-5">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
         <div>
-          <h3 className="font-semibold text-white">{graph.title}</h3>
-          <p className="mt-1 text-xs text-slate-500">
+          <h3 className="font-semibold text-workspace-ink">{graph.title}</h3>
+          <p className="mt-1 text-xs text-workspace-muted">
             {humanizeKey(graph.granularity)} intervals · {graph.timezone}
           </p>
         </div>
@@ -198,7 +201,7 @@ function ActivityGraph({ graph }: { graph: DashboardMainGraph }) {
           {series.map((item, index) => (
             <span
               key={item.name}
-              className="inline-flex items-center gap-1.5 text-xs text-slate-400"
+              className="inline-flex items-center gap-1.5 text-xs text-workspace-muted"
             >
               <span
                 className="h-2.5 w-2.5 rounded-full"
@@ -229,7 +232,7 @@ function ActivityGraph({ graph }: { graph: DashboardMainGraph }) {
                     x2={width - padding.right}
                     y1={y}
                     y2={y}
-                    stroke="rgba(255,255,255,.07)"
+                    stroke="#dce1e5"
                   />
                   <text
                     x={padding.left - 8}
@@ -251,6 +254,8 @@ function ActivityGraph({ graph }: { graph: DashboardMainGraph }) {
                   .join(" ")}
                 fill="none"
                 stroke={graphColors[seriesIndex]}
+                className="qx-chart-line"
+                pathLength={1}
                 strokeWidth="2.5"
                 strokeLinejoin="round"
                 strokeLinecap="round"
@@ -303,7 +308,7 @@ function ActivityGraph({ graph }: { graph: DashboardMainGraph }) {
           </table>
         </div>
       ) : (
-        <p className="mt-5 rounded-xl border border-dashed border-white/10 p-6 text-sm text-slate-500">
+        <p className="mt-5 rounded-md border border-dashed border-workspace-line p-6 text-sm text-workspace-muted">
           No activity matches the current filters.
         </p>
       )}
@@ -318,17 +323,17 @@ function TokenUsage({ overview }: { overview: InternalDashboardOverview }) {
   return (
     <section aria-labelledby="operation-token-heading">
       <div className="mb-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-300">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-workspace-blue">
           Provider telemetry
         </p>
-        <h3 id="operation-token-heading" className="mt-2 text-xl font-semibold text-white">
+        <h3 id="operation-token-heading" className="mt-2 text-xl font-semibold text-workspace-ink">
           {usage.title}
         </h3>
-        {usage.note && <p className="mt-1 text-xs leading-5 text-slate-500">{usage.note}</p>}
+        {usage.note && <p className="mt-1 text-xs leading-5 text-workspace-muted">{usage.note}</p>}
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
         {operations.length === 0 && (
-          <p className="rounded-2xl border border-dashed border-white/10 p-5 text-sm text-slate-500 lg:col-span-3">
+          <p className="rounded-lg border border-dashed border-workspace-line p-5 text-sm text-workspace-muted lg:col-span-3">
             No provider token usage matches the current filters.
           </p>
         )}
@@ -337,19 +342,21 @@ function TokenUsage({ overview }: { overview: InternalDashboardOverview }) {
           return (
             <article
               key={operation}
-              className="rounded-2xl border border-white/8 bg-white/[0.035] p-5"
+              className="rounded-lg border border-workspace-line bg-workspace-surface p-5"
             >
               <div className="flex items-start justify-between gap-4">
-                <h4 className="font-semibold text-slate-100">{humanizeKey(operation)}</h4>
-                <span className="rounded-full bg-blue-400/10 px-2.5 py-1 text-xs text-blue-200">
+                <h4 className="font-semibold text-workspace-ink">{humanizeKey(operation)}</h4>
+                <span className="rounded-full bg-workspace-tint px-2.5 py-1 text-xs text-workspace-blue">
                   {row.api_calls.toLocaleString()} calls
                 </span>
               </div>
-              <p className="mt-4 text-3xl font-semibold tracking-tight text-white">
+              <p className="mt-4 text-3xl font-semibold tracking-tight text-workspace-ink">
                 {row.total_tokens.toLocaleString()}
               </p>
-              <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">Total tokens</p>
-              <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-white/8 pt-4 text-sm">
+              <p className="mt-1 text-xs uppercase tracking-wide text-workspace-muted">
+                Total tokens
+              </p>
+              <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-workspace-line pt-4 text-sm">
                 <TokenMeasure label="Input" value={row.input_tokens} />
                 <TokenMeasure label="Output" value={row.output_tokens} />
                 <TokenMeasure label="Thought" value={row.thought_tokens} />
@@ -374,8 +381,8 @@ function TokenMeasure({
 }) {
   return (
     <div>
-      <dt className="text-xs text-slate-500">{label}</dt>
-      <dd className="mt-1 font-medium text-slate-200">{formatMetricValue(value, valueKey)}</dd>
+      <dt className="text-xs text-workspace-muted">{label}</dt>
+      <dd className="mt-1 font-medium text-workspace-ink">{formatMetricValue(value, valueKey)}</dd>
     </div>
   );
 }

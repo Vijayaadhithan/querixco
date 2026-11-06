@@ -70,46 +70,47 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
+  head: ({ matches }) => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Querix AI — Intent-aware product discovery" },
+      { title: "Querix AI — Intelligent search & conversational commerce" },
       {
         name: "description",
         content:
-          "Querix AI understands customer intent and helps shoppers find the products they actually want—even from vague, incomplete, and natural-language queries.",
+          "Help shoppers find what they mean with intent-aware search and conversational shopping grounded in your catalog.",
       },
       { name: "theme-color", content: "#0A1B2E" },
-      { property: "og:title", content: "Querix AI — Intent-aware product discovery" },
+      { property: "og:title", content: "Querix AI — Intelligent search & conversational commerce" },
       {
         property: "og:description",
-        content:
-          "Help shoppers find the products they actually want, even when they search with vague or natural-language queries.",
+        content: "Intelligent search and conversational shopping grounded in your catalog.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://querix.co" },
-      { property: "og:image", content: "https://querix.co/og.png" },
+      { property: "og:image", content: "https://querix.co/og-discovery.png" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       {
         property: "og:image:alt",
         content:
-          "Querix AI — Your customers think in ideas. Your search engine thinks in keywords.",
+          "Querix AI — From I need to that’s it. Intelligent search and conversational commerce.",
       },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Querix AI — Intent-aware product discovery" },
+      {
+        name: "twitter:title",
+        content: "Querix AI — Intelligent search & conversational commerce",
+      },
       {
         name: "twitter:description",
-        content:
-          "Help shoppers find the products they actually want, even from vague or natural-language queries.",
+        content: "Search, refine, and compare products with Querix AI.",
       },
-      { name: "twitter:image", content: "https://querix.co/og.png" },
+      { name: "twitter:image", content: "https://querix.co/og-discovery.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "canonical", href: "https://querix.co" },
-      { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png?v=6" },
+      { rel: "canonical", href: `https://querix.co${matches.at(-1)?.pathname ?? "/"}` },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg?v=7" },
       { rel: "shortcut icon", href: "/favicon.ico?v=6" },
       { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png?v=6" },
       { rel: "manifest", href: "/site.webmanifest" },

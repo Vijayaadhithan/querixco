@@ -1,8 +1,1 @@
-<svg
-  width="255"
-  height="255"
-  viewBox="0 0 255 255"
-  xmlns="http://www.w3.org/2000/svg"
->
-  <image href="/querix-q.png" width="255" height="255" />
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="13" fill="#fafaf7"/><circle cx="29" cy="29" r="22" fill="none" stroke="#14243b" stroke-width="6"/><path d="m45 45 8 8" stroke="#14243b" stroke-width="6" stroke-linecap="round"/><circle cx="58" cy="57" r="2.4" fill="#14243b"/><g fill="#2764ed"><circle cx="19" cy="29" r="3.5"/><circle cx="29" cy="29" r="3.5"/><circle cx="39" cy="29" r="3.5"/></g></svg>

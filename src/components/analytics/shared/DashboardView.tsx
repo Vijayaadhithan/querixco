@@ -90,16 +90,16 @@ export function DashboardView({
       <section className="mt-8" aria-labelledby={`${audience}-reports-heading`}>
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-300">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-workspace-blue">
               Latest snapshot
             </p>
             <h2
               id={`${audience}-reports-heading`}
-              className="mt-2 text-2xl font-semibold text-white"
+              className="mt-2 text-2xl font-semibold text-workspace-ink"
             >
               {audience === "internal" ? "Operational reports" : "Marketplace reports"}
             </h2>
-            <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-500">
+            <p className="mt-1 max-w-2xl text-sm leading-6 text-workspace-muted">
               Choose a business area for a focused, question-led view. These company-wide inventory
               reports use the latest completed snapshot; the filtered demand section above follows
               your activity filters.
@@ -107,7 +107,7 @@ export function DashboardView({
           </div>
           <a
             href={queryHref}
-            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-blue-400/25 bg-blue-400/10 px-4 text-sm font-semibold text-blue-100 transition hover:border-blue-300/40 hover:bg-blue-400/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-md border border-workspace-blue-line bg-workspace-tint px-4 text-sm font-semibold text-workspace-blue transition hover:border-workspace-blue-line hover:bg-workspace-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
           >
             <Search className="h-4 w-4" aria-hidden="true" />
             Explore {dashboard.metadata.individual_query_count.toLocaleString()} queries
@@ -124,10 +124,10 @@ export function DashboardView({
                   type="button"
                   onClick={() => setSelectedGroup(group.id)}
                   aria-pressed={group.id === activeGroup.id}
-                  className={`min-h-10 shrink-0 rounded-xl border px-4 text-sm font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 ${
+                  className={`min-h-10 shrink-0 rounded-md border px-4 text-sm font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 ${
                     group.id === activeGroup.id
-                      ? "border-blue-400/30 bg-blue-400/12 text-blue-100"
-                      : "border-white/8 bg-white/[0.025] text-slate-400 hover:bg-white/6 hover:text-white"
+                      ? "border-workspace-blue-line bg-workspace-tint text-workspace-blue"
+                      : "border-workspace-line bg-workspace-surface text-workspace-muted hover:bg-workspace-wash hover:text-workspace-blue"
                   }`}
                 >
                   {group.label}
@@ -144,7 +144,7 @@ export function DashboardView({
             </div>
           </>
         ) : (
-          <p className="mt-5 rounded-2xl border border-dashed border-white/10 p-6 text-sm text-slate-500">
+          <p className="mt-5 rounded-lg border border-dashed border-workspace-line p-6 text-sm text-workspace-muted">
             No completed report is available for this company yet.
           </p>
         )}
@@ -182,20 +182,20 @@ function DashboardHeader({
   return (
     <div className="mb-5 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-workspace-blue">
           {audience === "internal" ? "Selected company" : "Private company workspace"}
         </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-workspace-ink sm:text-4xl">
           {formatCompanyName(company)} analytics
         </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-workspace-muted">
           {audience === "internal"
             ? "Search reliability, provider usage, and query diagnostics for this company."
             : "Search demand, marketplace supply, and customer activity in one focused view."}
         </p>
       </div>
-      <div className="rounded-xl border border-white/8 bg-white/[0.035] px-4 py-2.5 text-sm text-slate-300">
-        <span className="text-slate-500">Snapshot schema </span>
+      <div className="rounded-md border border-workspace-line bg-workspace-surface px-4 py-2.5 text-sm text-workspace-body">
+        <span className="text-workspace-muted">Snapshot schema </span>
         {dashboard.metadata.schema_version}
       </div>
     </div>

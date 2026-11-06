@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RequestDemoRouteImport } from './routes/request-demo'
 import { Route as FootwearRouteImport } from './routes/footwear'
 import { Route as FashionRouteImport } from './routes/fashion'
 import { Route as DevelopersRouteImport } from './routes/developers'
@@ -17,11 +18,13 @@ import { Route as BeautyRouteImport } from './routes/beauty'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UseCasesConversationalCommerceRouteImport } from './routes/use-cases.conversational-commerce'
+import { Route as ProductsSearchRouteImport } from './routes/products.search'
 import { Route as InternalAnalyticsRouteImport } from './routes/internal.analytics'
 import { Route as DevelopersPlatformRouteImport } from './routes/developers/platform'
 import { Route as DevelopersOperationsRouteImport } from './routes/developers/operations'
 import { Route as DevelopersIntegrationRouteImport } from './routes/developers/integration'
 import { Route as DevelopersDataPipelineRouteImport } from './routes/developers/data-pipeline'
+import { Route as DevelopersCommerceRouteImport } from './routes/developers/commerce'
 import { Route as DevelopersArchitectureRouteImport } from './routes/developers/architecture'
 import { Route as DemoCommerceRouteImport } from './routes/demo.commerce'
 import { Route as CommerceLoginRouteImport } from './routes/commerce.login'
@@ -35,6 +38,11 @@ import { Route as AnalyticsCompanyQueriesRouteImport } from './routes/analytics.
 import { Route as AnalyticsCompanyLoginRouteImport } from './routes/analytics.$company.login'
 import { Route as InternalAnalyticsCompanyQueriesRouteImport } from './routes/internal.analytics.$company.queries'
 
+const RequestDemoRoute = RequestDemoRouteImport.update({
+  id: '/request-demo',
+  path: '/request-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FootwearRoute = FootwearRouteImport.update({
   id: '/footwear',
   path: '/footwear',
@@ -76,6 +84,11 @@ const UseCasesConversationalCommerceRoute =
     path: '/use-cases/conversational-commerce',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ProductsSearchRoute = ProductsSearchRouteImport.update({
+  id: '/products/search',
+  path: '/products/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InternalAnalyticsRoute = InternalAnalyticsRouteImport.update({
   id: '/internal/analytics',
   path: '/internal/analytics',
@@ -99,6 +112,11 @@ const DevelopersIntegrationRoute = DevelopersIntegrationRouteImport.update({
 const DevelopersDataPipelineRoute = DevelopersDataPipelineRouteImport.update({
   id: '/data-pipeline',
   path: '/data-pipeline',
+  getParentRoute: () => DevelopersRoute,
+} as any)
+const DevelopersCommerceRoute = DevelopersCommerceRouteImport.update({
+  id: '/commerce',
+  path: '/commerce',
   getParentRoute: () => DevelopersRoute,
 } as any)
 const DevelopersArchitectureRoute = DevelopersArchitectureRouteImport.update({
@@ -172,6 +190,7 @@ export interface FileRoutesByFullPath {
   '/developers': typeof DevelopersRouteWithChildren
   '/fashion': typeof FashionRoute
   '/footwear': typeof FootwearRoute
+  '/request-demo': typeof RequestDemoRoute
   '/analytics/$company': typeof AnalyticsCompanyRouteWithChildren
   '/api/ready': typeof ApiReadyRoute
   '/commerce/account': typeof CommerceAccountRoute
@@ -179,11 +198,13 @@ export interface FileRoutesByFullPath {
   '/commerce/login': typeof CommerceLoginRoute
   '/demo/commerce': typeof DemoCommerceRoute
   '/developers/architecture': typeof DevelopersArchitectureRoute
+  '/developers/commerce': typeof DevelopersCommerceRoute
   '/developers/data-pipeline': typeof DevelopersDataPipelineRoute
   '/developers/integration': typeof DevelopersIntegrationRoute
   '/developers/operations': typeof DevelopersOperationsRoute
   '/developers/platform': typeof DevelopersPlatformRoute
   '/internal/analytics': typeof InternalAnalyticsRouteWithChildren
+  '/products/search': typeof ProductsSearchRoute
   '/use-cases/conversational-commerce': typeof UseCasesConversationalCommerceRoute
   '/analytics/$company/login': typeof AnalyticsCompanyLoginRoute
   '/analytics/$company/queries': typeof AnalyticsCompanyQueriesRoute
@@ -199,6 +220,7 @@ export interface FileRoutesByTo {
   '/developers': typeof DevelopersRouteWithChildren
   '/fashion': typeof FashionRoute
   '/footwear': typeof FootwearRoute
+  '/request-demo': typeof RequestDemoRoute
   '/analytics/$company': typeof AnalyticsCompanyRouteWithChildren
   '/api/ready': typeof ApiReadyRoute
   '/commerce/account': typeof CommerceAccountRoute
@@ -206,11 +228,13 @@ export interface FileRoutesByTo {
   '/commerce/login': typeof CommerceLoginRoute
   '/demo/commerce': typeof DemoCommerceRoute
   '/developers/architecture': typeof DevelopersArchitectureRoute
+  '/developers/commerce': typeof DevelopersCommerceRoute
   '/developers/data-pipeline': typeof DevelopersDataPipelineRoute
   '/developers/integration': typeof DevelopersIntegrationRoute
   '/developers/operations': typeof DevelopersOperationsRoute
   '/developers/platform': typeof DevelopersPlatformRoute
   '/internal/analytics': typeof InternalAnalyticsRouteWithChildren
+  '/products/search': typeof ProductsSearchRoute
   '/use-cases/conversational-commerce': typeof UseCasesConversationalCommerceRoute
   '/analytics/$company/login': typeof AnalyticsCompanyLoginRoute
   '/analytics/$company/queries': typeof AnalyticsCompanyQueriesRoute
@@ -227,6 +251,7 @@ export interface FileRoutesById {
   '/developers': typeof DevelopersRouteWithChildren
   '/fashion': typeof FashionRoute
   '/footwear': typeof FootwearRoute
+  '/request-demo': typeof RequestDemoRoute
   '/analytics/$company': typeof AnalyticsCompanyRouteWithChildren
   '/api/ready': typeof ApiReadyRoute
   '/commerce/account': typeof CommerceAccountRoute
@@ -234,11 +259,13 @@ export interface FileRoutesById {
   '/commerce/login': typeof CommerceLoginRoute
   '/demo/commerce': typeof DemoCommerceRoute
   '/developers/architecture': typeof DevelopersArchitectureRoute
+  '/developers/commerce': typeof DevelopersCommerceRoute
   '/developers/data-pipeline': typeof DevelopersDataPipelineRoute
   '/developers/integration': typeof DevelopersIntegrationRoute
   '/developers/operations': typeof DevelopersOperationsRoute
   '/developers/platform': typeof DevelopersPlatformRoute
   '/internal/analytics': typeof InternalAnalyticsRouteWithChildren
+  '/products/search': typeof ProductsSearchRoute
   '/use-cases/conversational-commerce': typeof UseCasesConversationalCommerceRoute
   '/analytics/$company/login': typeof AnalyticsCompanyLoginRoute
   '/analytics/$company/queries': typeof AnalyticsCompanyQueriesRoute
@@ -256,6 +283,7 @@ export interface FileRouteTypes {
     | '/developers'
     | '/fashion'
     | '/footwear'
+    | '/request-demo'
     | '/analytics/$company'
     | '/api/ready'
     | '/commerce/account'
@@ -263,11 +291,13 @@ export interface FileRouteTypes {
     | '/commerce/login'
     | '/demo/commerce'
     | '/developers/architecture'
+    | '/developers/commerce'
     | '/developers/data-pipeline'
     | '/developers/integration'
     | '/developers/operations'
     | '/developers/platform'
     | '/internal/analytics'
+    | '/products/search'
     | '/use-cases/conversational-commerce'
     | '/analytics/$company/login'
     | '/analytics/$company/queries'
@@ -283,6 +313,7 @@ export interface FileRouteTypes {
     | '/developers'
     | '/fashion'
     | '/footwear'
+    | '/request-demo'
     | '/analytics/$company'
     | '/api/ready'
     | '/commerce/account'
@@ -290,11 +321,13 @@ export interface FileRouteTypes {
     | '/commerce/login'
     | '/demo/commerce'
     | '/developers/architecture'
+    | '/developers/commerce'
     | '/developers/data-pipeline'
     | '/developers/integration'
     | '/developers/operations'
     | '/developers/platform'
     | '/internal/analytics'
+    | '/products/search'
     | '/use-cases/conversational-commerce'
     | '/analytics/$company/login'
     | '/analytics/$company/queries'
@@ -310,6 +343,7 @@ export interface FileRouteTypes {
     | '/developers'
     | '/fashion'
     | '/footwear'
+    | '/request-demo'
     | '/analytics/$company'
     | '/api/ready'
     | '/commerce/account'
@@ -317,11 +351,13 @@ export interface FileRouteTypes {
     | '/commerce/login'
     | '/demo/commerce'
     | '/developers/architecture'
+    | '/developers/commerce'
     | '/developers/data-pipeline'
     | '/developers/integration'
     | '/developers/operations'
     | '/developers/platform'
     | '/internal/analytics'
+    | '/products/search'
     | '/use-cases/conversational-commerce'
     | '/analytics/$company/login'
     | '/analytics/$company/queries'
@@ -338,17 +374,26 @@ export interface RootRouteChildren {
   DevelopersRoute: typeof DevelopersRouteWithChildren
   FashionRoute: typeof FashionRoute
   FootwearRoute: typeof FootwearRoute
+  RequestDemoRoute: typeof RequestDemoRoute
   ApiReadyRoute: typeof ApiReadyRoute
   CommerceAccountRoute: typeof CommerceAccountRoute
   CommerceAdminRoute: typeof CommerceAdminRoute
   CommerceLoginRoute: typeof CommerceLoginRoute
   DemoCommerceRoute: typeof DemoCommerceRoute
   InternalAnalyticsRoute: typeof InternalAnalyticsRouteWithChildren
+  ProductsSearchRoute: typeof ProductsSearchRoute
   UseCasesConversationalCommerceRoute: typeof UseCasesConversationalCommerceRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/request-demo': {
+      id: '/request-demo'
+      path: '/request-demo'
+      fullPath: '/request-demo'
+      preLoaderRoute: typeof RequestDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/footwear': {
       id: '/footwear'
       path: '/footwear'
@@ -405,6 +450,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UseCasesConversationalCommerceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/products/search': {
+      id: '/products/search'
+      path: '/products/search'
+      fullPath: '/products/search'
+      preLoaderRoute: typeof ProductsSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/internal/analytics': {
       id: '/internal/analytics'
       path: '/internal/analytics'
@@ -438,6 +490,13 @@ declare module '@tanstack/react-router' {
       path: '/data-pipeline'
       fullPath: '/developers/data-pipeline'
       preLoaderRoute: typeof DevelopersDataPipelineRouteImport
+      parentRoute: typeof DevelopersRoute
+    }
+    '/developers/commerce': {
+      id: '/developers/commerce'
+      path: '/commerce'
+      fullPath: '/developers/commerce'
+      preLoaderRoute: typeof DevelopersCommerceRouteImport
       parentRoute: typeof DevelopersRoute
     }
     '/developers/architecture': {
@@ -554,6 +613,7 @@ const AnalyticsRouteWithChildren = AnalyticsRoute._addFileChildren(
 
 interface DevelopersRouteChildren {
   DevelopersArchitectureRoute: typeof DevelopersArchitectureRoute
+  DevelopersCommerceRoute: typeof DevelopersCommerceRoute
   DevelopersDataPipelineRoute: typeof DevelopersDataPipelineRoute
   DevelopersIntegrationRoute: typeof DevelopersIntegrationRoute
   DevelopersOperationsRoute: typeof DevelopersOperationsRoute
@@ -562,6 +622,7 @@ interface DevelopersRouteChildren {
 
 const DevelopersRouteChildren: DevelopersRouteChildren = {
   DevelopersArchitectureRoute: DevelopersArchitectureRoute,
+  DevelopersCommerceRoute: DevelopersCommerceRoute,
   DevelopersDataPipelineRoute: DevelopersDataPipelineRoute,
   DevelopersIntegrationRoute: DevelopersIntegrationRoute,
   DevelopersOperationsRoute: DevelopersOperationsRoute,
@@ -607,12 +668,14 @@ const rootRouteChildren: RootRouteChildren = {
   DevelopersRoute: DevelopersRouteWithChildren,
   FashionRoute: FashionRoute,
   FootwearRoute: FootwearRoute,
+  RequestDemoRoute: RequestDemoRoute,
   ApiReadyRoute: ApiReadyRoute,
   CommerceAccountRoute: CommerceAccountRoute,
   CommerceAdminRoute: CommerceAdminRoute,
   CommerceLoginRoute: CommerceLoginRoute,
   DemoCommerceRoute: DemoCommerceRoute,
   InternalAnalyticsRoute: InternalAnalyticsRouteWithChildren,
+  ProductsSearchRoute: ProductsSearchRoute,
   UseCasesConversationalCommerceRoute: UseCasesConversationalCommerceRoute,
 }
 export const routeTree = rootRouteImport

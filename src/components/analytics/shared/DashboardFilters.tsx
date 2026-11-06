@@ -115,22 +115,22 @@ export function DashboardFilters({
 
   return (
     <form
-      className="rounded-2xl border border-white/8 bg-white/[0.035] p-4 sm:p-5"
+      className="rounded-lg border border-workspace-line bg-workspace-surface p-4 sm:p-5"
       onSubmit={(event) => event.preventDefault()}
       aria-label="Filter dashboard activity"
     >
       <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold text-white">Activity filters</h2>
+            <h2 className="text-base font-semibold text-workspace-ink">Activity filters</h2>
             {isFetching && (
               <LoaderCircle
-                className="h-4 w-4 animate-spin text-blue-300"
+                className="h-4 w-4 animate-spin text-workspace-blue"
                 aria-label="Refreshing analytics"
               />
             )}
           </div>
-          <p className="mt-1 text-xs leading-5 text-slate-500">
+          <p className="mt-1 text-xs leading-5 text-workspace-muted">
             Filters update activity and demand insights. Company-wide inventory reports remain a
             latest-snapshot view.
           </p>
@@ -144,8 +144,8 @@ export function DashboardFilters({
               aria-pressed={value.period === option.value}
               className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 ${
                 value.period === option.value
-                  ? "border-blue-400/35 bg-blue-400/12 text-blue-100"
-                  : "border-white/10 bg-white/[0.025] text-slate-400 hover:bg-white/6 hover:text-white"
+                  ? "border-workspace-blue-line bg-workspace-tint text-workspace-blue"
+                  : "border-workspace-line bg-workspace-surface text-workspace-muted hover:bg-workspace-wash hover:text-workspace-blue"
               }`}
             >
               {option.label}
@@ -155,7 +155,7 @@ export function DashboardFilters({
       </div>
 
       <fieldset className="mt-5">
-        <legend className="text-xs font-medium text-slate-300">Search scope</legend>
+        <legend className="text-xs font-medium text-workspace-body">Search scope</legend>
         <div className="mt-2 grid gap-2 md:grid-cols-3">
           {requestScopeOptions.map((option) => (
             <button
@@ -163,14 +163,14 @@ export function DashboardFilters({
               type="button"
               onClick={() => update("requestScope", option.value)}
               aria-pressed={value.requestScope === option.value}
-              className={`rounded-xl border px-3 py-2.5 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 ${
+              className={`rounded-md border px-3 py-2.5 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 ${
                 value.requestScope === option.value
-                  ? "border-blue-400/35 bg-blue-400/12"
-                  : "border-white/8 bg-black/10 hover:bg-white/5"
+                  ? "border-workspace-blue-line bg-workspace-tint"
+                  : "border-workspace-line bg-black/10 hover:bg-workspace-wash"
               }`}
             >
-              <span className="block text-sm font-medium text-slate-100">{option.label}</span>
-              <span className="mt-0.5 block text-xs leading-5 text-slate-500">
+              <span className="block text-sm font-medium text-workspace-ink">{option.label}</span>
+              <span className="mt-0.5 block text-xs leading-5 text-workspace-muted">
                 {option.description}
               </span>
             </button>
@@ -212,18 +212,18 @@ export function DashboardFilters({
         </FilterField>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/8 pt-4">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-workspace-line pt-4">
         <button
           type="button"
           onClick={() => setAdvancedOpen((open) => !open)}
           aria-expanded={advancedOpen}
           aria-controls={`${audience}-advanced-filters`}
-          className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-white/10 px-3.5 text-sm font-medium text-slate-300 transition hover:bg-white/6 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+          className="inline-flex min-h-10 items-center gap-2 rounded-md border border-workspace-line px-3.5 text-sm font-medium text-workspace-body transition hover:bg-workspace-wash hover:text-workspace-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
         >
-          <SlidersHorizontal className="h-4 w-4 text-blue-300" aria-hidden="true" />
+          <SlidersHorizontal className="h-4 w-4 text-workspace-blue" aria-hidden="true" />
           {advancedOpen ? "Hide advanced filters" : "More filters"}
           {activeAdvancedFilters > 0 && (
-            <span className="rounded-full bg-blue-400/15 px-2 py-0.5 text-xs text-blue-200">
+            <span className="rounded-full bg-workspace-tint px-2 py-0.5 text-xs text-workspace-blue">
               {activeAdvancedFilters}
             </span>
           )}
@@ -239,7 +239,7 @@ export function DashboardFilters({
             onReset();
             setAdvancedOpen(false);
           }}
-          className="inline-flex min-h-10 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-400 transition hover:bg-white/6 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+          className="inline-flex min-h-10 items-center gap-2 rounded-md px-3 text-sm font-medium text-workspace-muted transition hover:bg-workspace-wash hover:text-workspace-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
         >
           <RotateCcw className="h-4 w-4" aria-hidden="true" />
           Reset
@@ -384,7 +384,7 @@ function FilterField({
 }) {
   return (
     <div>
-      <label htmlFor={htmlFor} className="text-xs font-medium text-slate-300">
+      <label htmlFor={htmlFor} className="text-xs font-medium text-workspace-body">
         {label}
       </label>
       <div className="mt-1.5">{children}</div>
@@ -408,7 +408,7 @@ function DateInput({
   return (
     <div className="relative">
       <CalendarDays
-        className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-500"
+        className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-workspace-muted"
         aria-hidden="true"
       />
       <input
@@ -418,7 +418,7 @@ function DateInput({
         min={min}
         max={max}
         onChange={(event) => onChange(event.target.value)}
-        className={`${inputClass} pr-3 pl-9 [color-scheme:dark]`}
+        className={`${inputClass} pr-3 pl-9 [color-scheme:light]`}
       />
     </div>
   );
@@ -431,4 +431,4 @@ function optionsWithCurrent(options: string[], current: string): string[] {
 }
 
 const inputClass =
-  "h-10 w-full rounded-xl border border-white/10 bg-[#0b1728] px-3 text-sm text-white outline-none focus:border-blue-400/70 focus:ring-3 focus:ring-blue-400/10";
+  "h-10 w-full rounded-md border border-workspace-line bg-workspace-surface px-3 text-sm text-workspace-ink outline-none focus:border-workspace-blue focus:ring-3 focus:ring-blue-400/10";

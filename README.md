@@ -2,13 +2,18 @@
 
 Customer-facing product website and developer documentation for Querix AI.
 
-Querix helps e-commerce stores, marketplaces, product catalogs, and listing platforms understand
-customer intent and return relevant inventory for vague, incomplete, misspelled, multilingual, or
-natural-language searches.
+Querix brings together intelligent search and conversational commerce. Search helps stores,
+marketplaces, catalogs, and listing platforms match customer intent to relevant inventory.
+Conversational commerce maintains shopping requirements across turns and supports refinements
+and comparisons of supplied catalog details. The two services have separate access contracts.
 
 ## Product surfaces
 
-- `/` — product story, search experience, platform overview, trust, and demo contact
+- `/` — shared product story, interactive illustrative walkthrough, use cases, and demo request
+- `/products/search` — intelligent search product page
+- `/use-cases/conversational-commerce` — conversational shopping product page and demo boundaries
+- `/request-demo` — prepare an email to `hello@querix.co` for Search, Commerce, or Both
+- `/developers/commerce` — conversation lifecycle, streaming, access, and current catalog boundaries
 - `/developers` — developer onboarding and documentation hub
 - `/developers/integration` — tenant-scoped API integration contract
 - `/developers/platform` — search behavior and routing
@@ -106,3 +111,16 @@ backend's `scripts/bootstrap_portal.py`; change the temporary password at first 
 Existing sample components remain regression fixtures; the hosted demo entry point
 requires login and no longer offers anonymous live access. The historical
 `docs/commerce-demo.md` sample walkthrough is not the current access contract.
+
+## Public design system
+
+Public pages use the scoped `qx-*` styles in `src/components/marketing/marketing.css`.
+The vector brand mark has a one-time draw animation, a hover signal, and a reduced-motion
+alternative. Developer documentation and company/internal analytics share the same palette through
+`workspace-*` tokens and `src/components/workspace/workspace.css`, including authentication,
+filters, tables, charts, and portal states. Existing access and data contracts are preserved.
+The homepage walkthrough uses explicitly illustrative products and makes no live AI requests.
+Search examples animate query interpretation, filter selection, and result entry; visitors can
+pause or replay the sequence, and reduced-motion preferences show the final state immediately.
+The demo form prepares a reviewable email draft; it does not transmit form data or report delivery.
+`public/og-discovery.svg` is the editable source for the social preview PNG.

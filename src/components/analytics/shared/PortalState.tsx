@@ -1,6 +1,7 @@
 import { AlertTriangle, LoaderCircle, LockKeyhole } from "lucide-react";
 
-import { QuerixLogo } from "@/components/QuerixLogo";
+import { Brand } from "@/components/marketing/Brand";
+import "@/components/workspace/workspace.css";
 
 type PortalStateProps = {
   kind: "loading" | "error" | "forbidden" | "empty";
@@ -15,27 +16,29 @@ export function PortalState({ kind, title, message, internal = false, action }: 
     kind === "loading" ? LoaderCircle : kind === "forbidden" ? LockKeyhole : AlertTriangle;
 
   return (
-    <main className="grid min-h-screen place-items-center px-5 py-12">
+    <div className="qx-workspace qx-state">
       <section
-        className="glass-card w-full max-w-lg rounded-3xl p-8 text-center"
+        className="qx-surface w-full max-w-lg rounded-xl p-8 text-center"
         aria-live={kind === "loading" ? "polite" : "assertive"}
       >
-        <QuerixLogo className="mx-auto mb-7" size={34} />
+        <div className="qx-state-brand">
+          <Brand />
+        </div>
         {internal && (
-          <p className="mb-5 text-xs font-semibold uppercase tracking-[0.24em] text-violet-300">
+          <p className="mb-5 text-xs font-semibold uppercase tracking-[0.24em] text-workspace-blue">
             Internal analytics
           </p>
         )}
         <Icon
           className={`mx-auto mb-4 h-7 w-7 ${
-            kind === "loading" ? "animate-spin text-blue-300" : "text-amber-300"
+            kind === "loading" ? "animate-spin text-workspace-blue" : "text-workspace-warning"
           }`}
           aria-hidden="true"
         />
-        <h1 className="text-xl font-semibold text-white">
+        <h1 className="text-xl font-semibold text-workspace-ink">
           {title ?? (kind === "loading" ? "Checking your session" : "Analytics unavailable")}
         </h1>
-        <p className="mt-2 text-sm leading-6 text-slate-300">
+        <p className="mt-2 text-sm leading-6 text-workspace-body">
           {message ??
             (kind === "loading"
               ? "Your private analytics workspace will be ready shortly."
@@ -45,12 +48,12 @@ export function PortalState({ kind, title, message, internal = false, action }: 
           <button
             type="button"
             onClick={action.onClick}
-            className="mt-6 rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+            className="mt-6 rounded-md qx-action bg-workspace-ink px-4 py-2.5 text-sm font-semibold text-workspace-ink transition hover:bg-workspace-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
           >
             {action.label}
           </button>
         )}
       </section>
-    </main>
+    </div>
   );
 }

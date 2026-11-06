@@ -25,18 +25,18 @@ function StatMetric({ metric }: { metric: MetricPayload; title: string }) {
 
   return (
     <>
-      <p className="mt-5 text-3xl font-semibold tracking-tight text-white">
+      <p className="mt-5 text-3xl font-semibold tracking-tight text-workspace-ink">
         {formatMetricValue(primary[1], primary[0])}
       </p>
-      <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">
+      <p className="mt-1 text-xs uppercase tracking-wide text-workspace-muted">
         {humanizeKey(primary[0])}
       </p>
       {rest.length > 0 && (
-        <dl className="mt-5 grid gap-3 border-t border-white/8 pt-4">
+        <dl className="mt-5 grid gap-3 border-t border-workspace-line pt-4">
           {rest.slice(0, 4).map(([key, value]) => (
             <div key={key} className="flex items-start justify-between gap-4 text-sm">
-              <dt className="text-slate-400">{humanizeKey(key)}</dt>
-              <dd className="text-right font-medium text-slate-100">
+              <dt className="text-workspace-muted">{humanizeKey(key)}</dt>
+              <dd className="text-right font-medium text-workspace-ink">
                 {formatMetricValue(value, key)}
               </dd>
             </div>
@@ -69,12 +69,14 @@ function BarMetric({ metric, title }: { metric: MetricPayload; title: string }) 
         return (
           <div key={`${label}-${index}`}>
             <div className="mb-1.5 flex items-start justify-between gap-3 text-xs">
-              <span className="min-w-0 truncate text-slate-300">{label}</span>
-              <span className="shrink-0 font-medium text-white">{formatMetricValue(value)}</span>
+              <span className="min-w-0 truncate text-workspace-body">{label}</span>
+              <span className="shrink-0 font-medium text-workspace-ink">
+                {formatMetricValue(value)}
+              </span>
             </div>
-            <div className="h-2 overflow-hidden rounded-full bg-white/6">
+            <div className="h-2 overflow-hidden rounded-full bg-workspace-wash">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-blue-400 to-violet-400"
+                className="qx-metric-bar h-full rounded-full bg-workspace-blue"
                 style={{ width: `${Math.max(2, (Math.abs(value) / max) * 100)}%` }}
                 aria-hidden="true"
               />
@@ -100,7 +102,7 @@ function BarMetric({ metric, title }: { metric: MetricPayload; title: string }) 
         </tbody>
       </table>
       {typeof metric.note === "string" && metric.note && (
-        <p className="text-xs leading-5 text-slate-500">{metric.note}</p>
+        <p className="text-xs leading-5 text-workspace-muted">{metric.note}</p>
       )}
     </div>
   );
@@ -115,10 +117,10 @@ function ListMetric({ metric, title }: { metric: MetricPayload; title: string })
       {list.slice(0, 12).map((item, index) => (
         <li
           key={index}
-          className="flex gap-3 rounded-xl border border-white/6 bg-white/[0.025] px-3 py-2.5 text-sm"
+          className="flex gap-3 rounded-md border border-workspace-line bg-workspace-surface px-3 py-2.5 text-sm"
         >
-          <span className="text-slate-500">{index + 1}</span>
-          <span className="min-w-0 break-words text-slate-200">
+          <span className="text-workspace-muted">{index + 1}</span>
+          <span className="min-w-0 break-words text-workspace-ink">
             {typeof item === "object" ? compactObject(item) : formatMetricValue(item)}
           </span>
         </li>
@@ -144,7 +146,7 @@ function ComparisonTableMetric({ metric, title }: { metric: MetricPayload; title
         <table className="w-full min-w-[680px] text-left text-sm">
           <caption className="sr-only">{title}</caption>
           <thead>
-            <tr className="border-b border-white/8 text-xs uppercase tracking-wide text-slate-500">
+            <tr className="border-b border-workspace-line text-xs uppercase tracking-wide text-workspace-muted">
               <th scope="col" className="pb-3 pr-5 font-medium">
                 Item
               </th>
@@ -157,12 +159,12 @@ function ComparisonTableMetric({ metric, title }: { metric: MetricPayload; title
           </thead>
           <tbody>
             {rows.map(([label, row]) => (
-              <tr key={label} className="border-b border-white/5 last:border-0">
-                <th scope="row" className="py-3 pr-5 font-medium text-slate-200">
+              <tr key={label} className="border-b border-workspace-line last:border-0">
+                <th scope="row" className="py-3 pr-5 font-medium text-workspace-ink">
                   {humanizeKey(label)}
                 </th>
                 {columns.map((column) => (
-                  <td key={column} className="px-3 py-3 text-right text-slate-300">
+                  <td key={column} className="px-3 py-3 text-right text-workspace-body">
                     {formatMetricValue(row[column], column)}
                   </td>
                 ))}
@@ -172,7 +174,7 @@ function ComparisonTableMetric({ metric, title }: { metric: MetricPayload; title
         </table>
       </div>
       {typeof metric.note === "string" && metric.note && (
-        <p className="mt-3 text-xs leading-5 text-slate-500">{metric.note}</p>
+        <p className="mt-3 text-xs leading-5 text-workspace-muted">{metric.note}</p>
       )}
     </>
   );
@@ -192,7 +194,7 @@ function TableMetric({ metric, title }: { metric: MetricPayload; title: string }
         <table className="w-full min-w-[560px] text-left text-sm">
           <caption className="sr-only">{title}</caption>
           <thead>
-            <tr className="border-b border-white/8 text-xs uppercase tracking-wide text-slate-500">
+            <tr className="border-b border-workspace-line text-xs uppercase tracking-wide text-workspace-muted">
               {columns.map((column) => (
                 <th key={column} scope="col" className="pb-3 pr-5 font-medium">
                   {humanizeKey(column)}
@@ -202,9 +204,9 @@ function TableMetric({ metric, title }: { metric: MetricPayload; title: string }
           </thead>
           <tbody>
             {rows.slice(0, 20).map((row, index) => (
-              <tr key={index} className="border-b border-white/5 last:border-0">
+              <tr key={index} className="border-b border-workspace-line last:border-0">
                 {columns.map((column) => (
-                  <td key={column} className="py-3 pr-5 text-slate-200">
+                  <td key={column} className="py-3 pr-5 text-workspace-ink">
                     {tableCellValue(row[column], column)}
                   </td>
                 ))}
@@ -214,7 +216,7 @@ function TableMetric({ metric, title }: { metric: MetricPayload; title: string }
         </table>
       </div>
       {typeof metric.note === "string" && metric.note && (
-        <p className="mt-3 text-xs leading-5 text-slate-500">{metric.note}</p>
+        <p className="mt-3 text-xs leading-5 text-workspace-muted">{metric.note}</p>
       )}
     </>
   );
@@ -232,30 +234,30 @@ function ClassificationCoverageMetric({ metric, title }: { metric: MetricPayload
       <div className="mt-5">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-3xl font-semibold tracking-tight text-white">
+            <p className="text-3xl font-semibold tracking-tight text-workspace-ink">
               {formatMetricValue(coverage, "coverage_rate")}
             </p>
-            <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">
+            <p className="mt-1 text-xs uppercase tracking-wide text-workspace-muted">
               Searches matched to a category
             </p>
           </div>
-          <dl className="text-right text-xs text-slate-400">
+          <dl className="text-right text-xs text-workspace-muted">
             <div>
               <dt className="inline">Matched: </dt>
-              <dd className="inline font-medium text-slate-100">
+              <dd className="inline font-medium text-workspace-ink">
                 {formatMetricValue(metric.classified)}
               </dd>
             </div>
             <div>
               <dt className="inline">Not matched: </dt>
-              <dd className="inline font-medium text-slate-100">
+              <dd className="inline font-medium text-workspace-ink">
                 {formatMetricValue(metric.unclassified)}
               </dd>
             </div>
           </dl>
         </div>
         <div
-          className="mt-4 h-3 overflow-hidden rounded-full bg-white/6"
+          className="mt-4 h-3 overflow-hidden rounded-full bg-workspace-wash"
           role="progressbar"
           aria-label={title}
           aria-valuemin={0}
@@ -263,23 +265,23 @@ function ClassificationCoverageMetric({ metric, title }: { metric: MetricPayload
           aria-valuenow={Math.round(percent)}
         >
           <div
-            className="h-full rounded-full bg-gradient-to-r from-blue-400 to-violet-400"
+            className="qx-metric-bar h-full rounded-full bg-workspace-blue"
             style={{ width: `${percent}%` }}
           />
         </div>
       </div>
       {rows.length > 0 && (
-        <div className="mt-5 border-t border-white/8 pt-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <div className="mt-5 border-t border-workspace-line pt-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-workspace-muted">
             Common unmatched searches
           </p>
           <ol className="mt-3 space-y-2">
             {rows.slice(0, 8).map((row, index) => (
               <li key={index} className="flex items-start justify-between gap-4 text-sm">
-                <span className="min-w-0 break-words text-slate-300">
+                <span className="min-w-0 break-words text-workspace-body">
                   {formatMetricValue(row.query)}
                 </span>
-                <span className="shrink-0 font-medium text-white">
+                <span className="shrink-0 font-medium text-workspace-ink">
                   {formatMetricValue(row.searches)}
                 </span>
               </li>
@@ -288,7 +290,7 @@ function ClassificationCoverageMetric({ metric, title }: { metric: MetricPayload
         </div>
       )}
       {typeof metric.note === "string" && metric.note && (
-        <p className="mt-3 text-xs leading-5 text-slate-500">{metric.note}</p>
+        <p className="mt-3 text-xs leading-5 text-workspace-muted">{metric.note}</p>
       )}
     </>
   );
@@ -303,7 +305,7 @@ function GenericMetric({ metric, title }: { metric: MetricPayload; title: string
       <table className="w-full min-w-[280px] text-left text-sm">
         <caption className="sr-only">{title}</caption>
         <thead>
-          <tr className="border-b border-white/8 text-xs uppercase tracking-wide text-slate-500">
+          <tr className="border-b border-workspace-line text-xs uppercase tracking-wide text-workspace-muted">
             <th scope="col" className="pb-2 pr-4 font-medium">
               Measure
             </th>
@@ -314,11 +316,11 @@ function GenericMetric({ metric, title }: { metric: MetricPayload; title: string
         </thead>
         <tbody>
           {entries.slice(0, 16).map(([key, value]) => (
-            <tr key={key} className="border-b border-white/5 last:border-0">
-              <th scope="row" className="py-2.5 pr-4 font-normal text-slate-400">
+            <tr key={key} className="border-b border-workspace-line last:border-0">
+              <th scope="row" className="py-2.5 pr-4 font-normal text-workspace-muted">
                 {humanizeKey(key)}
               </th>
-              <td className="py-2.5 text-slate-100">{displayValue(value, key)}</td>
+              <td className="py-2.5 text-workspace-ink">{displayValue(value, key)}</td>
             </tr>
           ))}
         </tbody>
@@ -368,7 +370,9 @@ function isPrimitive(value: unknown): boolean {
 }
 
 function MetricEmpty() {
-  return <p className="mt-5 text-sm text-slate-500">No data is available for this metric yet.</p>;
+  return (
+    <p className="mt-5 text-sm text-workspace-muted">No data is available for this metric yet.</p>
+  );
 }
 
 const metricRenderers: Record<string, MetricRenderer> = {
@@ -399,7 +403,9 @@ class MetricBoundary extends Component<{ children: ReactNode }, { failed: boolea
 
   render() {
     if (this.state.failed) {
-      return <p className="mt-5 text-sm text-amber-200">This metric could not be displayed.</p>;
+      return (
+        <p className="mt-5 text-sm text-workspace-warning">This metric could not be displayed.</p>
+      );
     }
     return this.props.children;
   }

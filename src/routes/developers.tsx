@@ -9,7 +9,7 @@ export const Route = createFileRoute("/developers")({
       {
         name: "description",
         content:
-          "Integrate the Querix tenant-scoped Search API with server-side authentication, cursor pagination, health checks, and production-ready client patterns.",
+          "Explore Querix search and conversational commerce integration guides, including authentication, conversation state, streaming, and deployment boundaries.",
       },
     ],
   }),

@@ -1,0 +1,93 @@
+.qx-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #122239;
+  white-space: nowrap;
+}
+.qx-brand-light {
+  color: #f6f7fb;
+}
+.qx-mark {
+  width: 39px;
+  height: 39px;
+  overflow: visible;
+  flex-shrink: 0;
+}
+.qx-wordmark {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -1.7px;
+  line-height: 1;
+}
+.qx-wordmark > span {
+  display: inline-block;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-left: 6px;
+  vertical-align: top;
+  margin-top: 3px;
+}
+.qx-mark-ring {
+  transform-origin: 29px 29px;
+  transform: rotate(-90deg);
+  animation: qx-draw 1.2s ease-out both;
+}
+.qx-mark-dots circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: qx-signal 0.65s ease both;
+  animation-delay: 0.6s;
+}
+.qx-mark-dots circle:nth-child(2) {
+  animation-delay: 0.8s;
+}
+.qx-mark-dots circle:nth-child(3) {
+  animation-delay: 1s;
+}
+a:hover .qx-mark-dots circle {
+  animation: qx-hover 0.65s ease both;
+}
+a:hover .qx-mark-dots circle:nth-child(2) {
+  animation-delay: 0.1s;
+}
+a:hover .qx-mark-dots circle:nth-child(3) {
+  animation-delay: 0.2s;
+}
+@keyframes qx-draw {
+  from {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes qx-signal {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  65% {
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes qx-hover {
+  50% {
+    transform: translateY(-3px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .qx-brand *,
+  a:hover .qx-brand * {
+    animation: none !important;
+  }
+}

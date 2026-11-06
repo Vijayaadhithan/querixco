@@ -83,18 +83,18 @@ export function QueryFilters({
 
   return (
     <form
-      className="rounded-2xl border border-white/8 bg-white/[0.035] p-4 sm:p-5"
+      className="rounded-lg border border-workspace-line bg-workspace-surface p-4 sm:p-5"
       onSubmit={(event) => event.preventDefault()}
       aria-label="Filter query history"
     >
       <div className="grid gap-4 lg:grid-cols-12">
         <div className="lg:col-span-4">
-          <label htmlFor="query-filter" className="text-xs font-medium text-slate-300">
+          <label htmlFor="query-filter" className="text-xs font-medium text-workspace-body">
             Search query text
           </label>
           <div className="relative mt-1.5">
             <Search
-              className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-500"
+              className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-workspace-muted"
               aria-hidden="true"
             />
             <input
@@ -183,7 +183,7 @@ export function QueryFilters({
         )}
       </div>
 
-      <div className="mt-4 grid gap-4 rounded-xl border border-white/8 bg-black/10 p-4 sm:grid-cols-2">
+      <div className="mt-4 grid gap-4 rounded-md border border-workspace-line bg-black/10 p-4 sm:grid-cols-2">
         <FilterField label="Sort results by" htmlFor="query-sort-field">
           <select
             id="query-sort-field"
@@ -211,32 +211,32 @@ export function QueryFilters({
         </FilterField>
       </div>
 
-      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-white/8 bg-black/10 px-4 py-3">
+      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-md border border-workspace-line bg-black/10 px-4 py-3">
         <input
           type="checkbox"
           checked={value.includeFilteredResults}
           onChange={(event) => update("includeFilteredResults", event.target.checked)}
-          className="mt-0.5 h-4 w-4 rounded border-white/20 bg-slate-950 text-blue-500 focus:ring-blue-300"
+          className="mt-0.5 h-4 w-4 rounded border-workspace-line bg-workspace-surface text-workspace-blue focus:ring-blue-300"
         />
         <span>
-          <span className="block text-sm font-medium text-slate-200">
+          <span className="block text-sm font-medium text-workspace-ink">
             Include filtered and catalogue browse results
           </span>
-          <span className="mt-0.5 block text-xs leading-5 text-slate-500">
+          <span className="mt-0.5 block text-xs leading-5 text-workspace-muted">
             Off by default so query history and zero-result review contain original text searches.
           </span>
         </span>
       </label>
 
-      <details className="group mt-4 rounded-xl border border-white/8 bg-black/10">
-        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-medium text-slate-300 [&::-webkit-details-marker]:hidden">
+      <details className="group mt-4 rounded-md border border-workspace-line bg-black/10">
+        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-medium text-workspace-body [&::-webkit-details-marker]:hidden">
           <span className="inline-flex items-center gap-2">
-            <SlidersHorizontal className="h-4 w-4 text-blue-300" aria-hidden="true" />
+            <SlidersHorizontal className="h-4 w-4 text-workspace-blue" aria-hidden="true" />
             Advanced filters
           </span>
           <ChevronDown className="h-4 w-4 transition group-open:rotate-180" aria-hidden="true" />
         </summary>
-        <div className="grid gap-4 border-t border-white/8 p-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 border-t border-workspace-line p-4 sm:grid-cols-2 lg:grid-cols-4">
           <FilterField label="Request type" htmlFor="request-kind-filter">
             <select
               id="request-kind-filter"
@@ -319,22 +319,22 @@ export function QueryFilters({
             </FilterField>
           )}
 
-          <label className="flex items-center gap-3 rounded-xl border border-white/8 px-3 py-2 text-sm text-slate-300">
+          <label className="flex items-center gap-3 rounded-md border border-workspace-line px-3 py-2 text-sm text-workspace-body">
             <input
               type="checkbox"
               checked={value.hasFilters}
               onChange={(event) => update("hasFilters", event.target.checked)}
-              className="h-4 w-4 rounded border-white/20 bg-slate-950 text-blue-500"
+              className="h-4 w-4 rounded border-workspace-line bg-workspace-surface text-workspace-blue"
             />
             Only requests with applied filters
           </label>
         </div>
       </details>
 
-      <fieldset className="mt-5 border-t border-white/8 pt-4">
+      <fieldset className="mt-5 border-t border-workspace-line pt-4">
         <legend className="sr-only">Date range</legend>
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-          <p className="text-sm font-semibold text-slate-200">Date range</p>
+          <p className="text-sm font-semibold text-workspace-ink">Date range</p>
           <div className="flex flex-wrap gap-2" aria-label="Quick date ranges">
             <DatePreset label="All time" onClick={() => setDateRange(null)} />
             <DatePreset label="Today" onClick={() => setDateRange(1)} />
@@ -364,7 +364,7 @@ export function QueryFilters({
             <button
               type="button"
               onClick={onReset}
-              className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-white/10 px-4 text-sm font-medium text-slate-300 transition hover:bg-white/6 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 lg:w-auto"
+              className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-md border border-workspace-line px-4 text-sm font-medium text-workspace-body transition hover:bg-workspace-wash hover:text-workspace-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 lg:w-auto"
             >
               <RotateCcw className="h-4 w-4" aria-hidden="true" />
               Reset all filters
@@ -397,7 +397,7 @@ function FilterField({
 }) {
   return (
     <div className={className}>
-      <label htmlFor={htmlFor} className="text-xs font-medium text-slate-300">
+      <label htmlFor={htmlFor} className="text-xs font-medium text-workspace-body">
         {label}
       </label>
       <div className="mt-1.5">{children}</div>
@@ -421,7 +421,7 @@ function DateInput({
   return (
     <div className="relative">
       <CalendarDays
-        className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-500"
+        className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-workspace-muted"
         aria-hidden="true"
       />
       <input
@@ -431,7 +431,7 @@ function DateInput({
         min={min}
         max={max}
         onChange={(event) => onChange(event.target.value)}
-        className={`${inputClass} pr-3 pl-9 [color-scheme:dark]`}
+        className={`${inputClass} pr-3 pl-9 [color-scheme:light]`}
       />
     </div>
   );
@@ -442,7 +442,7 @@ function DatePreset({ label, onClick }: { label: string; onClick: () => void }) 
     <button
       type="button"
       onClick={onClick}
-      className="rounded-lg border border-white/10 bg-white/[0.035] px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-blue-400/30 hover:bg-blue-400/8 hover:text-blue-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+      className="rounded-lg border border-workspace-line bg-workspace-surface px-3 py-1.5 text-xs font-medium text-workspace-body transition hover:border-workspace-blue-line hover:bg-workspace-tint hover:text-workspace-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
     >
       {label}
     </button>
@@ -463,4 +463,4 @@ function optionsWithCurrent(options: string[], current: string): string[] {
 }
 
 const inputClass =
-  "h-10 w-full rounded-xl border border-white/10 bg-[#0b1728] px-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-blue-400/70 focus:ring-3 focus:ring-blue-400/10";
+  "h-10 w-full rounded-md border border-workspace-line bg-workspace-surface px-3 text-sm text-workspace-ink outline-none placeholder:text-workspace-muted focus:border-workspace-blue focus:ring-3 focus:ring-blue-400/10";

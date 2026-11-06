@@ -37,29 +37,29 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
 
   return (
     <details className="group mt-3">
-      <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 text-xs font-medium text-violet-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300">
+      <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 text-xs font-medium text-workspace-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300">
         Internal diagnostics
         <ChevronDown className="h-3.5 w-3.5 transition group-open:rotate-180" aria-hidden="true" />
       </summary>
-      <div className="mt-3 space-y-5 rounded-xl border border-violet-400/12 bg-violet-400/[0.045] p-4">
+      <div className="mt-3 space-y-5 rounded-md border border-workspace-blue-line bg-workspace-tint p-4">
         <section
           aria-labelledby={`diagnosis-${item.request_id}`}
-          className="rounded-xl border border-white/8 bg-black/10 p-4"
+          className="rounded-md border border-workspace-line bg-black/10 p-4"
         >
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+          <p className="text-xs font-medium uppercase tracking-wide text-workspace-muted">
             Observed result diagnosis
           </p>
           <h3
             id={`diagnosis-${item.request_id}`}
-            className="mt-1 text-base font-semibold text-white"
+            className="mt-1 text-base font-semibold text-workspace-ink"
           >
             {formatLabel(diagnostics?.code)}
           </h3>
-          <p className="mt-1 text-sm leading-6 text-slate-300">
+          <p className="mt-1 text-sm leading-6 text-workspace-body">
             {formatRawText(diagnostics?.explanation)}
           </p>
           {diagnostics?.evidence_complete !== true && (
-            <p className="mt-2 text-xs text-amber-200">
+            <p className="mt-2 text-xs text-workspace-warning">
               Exact per-filter evidence was not recorded for this historical request; the diagnosis
               is limited to the observed outcome, applied filters, and any candidate-stage counts.
             </p>
@@ -67,7 +67,10 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
         </section>
 
         <section aria-labelledby={`filters-${item.request_id}`}>
-          <h3 id={`filters-${item.request_id}`} className="text-sm font-semibold text-slate-100">
+          <h3
+            id={`filters-${item.request_id}`}
+            className="text-sm font-semibold text-workspace-ink"
+          >
             Search and filter context
           </h3>
           <div className="mt-3 grid gap-3 lg:grid-cols-3">
@@ -77,7 +80,7 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
           </div>
           {Array.isArray(diagnostics?.ignored_filter_names) &&
             diagnostics.ignored_filter_names.length > 0 && (
-              <p className="mt-3 text-xs text-slate-400">
+              <p className="mt-3 text-xs text-workspace-muted">
                 Overridden or ignored planner filters: {diagnostics.ignored_filter_names.join(", ")}
               </p>
             )}
@@ -86,7 +89,7 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
         <section aria-labelledby={`filter-attribution-${item.request_id}`}>
           <h3
             id={`filter-attribution-${item.request_id}`}
-            className="text-sm font-semibold text-slate-100"
+            className="text-sm font-semibold text-workspace-ink"
           >
             Why filters returned no results
           </h3>
@@ -94,12 +97,12 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
             <>
               {Array.isArray(filterAttribution.blocking_filters) &&
               filterAttribution.blocking_filters.length > 0 ? (
-                <p className="mt-2 text-xs text-slate-300">
+                <p className="mt-2 text-xs text-workspace-body">
                   Removing these filter groups recovered candidates:{" "}
                   {filterAttribution.blocking_filters.map(humanizeKey).join(", ")}.
                 </p>
               ) : (
-                <p className="mt-2 text-xs text-slate-400">
+                <p className="mt-2 text-xs text-workspace-muted">
                   Removing any one captured filter group did not recover candidates.
                 </p>
               )}
@@ -112,14 +115,14 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
               )}
             </>
           ) : (
-            <p className="mt-2 text-xs text-slate-500">
+            <p className="mt-2 text-xs text-workspace-muted">
               Per-filter counterfactual counts are unavailable for this request.
             </p>
           )}
         </section>
 
         <section aria-labelledby={`funnel-${item.request_id}`}>
-          <h3 id={`funnel-${item.request_id}`} className="text-sm font-semibold text-slate-100">
+          <h3 id={`funnel-${item.request_id}`} className="text-sm font-semibold text-workspace-ink">
             Candidate funnel
           </h3>
           {Object.keys(candidateFunnel).length > 0 ? (
@@ -129,23 +132,27 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
               ))}
             </dl>
           ) : (
-            <p className="mt-2 text-xs text-slate-500">Candidate-stage counts are unavailable.</p>
+            <p className="mt-2 text-xs text-workspace-muted">
+              Candidate-stage counts are unavailable.
+            </p>
           )}
         </section>
 
         <section aria-labelledby={`performance-${item.request_id}`}>
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+              <p className="text-xs font-medium uppercase tracking-wide text-workspace-muted">
                 Total server duration
               </p>
               <p
                 id={`performance-${item.request_id}`}
-                className="mt-1 text-2xl font-semibold text-white"
+                className="mt-1 text-2xl font-semibold text-workspace-ink"
               >
                 {formatDuration(performance?.total_server_duration_ms)}
               </p>
-              <p className="mt-1 text-xs text-slate-500">Authoritative server processing time.</p>
+              <p className="mt-1 text-xs text-workspace-muted">
+                Authoritative server processing time.
+              </p>
             </div>
             <div className="flex flex-wrap gap-2">
               <CacheBadge label="Plan cache" value={cache?.plan_hit} />
@@ -172,7 +179,7 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
         </section>
 
         <section aria-labelledby={`tokens-${item.request_id}`}>
-          <h3 id={`tokens-${item.request_id}`} className="text-sm font-semibold text-slate-100">
+          <h3 id={`tokens-${item.request_id}`} className="text-sm font-semibold text-workspace-ink">
             Token usage
           </h3>
           <dl className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -189,17 +196,20 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
 
         <section aria-labelledby={`attempts-${item.request_id}`}>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h3 id={`attempts-${item.request_id}`} className="text-sm font-semibold text-slate-100">
+            <h3
+              id={`attempts-${item.request_id}`}
+              className="text-sm font-semibold text-workspace-ink"
+            >
               Provider and model attempts
             </h3>
-            <span className="text-xs text-slate-500">
+            <span className="text-xs text-workspace-muted">
               Recorded: {formatCount(performance?.attempt_count)}
             </span>
           </div>
           {attempts.length > 0 ? (
-            <div className="mt-2 overflow-x-auto rounded-lg border border-white/8">
+            <div className="mt-2 overflow-x-auto rounded-lg border border-workspace-line">
               <table className="w-full min-w-[900px] text-left text-xs">
-                <thead className="bg-black/15 text-slate-500">
+                <thead className="bg-black/15 text-workspace-muted">
                   <tr>
                     <th scope="col" className="px-3 py-2 font-medium">
                       #
@@ -227,38 +237,38 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/6">
+                <tbody className="divide-y divide-workspace-line">
                   {attempts.map((attempt, index) => {
                     const recovered =
                       isSuccessful(attempt.status) &&
                       attempts.slice(0, index).some((earlier) => isFailure(earlier.status));
                     return (
                       <tr key={`${String(attempt.attempt_number ?? index)}-${index}`}>
-                        <td className="px-3 py-2 text-slate-300">
+                        <td className="px-3 py-2 text-workspace-body">
                           {formatCount(attempt.attempt_number ?? index + 1)}
                         </td>
-                        <td className="px-3 py-2 text-slate-300">
+                        <td className="px-3 py-2 text-workspace-body">
                           {formatLabel(attempt.operation)}
                         </td>
-                        <td className="px-3 py-2 text-slate-300">
+                        <td className="px-3 py-2 text-workspace-body">
                           <p>{formatRawText(attempt.provider)}</p>
-                          <p className="mt-0.5 break-all text-slate-500">
+                          <p className="mt-0.5 break-all text-workspace-muted">
                             {formatRawText(attempt.model)}
                           </p>
                         </td>
                         <td className="px-3 py-2">
                           <AttemptStatus status={attempt.status} />
                         </td>
-                        <td className="px-3 py-2 text-right text-slate-300">
+                        <td className="px-3 py-2 text-right text-workspace-body">
                           {formatDuration(attempt.duration_ms)}
                         </td>
-                        <td className="px-3 py-2 text-right text-slate-300">
+                        <td className="px-3 py-2 text-right text-workspace-body">
                           {formatCount(attempt.api_calls)}
                         </td>
-                        <td className="px-3 py-2 text-right text-slate-300">
+                        <td className="px-3 py-2 text-right text-workspace-body">
                           {formatCount(attempt.total_tokens)}
                         </td>
-                        <td className="px-3 py-2 text-slate-300">
+                        <td className="px-3 py-2 text-workspace-body">
                           {attempt.failure_reason
                             ? attempt.failure_reason
                             : recovered
@@ -272,18 +282,21 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
               </table>
             </div>
           ) : (
-            <p className="mt-2 text-xs text-slate-500">Provider attempts are unavailable.</p>
+            <p className="mt-2 text-xs text-workspace-muted">Provider attempts are unavailable.</p>
           )}
         </section>
 
         <section
           aria-labelledby={`fallback-${item.request_id}`}
-          className="rounded-lg border border-white/8 bg-black/10 p-3"
+          className="rounded-lg border border-workspace-line bg-black/10 p-3"
         >
-          <h3 id={`fallback-${item.request_id}`} className="text-sm font-semibold text-slate-100">
+          <h3
+            id={`fallback-${item.request_id}`}
+            className="text-sm font-semibold text-workspace-ink"
+          >
             Failure and fallback
           </h3>
-          <p className="mt-1 text-xs text-slate-300">
+          <p className="mt-1 text-xs text-workspace-body">
             {fallbackSucceeded
               ? "A later provider/model attempt succeeded after an earlier failure."
               : failedAttempts.length > 0
@@ -293,7 +306,7 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
                   : "No provider failure or fallback was recorded."}
           </p>
           {failedAttempts.length > 0 && (
-            <ul className="mt-2 space-y-1 text-xs text-red-200">
+            <ul className="mt-2 space-y-1 text-xs text-workspace-danger">
               {failedAttempts.map((attempt, index) => (
                 <li key={`${String(attempt.attempt_number ?? index)}-failure`}>
                   Attempt {formatCount(attempt.attempt_number ?? index + 1)} ·{" "}
@@ -311,21 +324,23 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
 function FilterContext({ title, values }: { title: string; values: Record<string, unknown> }) {
   const entries = Object.entries(values).filter(([, value]) => value !== null && value !== "");
   return (
-    <article className="rounded-lg border border-white/6 bg-black/10 p-3">
-      <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500">{title}</h4>
+    <article className="rounded-lg border border-workspace-line bg-black/10 p-3">
+      <h4 className="text-xs font-semibold uppercase tracking-wide text-workspace-muted">
+        {title}
+      </h4>
       {entries.length > 0 ? (
         <dl className="mt-2 space-y-2">
           {entries.map(([name, value]) => (
             <div key={name} className="flex items-start justify-between gap-3 text-xs">
-              <dt className="text-slate-500">{humanizeKey(name)}</dt>
-              <dd className="max-w-[65%] break-words text-right font-medium text-slate-200">
+              <dt className="text-workspace-muted">{humanizeKey(name)}</dt>
+              <dd className="max-w-[65%] break-words text-right font-medium text-workspace-ink">
                 {formatFilterValue(value)}
               </dd>
             </div>
           ))}
         </dl>
       ) : (
-        <p className="mt-2 text-xs text-slate-500">None recorded</p>
+        <p className="mt-2 text-xs text-workspace-muted">None recorded</p>
       )}
     </article>
   );
@@ -341,9 +356,9 @@ function formatFilterValue(value: unknown): string {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-white/6 bg-black/10 p-2.5">
-      <dt className="text-slate-500">{label}</dt>
-      <dd className="mt-1 break-words text-sm font-medium text-slate-100">{value}</dd>
+    <div className="rounded-lg border border-workspace-line bg-black/10 p-2.5">
+      <dt className="text-workspace-muted">{label}</dt>
+      <dd className="mt-1 break-words text-sm font-medium text-workspace-ink">{value}</dd>
     </div>
   );
 }
@@ -352,10 +367,10 @@ function CacheBadge({ label, value }: { label: string; value: unknown }) {
   const state = typeof value === "boolean" ? (value ? "Hit" : "Miss") : "Unavailable";
   const className =
     value === true
-      ? "border-emerald-400/20 bg-emerald-400/8 text-emerald-200"
+      ? "border-workspace-success-line bg-workspace-success-tint text-workspace-success"
       : value === false
-        ? "border-slate-400/20 bg-slate-400/8 text-slate-300"
-        : "border-amber-400/20 bg-amber-400/8 text-amber-200";
+        ? "border-workspace-line bg-workspace-wash text-workspace-body"
+        : "border-workspace-warning-line bg-workspace-warning-tint text-workspace-warning";
 
   return (
     <span
@@ -373,10 +388,10 @@ function AttemptStatus({ status }: { status: unknown }) {
     <span
       className={`inline-flex rounded-full border px-2 py-1 font-medium ${
         successful
-          ? "border-emerald-400/20 bg-emerald-400/8 text-emerald-200"
+          ? "border-workspace-success-line bg-workspace-success-tint text-workspace-success"
           : failed
-            ? "border-red-400/20 bg-red-400/8 text-red-200"
-            : "border-slate-400/20 bg-slate-400/8 text-slate-300"
+            ? "border-workspace-danger-line bg-workspace-danger-tint text-workspace-danger"
+            : "border-workspace-line bg-workspace-wash text-workspace-body"
       }`}
     >
       {formatLabel(status)}

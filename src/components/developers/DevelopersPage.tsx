@@ -19,6 +19,13 @@ import { Reveal } from "@/components/Reveal";
 const guides = [
   {
     icon: BookOpen,
+    to: "/developers/commerce" as const,
+    eyebrow: "Conversational commerce",
+    title: "Build around a persistent shopping conversation.",
+    body: "Session ownership, structured preferences, streamed replies, idempotent retries, and current catalog boundaries.",
+  },
+  {
+    icon: BookOpen,
     to: "/developers/integration" as const,
     eyebrow: "Start here · API integration",
     title: "Ship your first tenant-scoped search flow.",
@@ -132,66 +139,64 @@ export function DevelopersPage() {
     <DeveloperShell active="overview">
       <section className="grid max-w-6xl gap-10 xl:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] xl:items-center">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-md border border-brand-blue/30 bg-brand-blue/10 px-2.5 py-1 text-xs font-medium text-[#9ed1ff]">
-            <ShieldCheck className="h-3.5 w-3.5" /> Tenant-scoped Search API
+          <div className="inline-flex items-center gap-2 rounded-md border border-workspace-blue-line bg-workspace-tint px-2.5 py-1 text-xs font-medium text-workspace-blue">
+            <ShieldCheck className="h-3.5 w-3.5" /> Search & conversational commerce
           </div>
-          <h1 className="mt-5 max-w-4xl font-display text-4xl font-semibold leading-tight text-white sm:text-5xl">
-            Add intent-aware search without rebuilding your product around it.
+          <h1 className="mt-5 max-w-4xl font-display text-4xl font-semibold leading-tight text-workspace-ink sm:text-5xl">
+            Connect your catalog to search and conversation.
           </h1>
-          <p className="mt-5 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
-            Querix gives product teams one authenticated API for exact filters, broad catalog
-            browsing, and natural-language discovery. Start with the integration contract; use the
-            platform and data guides when your team needs deeper context.
+          <p className="mt-5 max-w-3xl text-base leading-7 text-workspace-muted sm:text-lg">
+            Choose the integration that fits your customer journey: a tenant-scoped Search API or a
+            persistent shopping conversation. Each service has its own access contract and
+            deployment boundaries.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
               href="/developers/integration"
-              className="inline-flex h-11 items-center gap-2 rounded-md bg-brand-blue px-4 text-sm font-medium text-white transition hover:bg-brand-blue/85"
+              className="inline-flex h-11 items-center gap-2 rounded-md qx-action bg-workspace-ink px-4 text-sm font-medium text-workspace-ink transition hover:bg-workspace-blue"
             >
               Read the API guide <ArrowRight className="h-4 w-4" />
             </a>
             <a
-              href="mailto:hello@querix.co?subject=Querix%20AI%20API%20Access"
-              className="inline-flex h-11 items-center rounded-md border border-white/15 bg-white/[0.035] px-4 text-sm font-medium text-white transition hover:border-white/30 hover:bg-white/[0.07]"
+              href="/request-demo"
+              className="inline-flex h-11 items-center rounded-md border border-workspace-line bg-workspace-surface px-4 text-sm font-medium text-workspace-ink transition hover:border-workspace-line hover:bg-workspace-wash"
             >
-              Request API access
+              Discuss an integration
             </a>
           </div>
         </div>
 
-        <div className="relative overflow-hidden rounded-xl border border-white/10 bg-[#050b13] shadow-[0_32px_90px_-50px_rgba(30,144,255,0.75)]">
+        <div className="relative overflow-hidden rounded-md border border-workspace-line bg-workspace-wash shadow-sm">
           <div className="scan-line" />
-          <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-            <span className="font-mono text-[11px] text-muted-foreground">
-              First search request
-            </span>
-            <span className="rounded border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-1 font-mono text-[10px] text-emerald-200">
+          <div className="flex items-center justify-between border-b border-workspace-line px-4 py-3">
+            <span className="font-mono text-[11px] text-workspace-muted">First search request</span>
+            <span className="rounded border border-workspace-success-line bg-workspace-success-tint px-2 py-1 font-mono text-[10px] text-workspace-success">
               HTTPS · JSON
             </span>
           </div>
           <div className="p-5 font-mono text-[12px] leading-6 sm:p-6">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+              <p className="text-[10px] uppercase tracking-[0.14em] text-workspace-muted">
                 Request
               </p>
               <p className="mt-2">
-                <span className="text-emerald-300">POST</span>{" "}
-                <span className="text-[#b7dcff]">/api/v1/&lt;tenant&gt;/search</span>
+                <span className="text-workspace-success">POST</span>{" "}
+                <span className="text-workspace-blue">/api/v1/&lt;tenant&gt;/search</span>
               </p>
-              <p className="text-muted-foreground">X-API-Key: &lt;server-side-key&gt;</p>
-              <pre className="mt-3 whitespace-pre-wrap text-[#d8e6f7]">{`{
+              <p className="text-workspace-muted">X-API-Key: &lt;server-side-key&gt;</p>
+              <pre className="mt-3 whitespace-pre-wrap text-workspace-ink">{`{
   "query": "bike in Chennai under 1000",
   "page_size": 20
 }`}</pre>
             </div>
-            <div className="mt-5 border-t border-white/10 pt-4">
+            <div className="mt-5 border-t border-workspace-line pt-4">
               <div className="flex items-center justify-between">
-                <p className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                <p className="text-[10px] uppercase tracking-[0.14em] text-workspace-muted">
                   Response
                 </p>
-                <span className="text-[10px] text-emerald-300">200 OK</span>
+                <span className="text-[10px] text-workspace-success">200 OK</span>
               </div>
-              <pre className="mt-3 whitespace-pre-wrap text-[#d8e6f7]">{`{
+              <pre className="mt-3 whitespace-pre-wrap text-workspace-ink">{`{
   "items": [{ "id": "p_1042", "title": "City Bike" }],
   "interpreted_query": {
     "category": "bicycles",
@@ -201,7 +206,7 @@ export function DevelopersPage() {
   "pagination": { "has_more": true, "next_cursor": "..." }
 }`}</pre>
             </div>
-            <div className="mt-5 grid grid-cols-3 gap-2 border-t border-white/10 pt-4 text-center text-[10px] text-muted-foreground">
+            <div className="mt-5 grid grid-cols-3 gap-2 border-t border-workspace-line pt-4 text-center text-[10px] text-workspace-muted">
               <span>public fields</span>
               <span>safe filters</span>
               <span>next cursor</span>
@@ -211,16 +216,16 @@ export function DevelopersPage() {
       </section>
 
       <Reveal>
-        <section className="mt-12 max-w-6xl rounded-xl border border-white/10 bg-[#081522] p-5 sm:p-7">
+        <section className="mt-12 max-w-6xl rounded-md border border-workspace-line bg-workspace-wash p-5 sm:p-7">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-xs font-medium uppercase tracking-[0.15em] text-brand-blue">
+              <p className="text-xs font-medium uppercase tracking-[0.15em] text-workspace-blue">
                 Canonical API surface
               </p>
-              <h2 className="mt-3 font-display text-2xl font-semibold text-white">
+              <h2 className="mt-3 font-display text-2xl font-semibold text-workspace-ink">
                 A small contract for the complete search lifecycle.
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-workspace-muted">
                 Every company receives a tenant slug and server-side key. Your backend integrates
                 the endpoints below; Querix owns retrieval, ranking, cursors, and search operations.
               </p>
@@ -231,17 +236,17 @@ export function DevelopersPage() {
             {endpoints.map(({ method, path, icon: Icon, title, body }) => (
               <article
                 key={path}
-                className="rounded-lg border border-white/10 bg-[#050d16] p-4 transition duration-300 hover:-translate-y-1 hover:border-brand-blue/35"
+                className="rounded-lg border border-workspace-line bg-workspace-surface p-4 transition duration-300 hover:-translate-y-1 hover:border-workspace-blue-line"
               >
                 <div className="flex items-center justify-between">
-                  <Icon className="h-4 w-4 text-brand-blue" />
-                  <span className="font-mono text-[10px] text-emerald-200">{method}</span>
+                  <Icon className="h-4 w-4 text-workspace-blue" />
+                  <span className="font-mono text-[10px] text-workspace-success">{method}</span>
                 </div>
-                <code className="mt-4 block truncate font-mono text-[11px] text-[#9ed1ff]">
+                <code className="mt-4 block truncate font-mono text-[11px] text-workspace-blue">
                   {path}
                 </code>
-                <h3 className="mt-3 text-sm font-semibold text-white">{title}</h3>
-                <p className="mt-2 text-xs leading-5 text-muted-foreground">{body}</p>
+                <h3 className="mt-3 text-sm font-semibold text-workspace-ink">{title}</h3>
+                <p className="mt-2 text-xs leading-5 text-workspace-muted">{body}</p>
               </article>
             ))}
           </div>
@@ -253,11 +258,13 @@ export function DevelopersPage() {
           {essentials.map(({ icon: Icon, title, body }) => (
             <div
               key={title}
-              className="rounded-lg border border-white/10 bg-white/[0.025] p-5 transition duration-300 hover:-translate-y-1 hover:border-brand-blue/30"
+              className="rounded-lg border border-workspace-line bg-workspace-surface p-5 transition duration-300 hover:-translate-y-1 hover:border-workspace-blue-line"
             >
-              <Icon className="h-5 w-5 text-brand-blue" />
-              <h2 className="mt-5 font-display text-base font-semibold text-white">{title}</h2>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{body}</p>
+              <Icon className="h-5 w-5 text-workspace-blue" />
+              <h2 className="mt-5 font-display text-base font-semibold text-workspace-ink">
+                {title}
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-workspace-muted">{body}</p>
             </div>
           ))}
         </section>
@@ -266,16 +273,16 @@ export function DevelopersPage() {
       <Reveal>
         <section className="mt-16 max-w-6xl" aria-labelledby="launch-path-heading">
           <div className="max-w-3xl">
-            <p className="text-xs font-medium uppercase tracking-[0.15em] text-brand-blue">
+            <p className="text-xs font-medium uppercase tracking-[0.15em] text-workspace-blue">
               Tenant onboarding
             </p>
             <h2
               id="launch-path-heading"
-              className="mt-3 font-display text-3xl font-semibold text-white"
+              className="mt-3 font-display text-3xl font-semibold text-workspace-ink"
             >
               From provisioned tenant to measured launch.
             </h2>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+            <p className="mt-3 text-sm leading-6 text-workspace-muted">
               The integration is small, but a reliable launch also covers catalog quality, relevance
               acceptance, and operational ownership.
             </p>
@@ -284,15 +291,15 @@ export function DevelopersPage() {
             {launchSteps.map((step, index) => (
               <li
                 key={step.title}
-                className="rounded-lg border border-white/10 bg-white/[0.025] p-5"
+                className="rounded-lg border border-workspace-line bg-workspace-surface p-5"
               >
-                <span className="font-mono text-xs text-brand-blue">
+                <span className="font-mono text-xs text-workspace-blue">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <h3 className="mt-4 font-display text-base font-semibold text-white">
+                <h3 className="mt-4 font-display text-base font-semibold text-workspace-ink">
                   {step.title}
                 </h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{step.body}</p>
+                <p className="mt-2 text-sm leading-6 text-workspace-muted">{step.body}</p>
               </li>
             ))}
           </ol>
@@ -302,10 +309,10 @@ export function DevelopersPage() {
       <Reveal>
         <section className="mt-16 max-w-6xl">
           <div className="max-w-2xl">
-            <p className="text-xs font-medium uppercase tracking-[0.15em] text-brand-blue">
+            <p className="text-xs font-medium uppercase tracking-[0.15em] text-workspace-blue">
               Documentation paths
             </p>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-white">
+            <h2 className="mt-3 font-display text-3xl font-semibold text-workspace-ink">
               Start with the contract. Go deeper when you need to.
             </h2>
           </div>
@@ -314,7 +321,7 @@ export function DevelopersPage() {
               <a
                 key={to}
                 href={to}
-                className={`group rounded-lg border p-6 transition hover:border-brand-blue/45 hover:bg-white/[0.05] ${featured ? "border-brand-blue/30 bg-brand-blue/[0.06] md:col-span-2" : "border-white/10 bg-white/[0.025]"}`}
+                className={`group rounded-lg border p-6 transition hover:border-workspace-blue-line hover:bg-workspace-wash ${featured ? "border-workspace-blue-line bg-workspace-tint md:col-span-2" : "border-workspace-line bg-workspace-surface"}`}
               >
                 <div
                   className={
@@ -322,14 +329,16 @@ export function DevelopersPage() {
                   }
                 >
                   <div>
-                    <Icon className="h-5 w-5 text-brand-blue" />
-                    <p className="mt-6 text-xs font-medium uppercase tracking-[0.13em] text-brand-blue">
+                    <Icon className="h-5 w-5 text-workspace-blue" />
+                    <p className="mt-6 text-xs font-medium uppercase tracking-[0.13em] text-workspace-blue">
                       {eyebrow}
                     </p>
-                    <h3 className="mt-3 font-display text-xl font-semibold text-white">{title}</h3>
-                    <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{body}</p>
+                    <h3 className="mt-3 font-display text-xl font-semibold text-workspace-ink">
+                      {title}
+                    </h3>
+                    <p className="mt-3 max-w-2xl text-sm leading-6 text-workspace-muted">{body}</p>
                   </div>
-                  <span className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-[#9ed1ff] group-hover:text-white md:mt-0">
+                  <span className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-workspace-blue group-hover:text-workspace-blue md:mt-0">
                     Read guide <ArrowRight className="h-4 w-4" />
                   </span>
                 </div>
@@ -340,11 +349,11 @@ export function DevelopersPage() {
       </Reveal>
 
       <Reveal>
-        <section className="mt-16 max-w-6xl rounded-lg border border-amber-300/20 bg-amber-300/[0.06] p-5">
-          <h2 className="font-display text-lg font-semibold text-amber-100">
+        <section className="mt-16 max-w-6xl rounded-lg border border-workspace-warning-line bg-workspace-warning-tint p-5">
+          <h2 className="font-display text-lg font-semibold text-workspace-warning">
             Your tenant key belongs behind your application.
           </h2>
-          <p className="mt-2 max-w-4xl text-sm leading-6 text-amber-100/70">
+          <p className="mt-2 max-w-4xl text-sm leading-6 text-workspace-warning">
             Browser and mobile clients should call your backend proxy. Querix examples use
             placeholders intentionally; issued keys, admin diagnostics, and private data never
             belong in public source or client-visible configuration.

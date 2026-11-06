@@ -26,13 +26,16 @@ import {
 } from "lucide-react";
 
 import { ApiStatusBadge } from "@/components/ApiStatus";
-import { QuerixLogo } from "@/components/QuerixLogo";
+import "@/components/workspace/workspace.css";
+import { Brand } from "@/components/marketing/Brand";
 import { Reveal } from "@/components/Reveal";
 
-type Guide = "platform" | "integration" | "operations" | "architecture" | "data-pipeline";
+type Guide =
+  "platform" | "integration" | "operations" | "architecture" | "data-pipeline" | "commerce";
 
 const titles: Record<Guide | "overview", string> = {
   overview: "API Documentation",
+  commerce: "Conversational Commerce",
   platform: "Search API Behavior",
   integration: "Quickstart & API",
   operations: "Reliability & Health",
@@ -41,6 +44,12 @@ const titles: Record<Guide | "overview", string> = {
 };
 
 const guideSections: Record<Guide, string[]> = {
+  commerce: [
+    "Conversation lifecycle",
+    "Streaming and retries",
+    "Access and catalog boundaries",
+    "Integration checklist",
+  ],
   platform: [
     "What Querix does",
     "How requests are handled",
@@ -86,6 +95,12 @@ const guideSections: Record<Guide, string[]> = {
 };
 
 const documentationNav = [
+  {
+    label: "Conversational commerce",
+    to: "/developers/commerce",
+    key: "commerce",
+    group: "Core concepts",
+  },
   { label: "Overview", to: "/developers", key: "overview", group: "Get started" },
   {
     label: "Quickstart & API",
@@ -165,31 +180,34 @@ export function DeveloperShell({
   }, [sections]);
 
   return (
-    <div className="min-h-screen bg-[#07111f] text-foreground">
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#07111f]/95 backdrop-blur">
+    <div className="qx-workspace qx-docs min-h-screen">
+      <header className="sticky top-0 z-50 border-b border-workspace-line bg-workspace-paper/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-5 lg:px-8">
           <a href="/" className="flex items-center gap-2.5" aria-label="Querix AI home">
-            <QuerixLogo size={40} className="h-8 w-auto sm:h-10" />
-            <span className="hidden border-l border-white/15 pl-3 text-sm text-muted-foreground sm:inline">
+            <Brand />
+            <span className="hidden border-l border-workspace-line pl-3 text-sm text-workspace-muted sm:inline">
               Docs
             </span>
           </a>
           <div className="flex items-center gap-2">
+            <a className="qx-docs-home" href="/">
+              Back to platform
+            </a>
             <div className="hidden xl:block">
               <ApiStatusBadge detailed />
             </div>
             <a
-              href="mailto:hello@querix.co?subject=Querix%20AI%20Integration"
-              className="inline-flex h-9 items-center gap-2 rounded-lg bg-brand-blue px-2.5 text-xs font-medium text-white transition hover:bg-brand-blue/85 sm:px-3.5 sm:text-sm"
+              href={`/request-demo?product=${active === "commerce" ? "commerce" : active === "overview" ? "both" : "search"}`}
+              className="inline-flex h-9 items-center gap-2 rounded-lg qx-action bg-workspace-ink px-2.5 text-xs font-medium text-workspace-ink transition hover:bg-workspace-blue sm:px-3.5 sm:text-sm"
             >
-              <span className="sm:hidden">API access</span>
-              <span className="hidden sm:inline">Request API access</span>
+              <span className="sm:hidden">Demo</span>
+              <span className="hidden sm:inline">Request a demo</span>
               <ArrowRight className="hidden h-3.5 w-3.5 sm:block" />
             </a>
             <button
               type="button"
               onClick={() => setMobileOpen((value) => !value)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-white lg:hidden"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-workspace-line text-workspace-ink lg:hidden"
               aria-expanded={mobileOpen}
               aria-controls="docs-mobile-navigation"
               aria-label={
@@ -201,7 +219,10 @@ export function DeveloperShell({
           </div>
         </div>
         {mobileOpen && (
-          <nav id="docs-mobile-navigation" className="border-t border-white/10 px-5 py-4 lg:hidden">
+          <nav
+            id="docs-mobile-navigation"
+            className="border-t border-workspace-line px-5 py-4 lg:hidden"
+          >
             <div className="mx-auto grid max-w-[1440px] gap-1 sm:grid-cols-2">
               {documentationNav.map(({ label, to, key }) => (
                 <a
@@ -210,8 +231,8 @@ export function DeveloperShell({
                   onClick={() => setMobileOpen(false)}
                   className={`rounded-lg px-3 py-2.5 text-sm transition ${
                     key === active
-                      ? "bg-brand-blue/10 text-[#9ed1ff]"
-                      : "text-muted-foreground hover:bg-white/[0.05] hover:text-white"
+                      ? "bg-workspace-tint text-workspace-blue"
+                      : "text-workspace-muted hover:bg-workspace-wash hover:text-workspace-blue"
                   }`}
                 >
                   {label}
@@ -221,7 +242,7 @@ export function DeveloperShell({
           </nav>
         )}
       </header>
-      <div className="border-b border-white/10 bg-[#081522] lg:hidden">
+      <div className="border-b border-workspace-line bg-workspace-wash lg:hidden">
         <nav
           className="mx-auto flex max-w-[1440px] gap-1 overflow-x-auto px-4 py-2"
           aria-label="Documentation sections"
@@ -231,7 +252,7 @@ export function DeveloperShell({
               key={to}
               href={to}
               className={`shrink-0 rounded-md px-3 py-2 text-xs transition ${
-                key === active ? "bg-brand-blue/10 text-[#9ed1ff]" : "text-muted-foreground"
+                key === active ? "bg-workspace-tint text-workspace-blue" : "text-workspace-muted"
               }`}
             >
               {label}
@@ -240,11 +261,11 @@ export function DeveloperShell({
         </nav>
       </div>
       <div className="mx-auto grid max-w-[1440px] lg:grid-cols-[250px_minmax(0,1fr)] 2xl:grid-cols-[250px_minmax(0,1fr)_230px]">
-        <aside className="hidden border-r border-white/10 px-6 py-10 lg:block">
+        <aside className="hidden border-r border-workspace-line px-6 py-10 lg:block">
           <nav className="sticky top-24 text-sm">
             {documentationGroups.map((group, groupIndex) => (
               <div key={group} className={groupIndex === 0 ? "" : "mt-7"}>
-                <p className="mb-2 px-3 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground/55">
+                <p className="mb-2 px-3 text-[10px] font-medium uppercase tracking-[0.16em] text-workspace-muted">
                   {group}
                 </p>
                 <div className="space-y-1">
@@ -256,8 +277,8 @@ export function DeveloperShell({
                         href={to}
                         className={`docs-nav-link block rounded-md px-3 py-2 pl-4 transition ${
                           key === active
-                            ? "is-active bg-brand-blue/10 text-[#9ed1ff]"
-                            : "text-muted-foreground hover:bg-white/[0.05] hover:text-white"
+                            ? "is-active bg-workspace-tint text-workspace-blue"
+                            : "text-workspace-muted hover:bg-workspace-wash hover:text-workspace-blue"
                         }`}
                       >
                         {label}
@@ -266,52 +287,52 @@ export function DeveloperShell({
                 </div>
               </div>
             ))}
-            <div className="mt-8 border-t border-white/10 pt-6">
+            <div className="mt-8 border-t border-workspace-line pt-6">
               <div className="px-3">
                 <ApiStatusBadge detailed />
               </div>
-              <p className="px-3 text-xs leading-5 text-muted-foreground">
+              <p className="px-3 text-xs leading-5 text-workspace-muted">
                 Production contracts and integration guidance for customer engineering teams.
               </p>
               <a
-                href="mailto:hello@querix.co?subject=Querix%20AI%20API%20Access"
-                className="mt-4 inline-flex items-center gap-2 rounded-md border border-brand-blue/25 bg-brand-blue/[0.07] px-3 py-2 text-xs text-[#9ed1ff] transition hover:border-brand-blue/50 hover:text-white"
+                href={`/request-demo?product=${active === "commerce" ? "commerce" : active === "overview" ? "both" : "search"}`}
+                className="mt-4 inline-flex items-center gap-2 rounded-md border border-workspace-blue-line bg-workspace-tint px-3 py-2 text-xs text-workspace-blue transition hover:border-workspace-blue-line hover:text-workspace-blue"
               >
-                Request API access <ArrowRight className="h-3.5 w-3.5" />
+                Discuss an integration <ArrowRight className="h-3.5 w-3.5" />
               </a>
             </div>
           </nav>
         </aside>
         <main className="min-w-0 px-5 py-12 sm:px-8 lg:px-12 lg:py-16 xl:px-14">
           {active !== "overview" && (
-            <div className="mb-8 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              <a href="/developers" className="transition hover:text-white">
+            <div className="mb-8 flex flex-wrap items-center gap-2 text-xs text-workspace-muted">
+              <a href="/developers" className="transition hover:text-workspace-blue">
                 Docs
               </a>
               <ChevronRight className="h-3 w-3" />
-              <span className="text-[#9ed1ff]">{titles[active]}</span>
+              <span className="text-workspace-blue">{titles[active]}</span>
             </div>
           )}
           <div className="docs-page-enter">{children}</div>
-          <div className="mt-20 flex flex-col gap-4 border-t border-white/10 pt-8 text-sm sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-20 flex flex-col gap-4 border-t border-workspace-line pt-8 text-sm sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="font-medium text-white">Need help with your integration?</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Talk to us about your catalog and search contract.
+              <p className="font-medium text-workspace-ink">Need help with your integration?</p>
+              <p className="mt-1 text-xs text-workspace-muted">
+                Talk to us about your catalog, search, or conversation integration.
               </p>
             </div>
             <a
               href="mailto:hello@querix.co?subject=Querix%20AI%20Integration%20Support"
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 text-sm font-medium text-white transition hover:border-brand-blue/50"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-workspace-line px-4 text-sm font-medium text-workspace-ink transition hover:border-workspace-blue-line"
             >
               Contact engineering <ArrowRight className="h-3.5 w-3.5" />
             </a>
           </div>
         </main>
         {sections.length > 0 && (
-          <aside className="hidden border-l border-white/10 px-6 py-10 2xl:block">
+          <aside className="hidden border-l border-workspace-line px-6 py-10 2xl:block">
             <nav className="sticky top-24">
-              <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground/70">
+              <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-workspace-muted">
                 On this page
               </p>
               <ol className="mt-4 space-y-3">
@@ -321,11 +342,11 @@ export function DeveloperShell({
                       href={`#${sectionId(section)}`}
                       className={`flex gap-2 border-l pl-3 text-xs leading-5 transition ${
                         activeSection === sectionId(section)
-                          ? "border-brand-blue text-[#9ed1ff]"
-                          : "border-white/10 text-muted-foreground hover:border-white/25 hover:text-white"
+                          ? "border-workspace-blue-line text-workspace-blue"
+                          : "border-workspace-line text-workspace-muted hover:border-workspace-line hover:text-workspace-blue"
                       }`}
                     >
-                      <span className="font-mono text-[10px] text-[#526b83]">
+                      <span className="font-mono text-[10px] text-workspace-muted">
                         {String(index + 1).padStart(2, "0")}
                       </span>
                       {section}
@@ -341,7 +362,7 @@ export function DeveloperShell({
   );
 }
 
-export function DeveloperDocument({ guide }: { guide: Guide }) {
+export function DeveloperDocument({ guide }: { guide: Exclude<Guide, "commerce"> }) {
   return (
     <DeveloperShell active={guide}>
       {guide === "platform" ? (
@@ -1248,17 +1269,17 @@ function LanguageIntegrationExamples() {
     <div className="mt-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-sm font-medium text-foreground">Server-side integration example</p>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="text-sm font-medium text-workspace-ink">Server-side integration example</p>
+          <p className="mt-1 text-xs text-workspace-muted">
             Choose the backend your team uses. Every version keeps the tenant key server-side.
           </p>
         </div>
-        <label className="grid gap-1 text-xs text-muted-foreground">
+        <label className="grid gap-1 text-xs text-workspace-muted">
           Language
           <select
             value={language}
             onChange={(event) => setLanguage(event.target.value as keyof typeof serverExamples)}
-            className="h-9 min-w-44 rounded-md border border-white/15 bg-[#0a1625] px-3 text-sm text-white outline-none transition focus:border-brand-blue"
+            className="h-9 min-w-44 rounded-md border border-workspace-line bg-workspace-surface px-3 text-sm text-workspace-ink outline-none transition focus:border-workspace-blue"
           >
             {Object.entries(serverExamples).map(([key, value]) => (
               <option key={key} value={key}>
@@ -1286,16 +1307,16 @@ function Title({
 }) {
   return (
     <header>
-      <div className="inline-flex items-center gap-2 rounded-md border border-brand-blue/30 bg-brand-blue/10 px-2.5 py-1 text-xs font-medium text-[#9ed1ff]">
+      <div className="inline-flex items-center gap-2 rounded-md border border-workspace-blue-line bg-workspace-tint px-2.5 py-1 text-xs font-medium text-workspace-blue">
         <Icon className="h-3.5 w-3.5" /> {eyebrow}
       </div>
-      <h1 className="mt-5 font-display text-4xl font-semibold leading-tight text-white sm:text-5xl">
+      <h1 className="mt-5 font-display text-4xl font-semibold leading-tight text-workspace-ink sm:text-5xl">
         {title}
       </h1>
-      <p className="mt-5 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">{body}</p>
-      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[#71869d]">
+      <p className="mt-5 max-w-3xl text-base leading-7 text-workspace-muted sm:text-lg">{body}</p>
+      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-workspace-muted">
         <span>Querix API · v1 contract</span>
-        <span className="hidden h-1 w-1 rounded-full bg-white/20 sm:block" />
+        <span className="hidden h-1 w-1 rounded-full bg-workspace-wash sm:block" />
         <span>Last reviewed July 2026</span>
       </div>
     </header>
@@ -1311,18 +1332,21 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section id={sectionId(title)} className="mt-16 scroll-mt-28 border-t border-white/10 pt-10">
+    <section
+      id={sectionId(title)}
+      className="mt-16 scroll-mt-28 border-t border-workspace-line pt-10"
+    >
       <Reveal>
-        <p className="font-mono text-xs text-brand-blue">{number}</p>
-        <h2 className="mt-3 font-display text-2xl font-semibold text-white">{title}</h2>
-        <div className="mt-4 space-y-4 text-sm leading-6 text-muted-foreground">{children}</div>
+        <p className="font-mono text-xs text-workspace-blue">{number}</p>
+        <h2 className="mt-3 font-display text-2xl font-semibold text-workspace-ink">{title}</h2>
+        <div className="mt-4 space-y-4 text-sm leading-6 text-workspace-muted">{children}</div>
       </Reveal>
     </section>
   );
 }
 function Code({ children }: { children: React.ReactNode }) {
   return (
-    <code className="rounded bg-white/[0.08] px-1.5 py-0.5 font-mono text-[12px] text-[#b7dcff]">
+    <code className="rounded bg-workspace-wash px-1.5 py-0.5 font-mono text-[12px] text-workspace-blue">
       {children}
     </code>
   );
@@ -1341,8 +1365,8 @@ function CodeBlock({ label, code }: { label: string; code: string }) {
   }
 
   return (
-    <div className="mt-6 overflow-hidden rounded-lg border border-white/10 bg-[#050b13]">
-      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-2.5 font-mono text-[11px] text-muted-foreground">
+    <div className="mt-6 overflow-hidden rounded-lg border border-workspace-line bg-workspace-wash">
+      <div className="flex items-center justify-between gap-3 border-b border-workspace-line px-4 py-2.5 font-mono text-[11px] text-workspace-muted">
         <span>{label}</span>
         <button
           type="button"
@@ -1354,7 +1378,7 @@ function CodeBlock({ label, code }: { label: string; code: string }) {
           {copied ? "Copied" : "Copy"}
         </button>
       </div>
-      <pre className="overflow-x-auto p-4 text-[12px] leading-6 text-[#d8e6f7]">
+      <pre className="overflow-x-auto p-4 text-[12px] leading-6 text-workspace-ink">
         <code>{code}</code>
       </pre>
     </div>
@@ -1370,12 +1394,12 @@ function Callout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mt-6 rounded-lg border border-amber-300/20 bg-amber-300/[0.06] p-4">
-      <h3 className="flex items-center gap-2 font-medium text-amber-100">
+    <div className="mt-6 rounded-lg border border-workspace-warning-line bg-workspace-warning-tint p-4">
+      <h3 className="flex items-center gap-2 font-medium text-workspace-warning">
         <Icon className="h-4 w-4" />
         {title}
       </h3>
-      <p className="mt-2 text-sm leading-6 text-amber-100/70">{children}</p>
+      <p className="mt-2 text-sm leading-6 text-workspace-warning">{children}</p>
     </div>
   );
 }
@@ -1393,31 +1417,31 @@ function Endpoint({
   detail: string;
 }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.025] p-5">
-      <Icon className="h-5 w-5 text-brand-blue" />
+    <div className="rounded-lg border border-workspace-line bg-workspace-surface p-5">
+      <Icon className="h-5 w-5 text-workspace-blue" />
       <div className="mt-4 flex gap-2">
-        <span className="font-mono text-xs text-emerald-200">{method}</span>
+        <span className="font-mono text-xs text-workspace-success">{method}</span>
         <Code>{path}</Code>
       </div>
-      <h3 className="mt-4 font-display text-lg font-semibold text-white">{title}</h3>
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">{detail}</p>
+      <h3 className="mt-4 font-display text-lg font-semibold text-workspace-ink">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-workspace-muted">{detail}</p>
     </div>
   );
 }
 function StatusTable({ rows }: { rows: string[][] }) {
   return (
-    <div className="mt-6 overflow-x-auto rounded-lg border border-white/10">
+    <div className="mt-6 overflow-x-auto rounded-lg border border-workspace-line">
       <table className="w-full min-w-[440px] text-left text-sm">
-        <thead className="bg-white/[0.05] text-xs uppercase tracking-wide text-muted-foreground">
+        <thead className="bg-workspace-wash text-xs uppercase tracking-wide text-workspace-muted">
           <tr>
             <th className="px-4 py-3 font-medium">Status</th>
             <th className="px-4 py-3 font-medium">Meaning and action</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/10">
+        <tbody className="divide-y divide-workspace-line">
           {rows.map(([status, text]) => (
             <tr key={status}>
-              <td className="px-4 py-3 font-mono text-xs text-[#9ed1ff]">{status}</td>
+              <td className="px-4 py-3 font-mono text-xs text-workspace-blue">{status}</td>
               <td className="px-4 py-3">{text}</td>
             </tr>
           ))}
@@ -1428,19 +1452,19 @@ function StatusTable({ rows }: { rows: string[][] }) {
 }
 function FieldTable({ rows }: { rows: string[][] }) {
   return (
-    <div className="mt-6 overflow-x-auto rounded-lg border border-white/10">
+    <div className="mt-6 overflow-x-auto rounded-lg border border-workspace-line">
       <table className="w-full min-w-[580px] text-left text-sm">
-        <thead className="bg-white/[0.05] text-xs uppercase tracking-wide text-muted-foreground">
+        <thead className="bg-workspace-wash text-xs uppercase tracking-wide text-workspace-muted">
           <tr>
             <th className="px-4 py-3 font-medium">Field or role</th>
             <th className="px-4 py-3 font-medium">Type or store</th>
             <th className="px-4 py-3 font-medium">Contract</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/10">
+        <tbody className="divide-y divide-workspace-line">
           {rows.map(([a, b, c]) => (
             <tr key={a}>
-              <td className="px-4 py-3 font-mono text-xs text-[#9ed1ff]">{a}</td>
+              <td className="px-4 py-3 font-mono text-xs text-workspace-blue">{a}</td>
               <td className="px-4 py-3">{b}</td>
               <td className="px-4 py-3">{c}</td>
             </tr>
@@ -1452,10 +1476,10 @@ function FieldTable({ rows }: { rows: string[][] }) {
 }
 function Metric({ icon: Icon, title, text }: { icon: LucideIcon; title: string; text: string }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.025] p-5">
-      <Icon className="h-5 w-5 text-brand-blue" />
-      <h3 className="mt-5 font-display text-base font-semibold text-white">{title}</h3>
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">{text}</p>
+    <div className="rounded-lg border border-workspace-line bg-workspace-surface p-5">
+      <Icon className="h-5 w-5 text-workspace-blue" />
+      <h3 className="mt-5 font-display text-base font-semibold text-workspace-ink">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-workspace-muted">{text}</p>
     </div>
   );
 }
@@ -1465,9 +1489,9 @@ function Flow({ steps }: { steps: string[] }) {
       {steps.map((step, index) => (
         <li
           key={step}
-          className="relative z-10 rounded-lg border border-white/10 bg-[#091522] p-4 text-sm text-muted-foreground transition duration-300 hover:-translate-y-1 hover:border-brand-blue/30 hover:text-white"
+          className="relative z-10 rounded-lg border border-workspace-line bg-workspace-surface p-4 text-sm text-workspace-muted transition duration-300 hover:-translate-y-1 hover:border-workspace-blue-line hover:text-workspace-blue"
         >
-          <span className="font-mono text-xs text-brand-blue">0{index + 1}</span>
+          <span className="font-mono text-xs text-workspace-blue">0{index + 1}</span>
           <p className="mt-3 leading-5">{step}</p>
         </li>
       ))}
@@ -1476,10 +1500,10 @@ function Flow({ steps }: { steps: string[] }) {
 }
 function Checklist({ items }: { items: string[] }) {
   return (
-    <ul className="mt-6 space-y-3 rounded-lg border border-white/10 bg-white/[0.025] p-5">
+    <ul className="mt-6 space-y-3 rounded-lg border border-workspace-line bg-workspace-surface p-5">
       {items.map((item) => (
         <li key={item} className="flex gap-3">
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
+          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-workspace-success" />
           <span>{item}</span>
         </li>
       ))}

@@ -1,7 +1,8 @@
 import { createFileRoute, Outlet, useLocation } from "@tanstack/react-router";
 import { LockKeyhole } from "lucide-react";
 
-import { QuerixLogo } from "@/components/QuerixLogo";
+import { Brand } from "@/components/marketing/Brand";
+import "@/components/workspace/workspace.css";
 import { PrivatePortalError } from "@/components/analytics/shared/PrivatePortalError";
 import { privatePortalMeta } from "@/features/analytics/lib/head";
 
@@ -20,12 +21,14 @@ function AnalyticsRoot() {
   if (pathname !== "/analytics" && pathname !== "/analytics/") return <Outlet />;
 
   return (
-    <main className="grid min-h-screen place-items-center px-5 py-12">
-      <section className="glass-card w-full max-w-md rounded-3xl p-8 text-center">
-        <QuerixLogo className="mx-auto" size={34} />
-        <LockKeyhole className="mx-auto mt-8 h-7 w-7 text-blue-300" aria-hidden="true" />
-        <h1 className="mt-4 text-xl font-semibold text-white">Private analytics portal</h1>
-        <p className="mt-2 text-sm leading-6 text-slate-300">
+    <main className="qx-workspace qx-state">
+      <section className="qx-surface w-full max-w-md rounded-xl p-8 text-center">
+        <div className="qx-state-brand">
+          <Brand />
+        </div>
+        <LockKeyhole className="mx-auto mt-8 h-7 w-7 text-workspace-blue" aria-hidden="true" />
+        <h1 className="mt-4 text-xl font-semibold text-workspace-ink">Private analytics portal</h1>
+        <p className="mt-2 text-sm leading-6 text-workspace-body">
           Use the company-specific portal link supplied directly by Querix.
         </p>
       </section>

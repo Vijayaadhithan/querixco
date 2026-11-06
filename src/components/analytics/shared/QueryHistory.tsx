@@ -155,13 +155,13 @@ export function QueryHistory({
   return (
     <main className="mx-auto max-w-[1480px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
       <div className="mb-7">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-workspace-blue">
           {formatCompanyName(company)}
         </p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-workspace-ink">
           Individual query history
         </h1>
-        <p className="mt-2 text-sm leading-6 text-slate-400">
+        <p className="mt-2 text-sm leading-6 text-workspace-muted">
           {internal
             ? "Inspect API outcomes, execution paths, and operational diagnostics."
             : "Inspect query outcomes and classifications."}{" "}
@@ -210,9 +210,9 @@ export function QueryHistory({
             action={{ label: "Try again", onClick: () => void history.refetch() }}
           />
         ) : items.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 p-10 text-center">
-            <h2 className="text-lg font-semibold text-white">No matching queries</h2>
-            <p className="mt-2 text-sm text-slate-400">
+          <div className="rounded-lg border border-dashed border-workspace-line p-10 text-center">
+            <h2 className="text-lg font-semibold text-workspace-ink">No matching queries</h2>
+            <p className="mt-2 text-sm text-workspace-muted">
               Adjust or reset the filters to broaden the results.
             </p>
           </div>
@@ -221,7 +221,7 @@ export function QueryHistory({
             {history.isError && (
               <div
                 role="alert"
-                className="mb-4 rounded-xl border border-amber-400/20 bg-amber-400/8 px-4 py-3 text-sm text-amber-100"
+                className="mb-4 rounded-md border border-workspace-warning-line bg-workspace-warning-tint px-4 py-3 text-sm text-workspace-warning"
               >
                 Existing results are still available, but the latest request failed.{" "}
                 <button
@@ -234,11 +234,11 @@ export function QueryHistory({
               </div>
             )}
             <div className="mb-3 flex items-center justify-between gap-3">
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-workspace-muted">
                 Showing {items.length.toLocaleString()} {items.length === 1 ? "query" : "queries"}
               </p>
               {history.isFetching && !history.isFetchingNextPage && (
-                <span className="inline-flex items-center gap-2 text-xs text-slate-500">
+                <span className="inline-flex items-center gap-2 text-xs text-workspace-muted">
                   <LoaderCircle className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
                   Updating
                 </span>
@@ -251,7 +251,7 @@ export function QueryHistory({
                   type="button"
                   disabled={history.isFetchingNextPage}
                   onClick={() => void history.fetchNextPage()}
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 text-sm font-semibold text-white transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 disabled:cursor-wait disabled:opacity-60"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-workspace-line bg-workspace-wash px-5 text-sm font-semibold text-workspace-ink transition hover:bg-workspace-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 disabled:cursor-wait disabled:opacity-60"
                 >
                   {history.isFetchingNextPage && (
                     <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -259,7 +259,7 @@ export function QueryHistory({
                   {history.isFetchingNextPage ? "Loading…" : "Load more"}
                 </button>
               ) : (
-                <p className="text-sm text-slate-500">End of results</p>
+                <p className="text-sm text-workspace-muted">End of results</p>
               )}
             </div>
           </>

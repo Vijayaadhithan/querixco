@@ -96,7 +96,7 @@ function CompanyDashboardContent({
         {(dashboard.isError || status.isError) && (
           <div
             role="alert"
-            className="mx-auto mt-5 max-w-[1440px] rounded-xl border border-amber-400/20 bg-amber-400/8 px-4 py-3 text-sm text-amber-100"
+            className="mx-auto mt-5 max-w-[1440px] rounded-md border border-workspace-warning-line bg-workspace-warning-tint px-4 py-3 text-sm text-workspace-warning"
           >
             The saved snapshot remains visible, but the latest status check was unavailable.
           </div>
