@@ -83,8 +83,26 @@ plugin.
 
 ## Conversational commerce
 
-The use-case page at `/use-cases/conversational-commerce` links to the shopping
-workspace at `/demo/commerce`. A labelled fictional catalog makes the sample
-walkthrough usable immediately; optional live mode connects through a server-only
-commerce gateway. See [the demo guide](docs/commerce-demo.md) for supported sample
-journeys, local setup, session isolation, and public-launch requirements.
+`/commerce/login` is the private tester sign-in. `/demo/commerce` shows the signed-in
+user's assigned categories. `/commerce/admin` manages users, category grants,
+account disabling, password resets and deletion. `/commerce/account` changes a
+password and invalidates all existing sessions. Marketing pages stay public.
+
+The Worker keeps its `COMMERCE_API_TOKEN` private and uses it only for login exchange.
+Provision this service token with the backend's `portal` scope only. Shopping,
+history and admin requests use the user's revocable session token in a secure,
+HttpOnly, SameSite cookie. The backend checks ownership and category grants on every
+request; signed conversation cookies also bind to a user and storefront. A password
+reset/disable revokes sessions. Category changes apply to subsequent requests and
+refresh the UI on focus or within 30 seconds. New Chat preserves existing history;
+Delete Chat explicitly removes the selected conversation and its replay payloads.
+
+Local development uses private `.dev.vars` bindings: `COMMERCE_API_URL`,
+`COMMERCE_API_TOKEN`, and a random `COMMERCE_SESSION_SECRET` of at least 32 characters.
+Production uses the existing private Cloudflare bindings. No user password or API
+key belongs in a `VITE_*` variable. Bootstrap the initial administrator using the
+backend's `scripts/bootstrap_portal.py`; change the temporary password at first login.
+
+Existing sample components remain regression fixtures; the hosted demo entry point
+requires login and no longer offers anonymous live access. The historical
+`docs/commerce-demo.md` sample walkthrough is not the current access contract.

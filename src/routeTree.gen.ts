@@ -24,6 +24,9 @@ import { Route as DevelopersIntegrationRouteImport } from './routes/developers/i
 import { Route as DevelopersDataPipelineRouteImport } from './routes/developers/data-pipeline'
 import { Route as DevelopersArchitectureRouteImport } from './routes/developers/architecture'
 import { Route as DemoCommerceRouteImport } from './routes/demo.commerce'
+import { Route as CommerceLoginRouteImport } from './routes/commerce.login'
+import { Route as CommerceAdminRouteImport } from './routes/commerce.admin'
+import { Route as CommerceAccountRouteImport } from './routes/commerce.account'
 import { Route as ApiReadyRouteImport } from './routes/api/ready'
 import { Route as AnalyticsCompanyRouteImport } from './routes/analytics.$company'
 import { Route as InternalAnalyticsLoginRouteImport } from './routes/internal.analytics.login'
@@ -108,6 +111,21 @@ const DemoCommerceRoute = DemoCommerceRouteImport.update({
   path: '/demo/commerce',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommerceLoginRoute = CommerceLoginRouteImport.update({
+  id: '/commerce/login',
+  path: '/commerce/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommerceAdminRoute = CommerceAdminRouteImport.update({
+  id: '/commerce/admin',
+  path: '/commerce/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommerceAccountRoute = CommerceAccountRouteImport.update({
+  id: '/commerce/account',
+  path: '/commerce/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiReadyRoute = ApiReadyRouteImport.update({
   id: '/api/ready',
   path: '/api/ready',
@@ -156,6 +174,9 @@ export interface FileRoutesByFullPath {
   '/footwear': typeof FootwearRoute
   '/analytics/$company': typeof AnalyticsCompanyRouteWithChildren
   '/api/ready': typeof ApiReadyRoute
+  '/commerce/account': typeof CommerceAccountRoute
+  '/commerce/admin': typeof CommerceAdminRoute
+  '/commerce/login': typeof CommerceLoginRoute
   '/demo/commerce': typeof DemoCommerceRoute
   '/developers/architecture': typeof DevelopersArchitectureRoute
   '/developers/data-pipeline': typeof DevelopersDataPipelineRoute
@@ -180,6 +201,9 @@ export interface FileRoutesByTo {
   '/footwear': typeof FootwearRoute
   '/analytics/$company': typeof AnalyticsCompanyRouteWithChildren
   '/api/ready': typeof ApiReadyRoute
+  '/commerce/account': typeof CommerceAccountRoute
+  '/commerce/admin': typeof CommerceAdminRoute
+  '/commerce/login': typeof CommerceLoginRoute
   '/demo/commerce': typeof DemoCommerceRoute
   '/developers/architecture': typeof DevelopersArchitectureRoute
   '/developers/data-pipeline': typeof DevelopersDataPipelineRoute
@@ -205,6 +229,9 @@ export interface FileRoutesById {
   '/footwear': typeof FootwearRoute
   '/analytics/$company': typeof AnalyticsCompanyRouteWithChildren
   '/api/ready': typeof ApiReadyRoute
+  '/commerce/account': typeof CommerceAccountRoute
+  '/commerce/admin': typeof CommerceAdminRoute
+  '/commerce/login': typeof CommerceLoginRoute
   '/demo/commerce': typeof DemoCommerceRoute
   '/developers/architecture': typeof DevelopersArchitectureRoute
   '/developers/data-pipeline': typeof DevelopersDataPipelineRoute
@@ -231,6 +258,9 @@ export interface FileRouteTypes {
     | '/footwear'
     | '/analytics/$company'
     | '/api/ready'
+    | '/commerce/account'
+    | '/commerce/admin'
+    | '/commerce/login'
     | '/demo/commerce'
     | '/developers/architecture'
     | '/developers/data-pipeline'
@@ -255,6 +285,9 @@ export interface FileRouteTypes {
     | '/footwear'
     | '/analytics/$company'
     | '/api/ready'
+    | '/commerce/account'
+    | '/commerce/admin'
+    | '/commerce/login'
     | '/demo/commerce'
     | '/developers/architecture'
     | '/developers/data-pipeline'
@@ -279,6 +312,9 @@ export interface FileRouteTypes {
     | '/footwear'
     | '/analytics/$company'
     | '/api/ready'
+    | '/commerce/account'
+    | '/commerce/admin'
+    | '/commerce/login'
     | '/demo/commerce'
     | '/developers/architecture'
     | '/developers/data-pipeline'
@@ -303,6 +339,9 @@ export interface RootRouteChildren {
   FashionRoute: typeof FashionRoute
   FootwearRoute: typeof FootwearRoute
   ApiReadyRoute: typeof ApiReadyRoute
+  CommerceAccountRoute: typeof CommerceAccountRoute
+  CommerceAdminRoute: typeof CommerceAdminRoute
+  CommerceLoginRoute: typeof CommerceLoginRoute
   DemoCommerceRoute: typeof DemoCommerceRoute
   InternalAnalyticsRoute: typeof InternalAnalyticsRouteWithChildren
   UseCasesConversationalCommerceRoute: typeof UseCasesConversationalCommerceRoute
@@ -413,6 +452,27 @@ declare module '@tanstack/react-router' {
       path: '/demo/commerce'
       fullPath: '/demo/commerce'
       preLoaderRoute: typeof DemoCommerceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/commerce/login': {
+      id: '/commerce/login'
+      path: '/commerce/login'
+      fullPath: '/commerce/login'
+      preLoaderRoute: typeof CommerceLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/commerce/admin': {
+      id: '/commerce/admin'
+      path: '/commerce/admin'
+      fullPath: '/commerce/admin'
+      preLoaderRoute: typeof CommerceAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/commerce/account': {
+      id: '/commerce/account'
+      path: '/commerce/account'
+      fullPath: '/commerce/account'
+      preLoaderRoute: typeof CommerceAccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/ready': {
@@ -548,6 +608,9 @@ const rootRouteChildren: RootRouteChildren = {
   FashionRoute: FashionRoute,
   FootwearRoute: FootwearRoute,
   ApiReadyRoute: ApiReadyRoute,
+  CommerceAccountRoute: CommerceAccountRoute,
+  CommerceAdminRoute: CommerceAdminRoute,
+  CommerceLoginRoute: CommerceLoginRoute,
   DemoCommerceRoute: DemoCommerceRoute,
   InternalAnalyticsRoute: InternalAnalyticsRouteWithChildren,
   UseCasesConversationalCommerceRoute: UseCasesConversationalCommerceRoute,

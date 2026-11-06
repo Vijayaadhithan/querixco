@@ -167,3 +167,16 @@ export async function sendLive(
 }
 export const deleteLive = (storefront?: StorefrontID) =>
   request("session", { method: "DELETE" }, storefront);
+
+export type SavedConversation = {
+  id: string;
+  title: string;
+  updated_at: string;
+  storefront_id: StorefrontID;
+};
+export const listLive = (storefront: StorefrontID, offset = 0) =>
+  request<{ conversations: SavedConversation[] }>(`conversations?offset=${offset}`, {}, storefront);
+export const newLive = (storefront?: StorefrontID) =>
+  request("session/new", { method: "POST" }, storefront);
+export const openLive = (id: string, storefront: StorefrontID) =>
+  request(`session/open?id=${encodeURIComponent(id)}`, { method: "POST" }, storefront);

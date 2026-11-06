@@ -42,6 +42,9 @@ function addResponseSecurityHeaders(request: Request, response: Response): Respo
   const requestUrl = new URL(request.url);
   const pathname = requestUrl.pathname;
   const isPrivatePortal =
+    pathname.startsWith("/commerce/") ||
+    pathname === "/demo/commerce" ||
+    ["/beauty", "/clothing", "/footwear", "/fashion"].includes(pathname) ||
     pathname === "/analytics" ||
     pathname.startsWith("/analytics/") ||
     pathname === "/internal/analytics" ||

@@ -6,6 +6,19 @@ const env: CommerceEnv = {
   COMMERCE_API_TOKEN: "test-only-service-token",
   COMMERCE_SESSION_SECRET: "test-only-session-secret-longer-than-32-bytes",
 };
+const userToken = "test_user_session_" + "a".repeat(32);
+const user = {
+  id: "alice",
+  name: "alice",
+  role: "user",
+  storefronts: ["beauty", "clothing", "footwear"],
+  must_change_password: 0,
+};
+function mockUpstream(handler: (url: string, init: RequestInit) => Promise<Response>) {
+  vi.stubGlobal("fetch", (url: string, init: RequestInit) =>
+    url.endsWith("/portal/me") ? Promise.resolve(Response.json({ user })) : handler(url, init),
+  );
+}
 const origin = "https://demo.example";
 const cidA = "10000000-0000-4000-8000-000000000001";
 const cidB = "10000000-0000-4000-8000-000000000002";
@@ -16,12 +29,13 @@ function req(
   body?: unknown,
   headers?: Record<string, string>,
 ) {
+  if (!path.includes("storefront=")) path += `${path.includes("?") ? "&" : "?"}storefront=beauty`;
   return new Request(`${origin}/api/commerce/${path}`, {
     method,
     headers: {
       origin,
       "content-type": "application/json",
-      ...(cookie ? { cookie } : {}),
+      cookie: `querix_tester=${userToken}${cookie ? `; ${cookie}` : ""}`,
       ...headers,
     },
     ...(body ? { body: JSON.stringify(body) } : {}),
@@ -31,11 +45,12 @@ function extractCookie(response: Response) {
   return response.headers.get("set-cookie")!.split(";")[0];
 }
 async function bootstrap() {
+  mockUpstream(vi.fn());
   return extractCookie(await handleCommerceRequest(req("status"), env));
 }
 async function start(cid: string) {
   const initial = await bootstrap();
-  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json({ id: cid })));
+  mockUpstream(vi.fn().mockResolvedValue(Response.json({ id: cid, storefront_id: "beauty" })));
   return extractCookie(await handleCommerceRequest(req("session", "POST", initial), env));
 }
 afterEach(() => vi.unstubAllGlobals());
@@ -48,10 +63,11 @@ describe("commerce browser gateway", () => {
   it("requires a signed session for catalog coverage and forwards the full overview", async () => {
     const summary = { product_count: 50000, indexed_product_count: 50000, categories: [] };
     const fetchMock = vi.fn().mockImplementation(() => Promise.resolve(Response.json(summary)));
-    vi.stubGlobal("fetch", fetchMock);
+    mockUpstream(fetchMock);
     expect((await handleCommerceRequest(req("catalog"), env)).status).toBe(401);
     expect(fetchMock).not.toHaveBeenCalled();
     const cookie = await bootstrap();
+    mockUpstream(fetchMock);
     const response = await handleCommerceRequest(req("catalog", "GET", cookie), env);
     expect(await response.json()).toEqual(summary);
     expect(fetchMock.mock.calls[0][0]).toBe("http://127.0.0.1:8000/catalog/summary");
@@ -60,7 +76,7 @@ describe("commerce browser gateway", () => {
   it("restores the same browser session without creating another conversation", async () => {
     const cookie = await start(cidA);
     const fetchMock = vi.fn();
-    vi.stubGlobal("fetch", fetchMock);
+    mockUpstream(fetchMock);
     const first = await handleCommerceRequest(req("session", "POST", cookie), env);
     const restored = await handleCommerceRequest(req("session", "POST", extractCookie(first)), env);
     const data = await first.json();
@@ -77,7 +93,7 @@ describe("commerce browser gateway", () => {
         headers: { location: "https://other.example/private" },
       }),
     );
-    vi.stubGlobal("fetch", fetchMock);
+    mockUpstream(fetchMock);
     const result = await handleCommerceRequest(req("history", "GET", cookie), env);
     expect(fetchMock.mock.calls[0][1].redirect).toBe("manual");
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -96,7 +112,7 @@ describe("commerce browser gateway", () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValue(new Response(body, { headers: { "content-type": "text/event-stream" } }));
-    vi.stubGlobal("fetch", fetchMock);
+    mockUpstream(fetchMock);
     const response = await handleCommerceRequest(
       req(
         "messages",
@@ -121,7 +137,7 @@ describe("commerce browser gateway", () => {
   });
   it("rejects cross-origin mutations before calling the backend", async () => {
     const fetchMock = vi.fn();
-    vi.stubGlobal("fetch", fetchMock);
+    mockUpstream(fetchMock);
     const result = await handleCommerceRequest(
       req("session", "POST", undefined, undefined, { origin: "https://foreign.example" }),
       env,
@@ -135,7 +151,7 @@ describe("commerce browser gateway", () => {
     const fetchMock = vi
       .fn()
       .mockImplementation(() => Promise.resolve(Response.json({ messages: [], next_after: 0 })));
-    vi.stubGlobal("fetch", fetchMock);
+    mockUpstream(fetchMock);
     await handleCommerceRequest(req(`history?conversation_id=${cidB}`, "GET", a), env);
     await handleCommerceRequest(req("history", "GET", b), env);
     expect(fetchMock.mock.calls[0][0]).toContain(`/conversations/${cidA}/messages`);
@@ -144,7 +160,7 @@ describe("commerce browser gateway", () => {
   it("rejects a tampered cookie without accessing the backend", async () => {
     const cookie = await start(cidA);
     const fetchMock = vi.fn();
-    vi.stubGlobal("fetch", fetchMock);
+    mockUpstream(fetchMock);
     const result = await handleCommerceRequest(req("history", "GET", cookie + "x"), env);
     expect(result.status).toBe(401);
     expect(fetchMock).not.toHaveBeenCalled();
@@ -153,8 +169,10 @@ describe("commerce browser gateway", () => {
     const initial = await bootstrap();
     const fetchMock = vi
       .fn()
-      .mockImplementation(() => Promise.resolve(Response.json({ id: cidA })));
-    vi.stubGlobal("fetch", fetchMock);
+      .mockImplementation(() =>
+        Promise.resolve(Response.json({ id: cidA, storefront_id: "beauty" })),
+      );
+    mockUpstream(fetchMock);
     await handleCommerceRequest(req("session", "POST", initial), env);
     await handleCommerceRequest(req("session", "POST", initial), env);
     expect(fetchMock.mock.calls[0][1].headers["idempotency-key"]).toBe(
@@ -166,7 +184,7 @@ describe("commerce browser gateway", () => {
     const fetchMock = vi
       .fn()
       .mockImplementation(() => Promise.resolve(Response.json({ reply: "done" })));
-    vi.stubGlobal("fetch", fetchMock);
+    mockUpstream(fetchMock);
     for (let i = 0; i < 2; i++)
       await handleCommerceRequest(
         req(
@@ -181,12 +199,11 @@ describe("commerce browser gateway", () => {
     expect(fetchMock.mock.calls[0][1].headers["idempotency-key"]).toBe(
       fetchMock.mock.calls[1][1].headers["idempotency-key"],
     );
-    expect(fetchMock.mock.calls[0][1].headers.authorization).toBe("Bearer test-only-service-token");
+    expect(fetchMock.mock.calls[0][1].headers.authorization).toBe(`Bearer ${userToken}`);
   });
   it("sanitizes upstream failures and preserves retry guidance", async () => {
     const cookie = await start(cidA);
-    vi.stubGlobal(
-      "fetch",
+    mockUpstream(
       vi
         .fn()
         .mockResolvedValue(
@@ -204,7 +221,7 @@ describe("commerce browser gateway", () => {
   it("checks UTF-8 byte size and never forwards excessive messages", async () => {
     const cookie = await start(cidA);
     const fetchMock = vi.fn();
-    vi.stubGlobal("fetch", fetchMock);
+    mockUpstream(fetchMock);
     const result = await handleCommerceRequest(
       req(
         "messages",
@@ -221,7 +238,7 @@ describe("commerce browser gateway", () => {
   it("deletes only the cookie-bound conversation and expires the cookie", async () => {
     const cookie = await start(cidA);
     const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
-    vi.stubGlobal("fetch", fetchMock);
+    mockUpstream(fetchMock);
     const result = await handleCommerceRequest(req("session", "DELETE", cookie), env);
     expect(fetchMock.mock.calls[0][0]).toContain(`/conversations/${cidA}`);
     expect(result.headers.get("set-cookie")).toContain("Max-Age=0");
@@ -230,11 +247,12 @@ describe("commerce browser gateway", () => {
 
 describe("storefront session isolation", () => {
   async function scopedStart(scope: string, cid: string) {
+    mockUpstream(vi.fn());
     const cookie = extractCookie(
       await handleCommerceRequest(req(`status?storefront=${scope}`), env),
     );
     const fetchMock = vi.fn().mockResolvedValue(Response.json({ id: cid, storefront_id: scope }));
-    vi.stubGlobal("fetch", fetchMock);
+    mockUpstream(fetchMock);
     const response = await handleCommerceRequest(
       req(`session?storefront=${scope}`, "POST", cookie),
       env,
@@ -253,7 +271,7 @@ describe("storefront session isolation", () => {
     const fetchMock = vi
       .fn()
       .mockImplementation(() => Promise.resolve(Response.json({ messages: [], next_after: 0 })));
-    vi.stubGlobal("fetch", fetchMock);
+    mockUpstream(fetchMock);
     await handleCommerceRequest(req("history?storefront=beauty", "GET", cookies), env);
     await handleCommerceRequest(req("history?storefront=clothing", "GET", cookies), env);
     expect(fetchMock.mock.calls.map((call) => call[0])).toEqual([
@@ -263,13 +281,22 @@ describe("storefront session isolation", () => {
     expect(
       (await handleCommerceRequest(req("history?storefront=footwear", "GET", cookies), env)).status,
     ).toBe(401);
-    expect((await handleCommerceRequest(req("history", "GET", cookies), env)).status).toBe(401);
+    expect(
+      (
+        await handleCommerceRequest(
+          new Request(`${origin}/api/commerce/history`, {
+            headers: { cookie: `querix_tester=${userToken}; ${cookies}` },
+          }),
+          env,
+        )
+      ).status,
+    ).toBe(403);
   });
   it("rejects a valid signed payload renamed for another section", async () => {
     const beauty = await scopedStart("beauty", cidA);
     const forged = beauty.replace("querix_commerce_beauty=", "querix_commerce_clothing=");
     const fetchMock = vi.fn();
-    vi.stubGlobal("fetch", fetchMock);
+    mockUpstream(fetchMock);
     expect(
       (await handleCommerceRequest(req("history?storefront=clothing", "GET", forged), env)).status,
     ).toBe(401);
@@ -279,7 +306,7 @@ describe("storefront session isolation", () => {
     const beauty = await scopedStart("beauty", cidA);
     const clothing = await scopedStart("clothing", cidB);
     const fetchMock = vi.fn().mockResolvedValue(Response.json({ deleted: true }));
-    vi.stubGlobal("fetch", fetchMock);
+    mockUpstream(fetchMock);
     const response = await handleCommerceRequest(
       req("session?storefront=beauty", "DELETE", `${beauty}; ${clothing}`),
       env,
@@ -295,8 +322,9 @@ describe("storefront session isolation", () => {
       "storefront=beauty&storefront=clothing",
     ])
       expect((await handleCommerceRequest(req(`status?${query}`), env)).status).toBe(400);
+    mockUpstream(vi.fn());
     const cookie = extractCookie(await handleCommerceRequest(req("status?storefront=beauty"), env));
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json({ id: cidA })));
+    mockUpstream(vi.fn().mockResolvedValue(Response.json({ id: cidA })));
     const oldBackend = await handleCommerceRequest(
       req("session?storefront=beauty", "POST", cookie),
       env,

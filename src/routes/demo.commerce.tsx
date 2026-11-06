@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CommerceDemo } from "@/components/commerce/CommerceDemo";
+import { PortalGate, Workspace } from "@/components/commerce/Portal";
 export const Route = createFileRoute("/demo/commerce")({
   ssr: false,
   head: () => ({
@@ -13,5 +13,9 @@ export const Route = createFileRoute("/demo/commerce")({
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
-  component: CommerceDemo,
+  component: () => (
+    <PortalGate>
+      <Workspace />
+    </PortalGate>
+  ),
 });

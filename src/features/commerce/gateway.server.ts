@@ -5,7 +5,19 @@ export type CommerceEnv = {
   COMMERCE_SESSION_SECRET?: string;
 };
 import { isStorefront, type StorefrontID } from "./storefronts";
-type Session = { sid: string; cid?: string; expires: number; storefront?: StorefrontID };
+import {
+  handlePortalRequest,
+  portalToken,
+  portalUpstream,
+  portalResponse,
+} from "./portal-gateway.server";
+type Session = {
+  uid: string;
+  sid: string;
+  cid?: string;
+  expires: number;
+  storefront?: StorefrontID;
+};
 const COOKIE = "querix_commerce";
 const AGE = 60 * 60 * 24;
 const encoder = new TextEncoder();
@@ -55,7 +67,8 @@ async function seal(session: Session, secret: string) {
 async function readSession(
   request: Request,
   secret: string,
-  storefront?: StorefrontID,
+  storefront: StorefrontID | undefined,
+  uid: string,
 ): Promise<Session | null> {
   const name = COOKIE + (storefront ? `_${storefront}` : "");
   try {
@@ -79,7 +92,8 @@ async function readSession(
       return null;
     const session = JSON.parse(atob(payload)) as Session;
     const uuid = /^[a-f0-9-]{36}$/i;
-    return session.storefront === storefront &&
+    return session.uid === uid &&
+      session.storefront === storefront &&
       uuid.test(session.sid) &&
       (!session.cid || uuid.test(session.cid)) &&
       session.expires > Date.now()
@@ -111,14 +125,16 @@ async function safeResponse(response: Response) {
     return json({ error: "The commerce origin returned an unexpected redirect." }, 502);
   if (response.ok) return json(await response.json());
   const messages: Record<number, string> = {
-    401: "The commerce connection needs attention. Your API credentials stay on the server.",
+    401: "Your session expired. Sign in again.",
+    403: "You do not have access to this category. Return to your workspace.",
+    410: "This request has expired. Start a new conversation.",
     404: "This conversation is no longer available. Start a new conversation.",
     409: "The previous request may still be processing. Retry the same message shortly.",
     422: "Please check your message and try again.",
     429: "The demo is busy. Please wait before retrying.",
     503: "The commerce service is temporarily unavailable. You can retry or choose the sample walkthrough.",
   };
-  const status = response.status === 401 ? 503 : response.status >= 500 ? 503 : response.status;
+  const status = response.status >= 500 ? 503 : response.status;
   const retry = response.headers.get("retry-after");
   return json(
     {
@@ -181,23 +197,74 @@ export async function handleCommerceRequest(request: Request, env: CommerceEnv):
           },
           503,
         );
-  let session = await readSession(request, env.COMMERCE_SESSION_SECRET!, storefront ?? undefined);
-  if (path === "/api/commerce/status" && request.method === "GET") {
+  try {
+    if (path.startsWith("/api/commerce/auth/") || path.startsWith("/api/commerce/admin/"))
+      return await handlePortalRequest(request, env);
+    const token = portalToken(request);
+    if (!token) return json({ error: "Sign in to continue" }, 401);
+    const identity = await portalUpstream(env, token, "/portal/me");
+    if (!identity.ok) return await portalResponse(identity);
+    const { user } = await identity.json();
+    if (user.must_change_password)
+      return json({ error: "Change your temporary password before continuing" }, 403);
+    if (!storefront || !user.storefronts.includes(storefront))
+      return json({ error: "You do not have access to this category" }, 403);
+    // All shopping calls carry this user's session, never the shared Worker identity.
+    env = { ...env, COMMERCE_API_TOKEN: token };
+    let session = await readSession(request, env.COMMERCE_SESSION_SECRET!, storefront, user.id);
+    if (path === "/api/commerce/status" && request.method === "GET") {
+      if (!session)
+        session = {
+          uid: user.id,
+          sid: crypto.randomUUID(),
+          expires: Date.now() + AGE * 1000,
+          ...(storefront ? { storefront } : {}),
+        };
+      return json({ available: true, active: Boolean(session.cid) }, 200, {
+        "set-cookie": cookie(request, await seal(session, env.COMMERCE_SESSION_SECRET!)),
+      });
+    }
     if (!session)
+      return json({ error: "Your demo session expired. Reconnect to start a new one." }, 401);
+    if (path === "/api/commerce/catalog" && request.method === "GET") {
+      return await safeResponse(await upstream(env, "/catalog/summary"));
+    }
+    if (path === "/api/commerce/conversations" && request.method === "GET") {
+      const offset = url.searchParams.get("offset") ?? "0";
+      if (!/^\d{1,8}$/.test(offset)) return json({ error: "Invalid history offset" }, 400);
+      return await safeResponse(
+        await upstream(env, `/conversations?storefront_id=${storefront}&limit=50&offset=${offset}`),
+      );
+    }
+    if (path === "/api/commerce/session/new" && request.method === "POST") {
       session = {
+        uid: user.id,
         sid: crypto.randomUUID(),
         expires: Date.now() + AGE * 1000,
-        ...(storefront ? { storefront } : {}),
+        storefront,
       };
-    return json({ available: true, active: Boolean(session.cid) }, 200, {
-      "set-cookie": cookie(request, await seal(session, env.COMMERCE_SESSION_SECRET!)),
-    });
-  }
-  if (!session)
-    return json({ error: "Your demo session expired. Reconnect to start a new one." }, 401);
-  try {
-    if (path === "/api/commerce/catalog" && request.method === "GET") {
-      return safeResponse(await upstream(env, "/catalog/summary"));
+      return json({ ready: true }, 200, {
+        "set-cookie": cookie(request, await seal(session, env.COMMERCE_SESSION_SECRET!)),
+      });
+    }
+    if (path === "/api/commerce/session/open" && request.method === "POST") {
+      const cid = url.searchParams.get("id") ?? "";
+      if (!/^[a-f0-9-]{36}$/.test(cid)) return json({ error: "Invalid conversation" }, 400);
+      const response = await upstream(env, `/conversations/${cid}`);
+      if (!response.ok) return await safeResponse(response);
+      const record = await response.json();
+      if (record.storefront_id !== storefront)
+        return json({ error: "Conversation belongs to a different category" }, 403);
+      session = {
+        uid: user.id,
+        sid: crypto.randomUUID(),
+        cid,
+        expires: Date.now() + AGE * 1000,
+        storefront,
+      };
+      return json({ ready: true }, 200, {
+        "set-cookie": cookie(request, await seal(session, env.COMMERCE_SESSION_SECRET!)),
+      });
     }
     if (path === "/api/commerce/session" && request.method === "POST") {
       if (!session.cid) {
@@ -210,7 +277,7 @@ export async function handleCommerceRequest(request: Request, env: CommerceEnv):
             ...(storefront ? { storefront_id: storefront } : {}),
           }),
         });
-        if (!response.ok) return safeResponse(response);
+        if (!response.ok) return await safeResponse(response);
         const record = (await response.json()) as { id?: string; storefront_id?: string };
         if (!record.id || !/^[a-f0-9-]{36}$/i.test(record.id))
           return json({ error: "The commerce service returned an invalid session." }, 502);
@@ -231,7 +298,7 @@ export async function handleCommerceRequest(request: Request, env: CommerceEnv):
         const response = await upstream(env, `/conversations/${session.cid}`, {
           method: "DELETE",
         });
-        if (!response.ok && response.status !== 404) return safeResponse(response);
+        if (!response.ok && response.status !== 404) return await safeResponse(response);
       }
       return json({ deleted: true }, 200, {
         "set-cookie": cookie(request, "", 0),
@@ -241,7 +308,7 @@ export async function handleCommerceRequest(request: Request, env: CommerceEnv):
     if (path === "/api/commerce/history" && request.method === "GET") {
       const after = url.searchParams.get("after") ?? "0";
       if (!/^\d{1,12}$/.test(after)) return json({ error: "Invalid history cursor" }, 400);
-      return safeResponse(
+      return await safeResponse(
         await upstream(env, `/conversations/${session.cid}/messages?limit=100&after=${after}`),
       );
     }
@@ -275,7 +342,7 @@ export async function handleCommerceRequest(request: Request, env: CommerceEnv):
           },
         });
       }
-      return safeResponse(response);
+      return await safeResponse(response);
     }
     return json({ error: "Not found" }, 404);
   } catch (error) {

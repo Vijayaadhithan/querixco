@@ -1,3 +1,4 @@
+import { usePortalUser } from "@/features/commerce/portal-context";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
@@ -16,6 +17,10 @@ import {
   connectLive,
   loadCatalog,
   deleteLive,
+  listLive,
+  newLive,
+  openLive,
+  type SavedConversation,
   liveStatus,
   sendLive,
   CommerceError,
@@ -32,6 +37,7 @@ import {
   type Product,
 } from "@/features/commerce/model";
 import { sampleTurn } from "@/features/commerce/sample";
+import { PortalAccountBar } from "./Portal";
 import { CommerceHeader } from "./CommerceChrome";
 import { ProductCard } from "./ProductCard";
 import "./commerce.css";
@@ -40,7 +46,7 @@ import { STOREFRONTS, isStorefront, type StorefrontID } from "@/features/commerc
 
 type Mode = "sample" | "live";
 type Pending = { key: string; message: string; sessionId?: string };
-const MODE_KEY = "querix-commerce-mode-v1";
+const MODE_KEY = "querix-commerce-mode-v1"; // gitleaks:allow -- non-secret browser storage name
 function restorePending(sessionId?: string, storageKey = PENDING_KEY): Pending | null {
   try {
     const value = JSON.parse(sessionStorage.getItem(storageKey) ?? "null");
@@ -55,7 +61,7 @@ function restorePending(sessionId?: string, storageKey = PENDING_KEY): Pending |
   }
 }
 const SAVE_KEY = "querix-commerce-sample-v1";
-const PENDING_KEY = "querix-commerce-pending-v1";
+const PENDING_KEY = "querix-commerce-pending-v1"; // gitleaks:allow -- non-secret browser storage name
 function storedSample(): Conversation {
   try {
     const raw = localStorage.getItem(SAVE_KEY);
@@ -138,6 +144,7 @@ function AssistantResponse({
   disabled: boolean;
   onSend: (message: string) => void;
 }) {
+  const portalUser = usePortalUser();
   const groups = commerce
     ? latestGroups([{ id: "response", role: "assistant", content, commerce }])
     : [];
@@ -147,7 +154,11 @@ function AssistantResponse({
         <p className="chat-prose">{content}</p>
         <div className="chat-handoffs">
           {commerce.handoff.targets
-            .filter((target) => isStorefront(target.storefront_id))
+            .filter(
+              (target) =>
+                isStorefront(target.storefront_id) &&
+                (!portalUser || portalUser.storefronts.includes(target.storefront_id)),
+            )
             .map((target, index) => (
               <a
                 key={`${target.storefront_id}-${index}`}
@@ -261,6 +272,10 @@ function AssistantResponse({
   );
 }
 export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {}) {
+  const portalUser = usePortalUser();
+  const [showHistory, setShowHistory] = useState(false);
+  const [saved, setSaved] = useState<SavedConversation[]>([]);
+  const [moreHistory, setMoreHistory] = useState(false);
   const section = storefront ? STOREFRONTS[storefront] : undefined;
   const pendingKey = PENDING_KEY + (storefront ? `-${storefront}` : "");
   const starters = section
@@ -542,7 +557,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
       setRetryAt,
     ],
   );
-  async function reset() {
+  async function reset(remove = true) {
     if (lock.current) return;
     lock.current = true;
     setBusy(true);
@@ -550,7 +565,8 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
     setError("");
     try {
       if (mode === "live") {
-        await deleteLive(storefront);
+        if (remove) await deleteLive(storefront);
+        else await newLive(storefront);
         savePending(null);
         const restored = await connectLive(storefront);
         setState(restored);
@@ -567,15 +583,51 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
       setBusy(false);
     }
   }
+  async function historyPage(append = false) {
+    if (!storefront) return;
+    try {
+      const result = await listLive(storefront, append ? saved.length : 0);
+      setSaved(append ? [...saved, ...result.conversations] : result.conversations);
+      setMoreHistory(result.conversations.length === 50);
+      setShowHistory(true);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not load history");
+    }
+  }
+  async function resume(id: string) {
+    if (!storefront || lock.current) return;
+    lock.current = true;
+    setBusy(true);
+    setError("");
+    try {
+      await openLive(id, storefront);
+      savePending(null);
+      setState(await connectLive(storefront));
+      setDraft("");
+      setShowHistory(false);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not open conversation");
+    } finally {
+      lock.current = false;
+      setBusy(false);
+    }
+  }
   return (
     <div className="commerce-app commerce-demo commerce-chat-page">
       <CommerceHeader demo />
+      {portalUser && (
+        <div className="portal-chat-account">
+          <PortalAccountBar user={portalUser} />
+        </div>
+      )}
       <nav className="chat-sections" aria-label="Shopping sections">
-        {Object.entries(STOREFRONTS).map(([id, item]) => (
-          <a key={id} href={`/${id}`} aria-current={storefront === id ? "page" : undefined}>
-            {item.label}
-          </a>
-        ))}
+        {Object.entries(STOREFRONTS)
+          .filter(([id]) => !portalUser || portalUser.storefronts.includes(id as StorefrontID))
+          .map(([id, item]) => (
+            <a key={id} href={`/${id}`} aria-current={storefront === id ? "page" : undefined}>
+              {item.label}
+            </a>
+          ))}
         {!storefront && <span>Legacy demo</span>}
       </nav>
       <div className="chat-toolbar">
@@ -611,12 +663,55 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
             <SlidersHorizontal size={17} />
             <span>Preferences</span>
           </button>
-          <button disabled={busy} onClick={() => setConfirmDelete(true)}>
+          {portalUser && (
+            <>
+              <button
+                disabled={busy}
+                aria-expanded={showHistory}
+                onClick={() => (showHistory ? setShowHistory(false) : void historyPage())}
+              >
+                History
+              </button>
+              <button
+                disabled={busy || !state.messages.length}
+                onClick={() => setConfirmDelete(true)}
+              >
+                <Trash2 size={16} />
+                <span>Delete chat</span>
+              </button>
+            </>
+          )}
+          <button
+            disabled={busy}
+            onClick={() => (portalUser ? void reset(false) : setConfirmDelete(true))}
+          >
             <Plus size={18} />
             <span>New chat</span>
           </button>
         </div>
       </div>
+      {showHistory && (
+        <aside className="chat-history-panel" aria-label="Your saved conversations">
+          <h2>Your conversations · {section?.label}</h2>
+          {saved.length ? (
+            <ul>
+              {saved.map((item) => (
+                <li key={item.id}>
+                  <button disabled={busy} onClick={() => void resume(item.id)}>
+                    {item.title}
+                    <small>{new Date(item.updated_at).toLocaleString()}</small>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No saved conversations in this category.</p>
+          )}
+          {moreHistory && (
+            <button onClick={() => void historyPage(true)}>Load older conversations</button>
+          )}
+        </aside>
+      )}
       {showContext && (
         <aside className="chat-context" aria-label="Saved shopping preferences">
           <div>
