@@ -100,7 +100,7 @@ export type CompanyBusinessOverview = {
 };
 
 export type DashboardPeriod = "24h" | "7d" | "30d" | "90d" | "all" | "custom";
-export type DashboardRequestScope = "all" | "text_search" | "browse";
+type DashboardRequestScope = "all" | "text_search" | "browse";
 
 export type DashboardFilterValue = {
   period: DashboardPeriod;
@@ -176,7 +176,7 @@ export type DashboardMainGraph = {
 
 type DashboardBreakdowns = Record<string, MetricPayload>;
 
-export type CompanyDashboardOverview = {
+type CompanyDashboardOverview = {
   summary: {
     searches: number;
     fulfilled: number;
@@ -394,6 +394,8 @@ export type QueryFilters = {
   adType: string;
   diagnosticCode: string;
   hasFilters: boolean;
+  exactFrom?: string;
+  exactTo?: string;
   from: string;
   to: string;
 };

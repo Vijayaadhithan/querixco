@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useAnalyticsLocation } from "@/features/analytics/lib/use-analytics-location";
+import { useRetainedResult } from "@/features/analytics/lib/use-retained-result";
 
 import { CompanyAnalyticsShell } from "./CompanyAnalyticsShell";
 import { DashboardView } from "../shared/DashboardView";
@@ -30,7 +31,9 @@ function CompanyDashboardContent({
   session: AnalyticsSession;
 }) {
   const queryClient = useQueryClient();
-  const [filters, setFilters] = useState(createDashboardFilters);
+  const location = useAnalyticsLocation("company");
+  const filters = location.dashboardFilters;
+  const setFilters = location.update;
   const dashboard = useQuery({
     queryKey: ["analytics", "company", company, "dashboard", filters],
     queryFn: ({ signal }) => getCompanyDashboard(company, filters, signal),
@@ -54,8 +57,14 @@ function CompanyDashboardContent({
     queryClient,
   );
 
+  const displayed = useRetainedResult(
+    dashboard.data,
+    dashboard.isPlaceholderData,
+    "company:" + company,
+  );
+
   let content;
-  if (dashboard.isPending) {
+  if (dashboard.isPending && !displayed) {
     content = (
       <PortalState
         kind="loading"
@@ -63,7 +72,7 @@ function CompanyDashboardContent({
         message="Retrieving the latest private snapshot."
       />
     );
-  } else if (dashboard.isError && !dashboard.data) {
+  } else if (dashboard.isError && !displayed) {
     content = (
       <PortalState
         kind={isAnalyticsApiError(dashboard.error, 403) ? "forbidden" : "error"}
@@ -79,9 +88,8 @@ function CompanyDashboardContent({
       />
     );
   } else if (
-    dashboard.data &&
-    (dashboard.data.metadata.audience !== "company" ||
-      dashboard.data.metadata.company_id !== company)
+    displayed &&
+    (displayed.metadata.audience !== "company" || displayed.metadata.company_id !== company)
   ) {
     content = (
       <PortalState
@@ -90,7 +98,7 @@ function CompanyDashboardContent({
         message="The analytics response did not match this company workspace."
       />
     );
-  } else if (dashboard.data) {
+  } else if (displayed) {
     content = (
       <>
         {(dashboard.isError || status.isError) && (
@@ -98,16 +106,35 @@ function CompanyDashboardContent({
             role="alert"
             className="mx-auto mt-5 max-w-[1440px] rounded-md border border-workspace-warning-line bg-workspace-warning-tint px-4 py-3 text-sm text-workspace-warning"
           >
-            The saved snapshot remains visible, but the latest status check was unavailable.
+            {dashboard.isError
+              ? "The saved report remains visible, but the latest request failed."
+              : "The report loaded, but its status check failed."}{" "}
+            <button
+              className="font-semibold underline"
+              onClick={() => {
+                if (dashboard.isError) void dashboard.refetch();
+                if (status.isError) void status.refetch();
+              }}
+            >
+              Retry
+            </button>
           </div>
         )}
         <DashboardView
-          dashboard={dashboard.data}
+          dashboard={displayed}
           company={company}
           audience="company"
           status={status.data}
           filters={filters}
           isFetching={dashboard.isFetching}
+          stale={
+            dashboard.isPlaceholderData ||
+            dashboard.isError ||
+            (dashboard.isPending && Boolean(displayed))
+          }
+          view={location.view}
+          onViewChange={location.setView}
+          currentHref={location.href}
           onFiltersChange={setFilters}
           onFiltersReset={() => setFilters(createDashboardFilters())}
         />

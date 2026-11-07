@@ -42,6 +42,28 @@ Analytics code is grouped by responsibility:
 The browser never receives an analytics API key. Authentication uses the API's HttpOnly cookie,
 and private data is not rendered during server-side rendering.
 
+## Analytics workflow
+
+Client dashboards separate Overview, Search insights, and Catalog & reports. Internal dashboards
+separate Overview, Activity breakdowns, and Performance & usage; request diagnostics open from the
+compact history table. Snapshot report selectors retain every existing report group.
+
+Common date/activity controls apply immediately. Advanced filters apply together; active filter
+chips can be removed individually. Dashboard sections and filters persist in the URL, so reload
+and browser back restore the selection. Query text replaces the current history entry while typing
+and is debounced before requesting data. URLs may contain search text and selected dimensions;
+they never contain credentials and still require the correct company or internal session.
+
+Metric links use the report's applied timestamps exactly, and retain a workspace-checked return
+path. Links are unavailable for combined Browse, provider, or operation selections because the
+existing query API cannot represent those filters exactly. Calendar dates selected manually use
+local day boundaries, while drill-through timestamps retain their precise instant.
+
+Prior successful results stay visible during refresh/failure with the displayed selection clearly
+identified; drill-through and pagination are disabled until that selection is current. Retained
+results are scoped to the audience and company. Report generation time and source watermark are
+shown separately; snapshot reports explicitly disclose that activity filters do not apply.
+
 ## Health-check implementation
 
 The website health endpoint is implemented in `src/routes/api/ready.ts`. It calls

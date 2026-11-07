@@ -5,6 +5,8 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { PortalShell } from "./PortalShell";
 import { AnalyticsLogin } from "./AnalyticsLogin";
 import { DashboardFilters } from "./DashboardFilters";
+import { QueryFilters } from "./QueryFilters";
+import { emptyQueryFilters } from "@/features/analytics/lib/navigation";
 import { QueryTable } from "./QueryTable";
 import { createDashboardFilters } from "@/features/analytics/lib/dashboard";
 import { endAnalyticsSession } from "@/features/analytics/auth/session";
@@ -92,7 +94,7 @@ it("keeps internal workspace switching distinct from company access", async () =
   );
   expect(
     element.querySelector('nav a[href="/internal/analytics/sample/queries"]')?.textContent,
-  ).toContain("Queries");
+  ).toContain("Requests");
 });
 it("preserves dashboard period and city filtering and the reset action", async () => {
   const onChange = vi.fn(),
@@ -110,14 +112,18 @@ it("preserves dashboard period and city filtering and the reset action", async (
   );
   await act(async () => button("7 days").click());
   expect(onChange).toHaveBeenLastCalledWith({ ...value, period: "7d", from: "", to: "" });
+  await act(async () => button("More filters").click());
+  onChange.mockClear();
   const city = element.querySelector("#company-dashboard-city") as HTMLSelectElement;
   await act(async () => {
     city.value = "81";
     city.dispatchEvent(new Event("change", { bubbles: true }));
   });
-  expect(onChange).toHaveBeenLastCalledWith({ ...value, cityId: "81" });
+  expect(onChange).not.toHaveBeenCalled();
+  await act(async () => button("Apply filters").click());
+  expect(onChange).toHaveBeenLastCalledWith({ ...value, period: "custom", cityId: "81" });
   expect(element.querySelector("#internal-dashboard-provider")).toBeNull();
-  await act(async () => button("Reset").click());
+  await act(async () => button("Clear filters").click());
   expect(onReset).toHaveBeenCalledOnce();
 });
 it("exposes the existing operational filters only in the internal view", async () => {
@@ -139,6 +145,8 @@ it("exposes the existing operational filters only in the internal view", async (
     provider.value = "sample-provider";
     provider.dispatchEvent(new Event("change", { bubbles: true }));
   });
+  expect(onChange).not.toHaveBeenCalled();
+  await act(async () => button("Apply filters").click());
   expect(onChange).toHaveBeenCalledWith({
     ...createDashboardFilters(),
     provider: "sample-provider",
@@ -186,4 +194,63 @@ it("keeps query results available in both desktop and mobile presentations", asy
   expect(element.querySelector("table tbody")?.textContent).toContain("Cotton shirt");
   expect(element.querySelector("article")?.textContent).toContain("Cotton shirt");
   expect(element.querySelector("article")?.textContent).toContain("2 results");
+});
+
+it("allows canceling a filter draft without issuing a new selection", async () => {
+  const onChange = vi.fn();
+  await render(
+    <DashboardFilters
+      audience="internal"
+      value={createDashboardFilters()}
+      available={available}
+      isFetching={false}
+      onChange={onChange}
+      onReset={vi.fn()}
+    />,
+  );
+  await act(async () => button("More filters").click());
+  const provider = element.querySelector("#internal-dashboard-provider") as HTMLSelectElement;
+  await act(async () => {
+    provider.value = "sample-provider";
+    provider.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  await act(async () => button("Cancel").click());
+  expect(onChange).not.toHaveBeenCalled();
+  await act(async () => button("More filters").click());
+  expect((element.querySelector("#internal-dashboard-provider") as HTMLSelectElement).value).toBe(
+    "",
+  );
+});
+it("applies history sorting and dimensions together while retaining exact report dates", async () => {
+  const onChange = vi.fn();
+  const value = {
+    ...emptyQueryFilters,
+    exactFrom: "2026-11-01T07:04:56.000Z",
+    exactTo: "2026-11-07T07:04:56.000Z",
+    cityId: "81",
+  };
+  await render(
+    <QueryFilters
+      audience="company"
+      value={value}
+      classificationOptions={["Clothing"]}
+      executionPathOptions={[]}
+      languageOptions={[]}
+      onChange={onChange}
+      onReset={vi.fn()}
+    />,
+  );
+  expect(element.textContent).toContain("Exact dashboard range");
+  await act(async () => button("More filters & sorting").click());
+  const sort = element.querySelector("#query-sort-field") as HTMLSelectElement;
+  expect((element.querySelector("#city-filter") as HTMLSelectElement).value).toBe("81");
+  await act(async () => {
+    sort.value = "results";
+    sort.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  expect(onChange).not.toHaveBeenCalled();
+  await act(async () => button("Apply filters").click());
+  expect(onChange).toHaveBeenCalledOnce();
+  expect(onChange).toHaveBeenCalledWith({ ...value, sortBy: "results" });
+  expect(element.querySelector("#query-sort-field")).toBeNull();
 });

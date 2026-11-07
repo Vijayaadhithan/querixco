@@ -1,6 +1,9 @@
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { LoaderCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useAnalyticsLocation } from "@/features/analytics/lib/use-analytics-location";
+import { useRetainedResult } from "@/features/analytics/lib/use-retained-result";
+import { emptyQueryFilters, safeDashboardReturn } from "@/features/analytics/lib/navigation";
 
 import { PortalState } from "./PortalState";
 import { QueryFilters } from "./QueryFilters";
@@ -24,25 +27,6 @@ import type {
   QueryPage,
 } from "@/features/analytics/model/types";
 
-const emptyFilters: QueryFiltersValue = {
-  sortBy: "created_at",
-  sortDirection: "desc",
-  query: "",
-  outcome: "",
-  category: "",
-  executionPath: "",
-  language: "",
-  includeFilteredResults: false,
-  requestKind: "",
-  cityId: "",
-  subcategoryId: "",
-  adType: "",
-  diagnosticCode: "",
-  hasFilters: false,
-  from: "",
-  to: "",
-};
-
 type QueryRecord = CompanyQueryRecord | InternalQueryRecord;
 
 export function QueryHistory({
@@ -53,7 +37,10 @@ export function QueryHistory({
   audience: "company" | "internal";
 }) {
   const queryClient = useQueryClient();
-  const [filters, setFilters] = useState<QueryFiltersValue>(emptyFilters);
+  const location = useAnalyticsLocation(audience);
+  const filters = location.queryFilters;
+  const setFilters = (next: QueryFiltersValue) =>
+    location.update(next, next.query !== filters.query);
   const debouncedQuery = useDebouncedValue(filters.query, 300);
   const normalizedFilters = useMemo(
     () => ({
@@ -72,7 +59,10 @@ export function QueryHistory({
   );
   const internal = audience === "internal";
 
-  const history = useInfiniteQuery<QueryPage<QueryRecord>, Error>({
+  const history = useInfiniteQuery<
+    QueryPage<QueryRecord> & { selection: QueryFiltersValue },
+    Error
+  >({
     queryKey: [
       "analytics",
       internal ? "internal" : "company",
@@ -81,11 +71,12 @@ export function QueryHistory({
       normalizedFilters,
     ],
     initialPageParam: null as string | null,
-    queryFn: ({ pageParam, signal }) => {
+    queryFn: async ({ pageParam, signal }) => {
       const cursor = typeof pageParam === "string" ? pageParam : null;
-      return internal
+      const page = await (internal
         ? getInternalQueries(company, normalizedFilters, cursor, signal)
-        : getCompanyQueries(company, normalizedFilters, cursor, signal);
+        : getCompanyQueries(company, normalizedFilters, cursor, signal));
+      return { ...page, selection: normalizedFilters };
     },
     getNextPageParam: (lastPage) =>
       lastPage?.has_more && typeof lastPage.next_cursor === "string"
@@ -99,17 +90,29 @@ export function QueryHistory({
 
   const loginPath = internal ? "/internal/analytics/login" : `/analytics/${company}/login`;
   useUnauthorizedRedirect([history.error], audience, loginPath, queryClient);
+  const displayed = useRetainedResult(
+    history.data,
+    history.isPlaceholderData,
+    `${audience}:${company}`,
+  );
+  const previousSelection = displayed?.pages[0]?.selection;
+  const stale =
+    Boolean(displayed) &&
+    (history.isPlaceholderData ||
+      history.isError ||
+      JSON.stringify(previousSelection) !== JSON.stringify(normalizedFilters) ||
+      filters.query !== debouncedQuery);
   const companyMismatch =
     history.error instanceof AnalyticsCompanyMismatchError ||
-    !queryPagesMatchCompany(history.data, company);
+    !queryPagesMatchCompany(displayed, company);
 
   const items = useMemo(
     () =>
       companyMismatch
         ? []
-        : (history.data?.pages.flatMap((page) => (Array.isArray(page?.items) ? page.items : [])) ??
+        : (displayed?.pages.flatMap((page) => (Array.isArray(page?.items) ? page.items : [])) ??
           []),
-    [companyMismatch, history.data],
+    [companyMismatch, displayed],
   );
   const classificationOptions = useMemo(
     () =>
@@ -150,22 +153,28 @@ export function QueryHistory({
       ).sort((left, right) => left.localeCompare(right)),
     [items],
   );
-  const facets = history.data?.pages[0]?.facets;
+  const facets = displayed?.pages[0]?.facets;
 
   return (
     <main className="mx-auto max-w-[1480px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+      <a
+        className="analytics-secondary-link mb-5"
+        href={safeDashboardReturn(location.search, company, audience)}
+      >
+        ← Back to overview
+      </a>
       <div className="mb-7">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-workspace-blue">
           {formatCompanyName(company)}
         </p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight text-workspace-ink">
-          Individual query history
+          {internal ? "Requests" : "Search history"}
         </h1>
         <p className="mt-2 text-sm leading-6 text-workspace-muted">
           {internal
             ? "Inspect API outcomes, execution paths, and operational diagnostics."
             : "Inspect query outcomes and classifications."}{" "}
-          Filters reset cursor pagination automatically.
+          Open a record for context and details.
         </p>
       </div>
 
@@ -177,11 +186,36 @@ export function QueryHistory({
         languageOptions={languageOptions}
         facets={facets}
         onChange={setFilters}
-        onReset={() => setFilters(emptyFilters)}
+        onReset={() => setFilters(emptyQueryFilters)}
       />
 
+      {stale && previousSelection && (
+        <div role="status" className="analytics-selection-notice">
+          <strong>
+            {history.isFetching
+              ? "Updating results…"
+              : "Showing the previous successful selection."}
+          </strong>
+          <p>The rows below still use: {selectionLabel(previousSelection)}.</p>
+        </div>
+      )}
+      {history.isError && displayed && !companyMismatch && (
+        <div
+          role="alert"
+          className="mb-4 rounded-md border border-workspace-warning-line bg-workspace-warning-tint px-4 py-3 text-sm text-workspace-warning"
+        >
+          Existing results are still available, but the latest request failed.{" "}
+          <button
+            type="button"
+            onClick={() => void history.refetch()}
+            className="font-semibold underline underline-offset-2"
+          >
+            Retry
+          </button>
+        </div>
+      )}
       <div className="mt-6" aria-live="polite">
-        {history.isPending ? (
+        {history.isPending && !displayed ? (
           <PortalState
             kind="loading"
             title="Loading query history"
@@ -195,7 +229,7 @@ export function QueryHistory({
             message="The query response did not match the selected company workspace."
             internal={internal}
           />
-        ) : history.isError && !history.data ? (
+        ) : history.isError && !displayed ? (
           <PortalState
             kind="error"
             title={
@@ -215,24 +249,15 @@ export function QueryHistory({
             <p className="mt-2 text-sm text-workspace-muted">
               Adjust or reset the filters to broaden the results.
             </p>
+            <button
+              className="analytics-secondary-link mt-4"
+              onClick={() => setFilters(emptyQueryFilters)}
+            >
+              Clear filters
+            </button>
           </div>
         ) : (
           <>
-            {history.isError && (
-              <div
-                role="alert"
-                className="mb-4 rounded-md border border-workspace-warning-line bg-workspace-warning-tint px-4 py-3 text-sm text-workspace-warning"
-              >
-                Existing results are still available, but the latest request failed.{" "}
-                <button
-                  type="button"
-                  onClick={() => void history.refetch()}
-                  className="font-semibold underline underline-offset-2"
-                >
-                  Retry
-                </button>
-              </div>
-            )}
             <div className="mb-3 flex items-center justify-between gap-3">
               <p className="text-sm text-workspace-muted">
                 Showing {items.length.toLocaleString()} {items.length === 1 ? "query" : "queries"}
@@ -249,7 +274,7 @@ export function QueryHistory({
               {history.hasNextPage ? (
                 <button
                   type="button"
-                  disabled={history.isFetchingNextPage}
+                  disabled={history.isFetching || stale}
                   onClick={() => void history.fetchNextPage()}
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-workspace-line bg-workspace-wash px-5 text-sm font-semibold text-workspace-ink transition hover:bg-workspace-wash focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 disabled:cursor-wait disabled:opacity-60"
                 >
@@ -278,4 +303,31 @@ function useDebouncedValue(value: string, delay: number): string {
   }, [delay, value]);
 
   return debounced;
+}
+
+function selectionLabel(value: QueryFiltersValue) {
+  const labels: Record<string, string> = {
+    sortBy: "Sort",
+    sortDirection: "Order",
+    query: "Text",
+    outcome: "Outcome",
+    category: "Category",
+    executionPath: "Path",
+    language: "Language",
+    includeFilteredResults: "Include browsing",
+    requestKind: "Request type",
+    cityId: "City ID",
+    subcategoryId: "Subcategory ID",
+    adType: "Listing type",
+    diagnosticCode: "Diagnosis",
+    hasFilters: "Applied filters",
+    from: "From",
+    to: "To",
+    exactFrom: "From",
+    exactTo: "To",
+  };
+  return Object.entries(value)
+    .filter(([, v]) => v !== "" && v !== false && v != null)
+    .map(([k, v]) => `${labels[k] ?? k}: ${v === true ? "yes" : v}`)
+    .join(" · ");
 }

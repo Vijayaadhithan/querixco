@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { ChevronDown } from "lucide-react";
 
 import { humanizeKey } from "@/features/analytics/lib/format";
@@ -5,7 +6,14 @@ import type { InternalQueryAttempt, InternalQueryRecord } from "@/features/analy
 
 const successStatuses = new Set(["success", "successful", "ok", "cache_hit"]);
 
-export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
+export function InternalQueryDetails({
+  item,
+  defaultOpen = false,
+}: {
+  item: InternalQueryRecord;
+  defaultOpen?: boolean;
+}) {
+  const id = useId();
   const performance = isRecord(item.performance) ? item.performance : null;
   const tokenUsage = isRecord(item.token_usage) ? item.token_usage : null;
   const cache = isRecord(performance?.cache) ? performance.cache : null;
@@ -36,23 +44,20 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
     : {};
 
   return (
-    <details className="group mt-3">
+    <details className="group mt-3" open={defaultOpen || undefined}>
       <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 text-xs font-medium text-workspace-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300">
         Internal diagnostics
         <ChevronDown className="h-3.5 w-3.5 transition group-open:rotate-180" aria-hidden="true" />
       </summary>
       <div className="mt-3 space-y-5 rounded-md border border-workspace-blue-line bg-workspace-tint p-4">
         <section
-          aria-labelledby={`diagnosis-${item.request_id}`}
+          aria-labelledby={`diagnosis-${id}`}
           className="rounded-md border border-workspace-line bg-black/10 p-4"
         >
           <p className="text-xs font-medium uppercase tracking-wide text-workspace-muted">
             Observed result diagnosis
           </p>
-          <h3
-            id={`diagnosis-${item.request_id}`}
-            className="mt-1 text-base font-semibold text-workspace-ink"
-          >
+          <h3 id={`diagnosis-${id}`} className="mt-1 text-base font-semibold text-workspace-ink">
             {formatLabel(diagnostics?.code)}
           </h3>
           <p className="mt-1 text-sm leading-6 text-workspace-body">
@@ -66,11 +71,8 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
           )}
         </section>
 
-        <section aria-labelledby={`filters-${item.request_id}`}>
-          <h3
-            id={`filters-${item.request_id}`}
-            className="text-sm font-semibold text-workspace-ink"
-          >
+        <section aria-labelledby={`filters-${id}`}>
+          <h3 id={`filters-${id}`} className="text-sm font-semibold text-workspace-ink">
             Search and filter context
           </h3>
           <div className="mt-3 grid gap-3 lg:grid-cols-3">
@@ -86,11 +88,8 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
             )}
         </section>
 
-        <section aria-labelledby={`filter-attribution-${item.request_id}`}>
-          <h3
-            id={`filter-attribution-${item.request_id}`}
-            className="text-sm font-semibold text-workspace-ink"
-          >
+        <section aria-labelledby={`filter-attribution-${id}`}>
+          <h3 id={`filter-attribution-${id}`} className="text-sm font-semibold text-workspace-ink">
             Why filters returned no results
           </h3>
           {filterAttribution?.evidence_complete === true ? (
@@ -121,8 +120,8 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
           )}
         </section>
 
-        <section aria-labelledby={`funnel-${item.request_id}`}>
-          <h3 id={`funnel-${item.request_id}`} className="text-sm font-semibold text-workspace-ink">
+        <section aria-labelledby={`funnel-${id}`}>
+          <h3 id={`funnel-${id}`} className="text-sm font-semibold text-workspace-ink">
             Candidate funnel
           </h3>
           {Object.keys(candidateFunnel).length > 0 ? (
@@ -138,14 +137,14 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
           )}
         </section>
 
-        <section aria-labelledby={`performance-${item.request_id}`}>
+        <section aria-labelledby={`performance-${id}`}>
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
               <p className="text-xs font-medium uppercase tracking-wide text-workspace-muted">
                 Total server duration
               </p>
               <p
-                id={`performance-${item.request_id}`}
+                id={`performance-${id}`}
                 className="mt-1 text-2xl font-semibold text-workspace-ink"
               >
                 {formatDuration(performance?.total_server_duration_ms)}
@@ -178,8 +177,8 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
           </dl>
         </section>
 
-        <section aria-labelledby={`tokens-${item.request_id}`}>
-          <h3 id={`tokens-${item.request_id}`} className="text-sm font-semibold text-workspace-ink">
+        <section aria-labelledby={`tokens-${id}`}>
+          <h3 id={`tokens-${id}`} className="text-sm font-semibold text-workspace-ink">
             Token usage
           </h3>
           <dl className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -194,12 +193,9 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
           </dl>
         </section>
 
-        <section aria-labelledby={`attempts-${item.request_id}`}>
+        <section aria-labelledby={`attempts-${id}`}>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h3
-              id={`attempts-${item.request_id}`}
-              className="text-sm font-semibold text-workspace-ink"
-            >
+            <h3 id={`attempts-${id}`} className="text-sm font-semibold text-workspace-ink">
               Provider and model attempts
             </h3>
             <span className="text-xs text-workspace-muted">
@@ -287,13 +283,10 @@ export function InternalQueryDetails({ item }: { item: InternalQueryRecord }) {
         </section>
 
         <section
-          aria-labelledby={`fallback-${item.request_id}`}
+          aria-labelledby={`fallback-${id}`}
           className="rounded-lg border border-workspace-line bg-black/10 p-3"
         >
-          <h3
-            id={`fallback-${item.request_id}`}
-            className="text-sm font-semibold text-workspace-ink"
-          >
+          <h3 id={`fallback-${id}`} className="text-sm font-semibold text-workspace-ink">
             Failure and fallback
           </h3>
           <p className="mt-1 text-xs text-workspace-body">

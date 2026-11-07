@@ -1,167 +1,142 @@
-import { Activity, CheckCircle2, ChevronDown, CircleX, Clock3, SearchX, Zap } from "lucide-react";
-
+import { Activity, ArrowUpRight, CheckCircle2, CircleX, Clock3, SearchX } from "lucide-react";
 import { DashboardModule } from "./DashboardModule";
 import { formatMetricValue, humanizeKey } from "@/features/analytics/lib/format";
 import type {
   AnalyticsAudience,
   AnalyticsDashboard,
-  CompanyDashboardOverview,
   DashboardMainGraph,
   InternalDashboardOverview,
+  QueryOutcome,
 } from "@/features/analytics/model/types";
-
 const graphColors = ["#275fe8", "#7b51b5", "#23755a", "#b84853"];
-
 export function DashboardActivityOverview({
   dashboard,
   audience,
+  mode,
+  queryHref,
 }: {
   dashboard: AnalyticsDashboard;
   audience: AnalyticsAudience;
+  mode: string;
+  queryHref: (outcome?: QueryOutcome) => string | undefined;
 }) {
-  const { filtering } = dashboard;
   const internal = audience === "internal";
-
+  const summary = dashboard.filtered_overview.summary;
+  const operational = dashboard.filtered_overview as InternalDashboardOverview;
+  const cards =
+    "searches" in summary
+      ? [
+          { label: "Searches", value: summary.searches, icon: Activity, href: queryHref() },
+          {
+            label: "Searches returning results",
+            value: summary.fulfillment_rate,
+            key: "rate",
+            icon: CheckCircle2,
+            href: queryHref("fulfilled"),
+          },
+          {
+            label: "Searches with no results",
+            value: summary.zero_results,
+            icon: SearchX,
+            href: queryHref("zero_result"),
+          },
+          {
+            label: "Average results returned",
+            value: summary.average_returned_results,
+            icon: Activity,
+          },
+        ]
+      : [
+          { label: "Requests", value: summary.requests, icon: Activity, href: queryHref() },
+          {
+            label: "Failed requests",
+            value: summary.failed,
+            icon: CircleX,
+            href: queryHref("failure"),
+          },
+          {
+            label: "P95 response time",
+            value: summary.p95_latency_ms,
+            key: "latency_ms",
+            icon: Clock3,
+          },
+          {
+            label: "Requests with no results",
+            value: summary.zero_results,
+            icon: SearchX,
+            href: queryHref("zero_result"),
+          },
+        ];
   return (
-    <section className="mt-6 space-y-5" aria-labelledby="filtered-activity-heading">
-      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-workspace-blue">
-            Filtered activity
+    <section className="mt-6 space-y-6" aria-label="Activity results">
+      {mode === "overview" && (
+        <>
+          <div className="analytics-summary-grid">
+            {cards.map(({ label, value, key, icon: Icon, href }) => (
+              <article className="qx-summary-card analytics-summary-card" key={label}>
+                <div>
+                  <span>{label}</span>
+                  <Icon size={16} aria-hidden="true" />
+                </div>
+                <strong>{formatMetricValue(value, key ?? "value")}</strong>
+                {href && (
+                  <a href={href} aria-label={`View ${label.toLowerCase()}`}>
+                    View records <ArrowUpRight size={14} />
+                  </a>
+                )}
+              </article>
+            ))}
+          </div>
+          <p className="analytics-small-note">
+            {internal
+              ? "P95 is the server response time within which 95% of measured requests completed."
+              : "Results found means a search returned products; it does not measure purchases."}
           </p>
-          <h2
-            id="filtered-activity-heading"
-            className="mt-2 text-2xl font-semibold text-workspace-ink"
-          >
-            Search activity overview
+          <ActivityGraph graph={dashboard.filtered_overview.main_graph} />
+        </>
+      )}
+      {mode === "activity" && (
+        <>
+          <h2 className="text-2xl text-workspace-ink">
+            {internal ? "Request activity" : "Search activity"}
           </h2>
-        </div>
-        <p className="text-sm text-workspace-muted">
-          <span className="font-semibold text-workspace-ink">
-            {filtering.matched_records.toLocaleString()}
-          </span>{" "}
-          of {filtering.total_records.toLocaleString()} records
-        </p>
-      </div>
-
-      {internal ? (
-        <InternalSummary overview={dashboard.filtered_overview as InternalDashboardOverview} />
-      ) : (
-        <CompanySummary overview={dashboard.filtered_overview as CompanyDashboardOverview} />
-      )}
-
-      <ActivityGraph graph={dashboard.filtered_overview.main_graph} />
-
-      {internal && (
-        <TokenUsage overview={dashboard.filtered_overview as InternalDashboardOverview} />
-      )}
-
-      <details className="group rounded-lg border border-workspace-line bg-workspace-surface">
-        <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 text-sm font-medium text-workspace-body transition hover:bg-workspace-wash hover:text-workspace-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 sm:px-5 [&::-webkit-details-marker]:hidden">
-          <span>
-            Detailed breakdowns
-            <span className="ml-2 text-xs font-normal text-workspace-muted">
-              Categories, languages, outcomes{internal ? ", and stage latency" : ""}
-            </span>
-          </span>
-          <ChevronDown
-            className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180"
-            aria-hidden="true"
-          />
-        </summary>
-        <div className="border-t border-workspace-line p-4 sm:p-5">
+          <p className="analytics-small-note">
+            {dashboard.filtering.matched_records.toLocaleString()} matching records out of{" "}
+            {dashboard.filtering.total_records.toLocaleString()} available.
+          </p>
+          <ActivityGraph graph={dashboard.filtered_overview.main_graph} />
           <DashboardModule
             title="Activity breakdowns"
-            eyebrow="Current filters"
-            metrics={{
-              ...dashboard.filtered_overview.breakdowns,
-              ...(internal
-                ? {
-                    stage_latency: (dashboard.filtered_overview as InternalDashboardOverview)
-                      .stage_latency,
-                  }
-                : {}),
-            }}
+            eyebrow="For the selected activity"
+            metrics={dashboard.filtered_overview.breakdowns}
           />
-        </div>
-      </details>
+        </>
+      )}
+      {mode === "performance" && internal && (
+        <>
+          <h2 className="text-2xl text-workspace-ink">Performance & usage</h2>
+          <div className="analytics-summary-grid">
+            {[
+              ["Success rate", operational.summary.success_rate, "rate"],
+              ["P50 response time", operational.summary.p50_latency_ms, "latency_ms"],
+              ["P95 response time", operational.summary.p95_latency_ms, "latency_ms"],
+              ["Provider API calls", operational.summary.downstream_api_calls, "value"],
+            ].map(([label, value, key]) => (
+              <article className="analytics-summary-card" key={String(label)}>
+                <span>{label}</span>
+                <strong>{formatMetricValue(value, String(key))}</strong>
+              </article>
+            ))}
+          </div>
+          <TokenUsage overview={operational} />
+          <DashboardModule
+            title="Stage latency"
+            eyebrow="For the selected activity"
+            metrics={{ stage_latency: operational.stage_latency }}
+          />
+        </>
+      )}
     </section>
-  );
-}
-
-function CompanySummary({ overview }: { overview: CompanyDashboardOverview }) {
-  const summary = overview.summary;
-  return (
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
-      <SummaryCard label="Searches" value={summary.searches} icon={Activity} />
-      <SummaryCard label="Fulfilled" value={summary.fulfilled} icon={CheckCircle2} />
-      <SummaryCard
-        label="Fulfillment rate"
-        value={summary.fulfillment_rate}
-        valueKey="rate"
-        icon={Zap}
-      />
-      <SummaryCard label="Zero results" value={summary.zero_results} icon={SearchX} />
-      <SummaryCard
-        label="Average returned"
-        value={summary.average_returned_results}
-        icon={Activity}
-      />
-    </div>
-  );
-}
-
-function InternalSummary({ overview }: { overview: InternalDashboardOverview }) {
-  const summary = overview.summary;
-  return (
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-      <SummaryCard label="Requests" value={summary.requests} icon={Activity} />
-      <SummaryCard
-        label="Success rate"
-        value={summary.success_rate}
-        valueKey="rate"
-        icon={CheckCircle2}
-      />
-      <SummaryCard
-        label="P50 latency"
-        value={summary.p50_latency_ms}
-        valueKey="latency_ms"
-        icon={Clock3}
-      />
-      <SummaryCard
-        label="P95 latency"
-        value={summary.p95_latency_ms}
-        valueKey="latency_ms"
-        icon={Clock3}
-      />
-      <SummaryCard label="Zero results" value={summary.zero_results} icon={SearchX} />
-      <SummaryCard label="Failed requests" value={summary.failed} icon={CircleX} />
-      <SummaryCard label="API calls" value={summary.downstream_api_calls} icon={Zap} />
-    </div>
-  );
-}
-
-function SummaryCard({
-  label,
-  value,
-  valueKey = "value",
-  icon: Icon,
-}: {
-  label: string;
-  value: number | null;
-  valueKey?: string;
-  icon: typeof Activity;
-}) {
-  return (
-    <article className="qx-summary-card rounded-lg border border-workspace-line bg-workspace-surface p-4">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-medium uppercase tracking-wide text-workspace-muted">{label}</p>
-        <Icon className="h-4 w-4 text-workspace-blue" aria-hidden="true" />
-      </div>
-      <p className="mt-3 text-2xl font-semibold tracking-tight text-workspace-ink">
-        {formatMetricValue(value, valueKey)}
-      </p>
-    </article>
   );
 }
 

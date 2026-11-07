@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { emptyQueryFilters } from "../lib/navigation";
 import { getCompanyQueries, getInternalQueries, login } from "./endpoints";
 
 const emptyFacets = {
@@ -168,6 +169,40 @@ describe("analytics API contract", () => {
       from: new Date("2026-08-01T00:00:00.000").toISOString(),
       to: new Date("2026-08-09T23:59:59.999").toISOString(),
     });
+  });
+
+  it("uses exact dashboard boundaries without widening to calendar days", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonResponse({
+        company_id: "sample",
+        returned: 0,
+        has_more: false,
+        next_cursor: null,
+        facets: emptyFacets,
+        items: [],
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const controller = new AbortController();
+    await getCompanyQueries(
+      "sample",
+      {
+        ...emptyQueryFilters,
+        exactFrom: "2026-11-01T07:04:56.000Z",
+        exactTo: "2026-11-07T07:04:56.000Z",
+        includeFilteredResults: true,
+      },
+      null,
+      controller.signal,
+    );
+    const [rawUrl, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const params = new URL(rawUrl).searchParams;
+    expect(params.get("from")).toBe("2026-11-01T07:04:56.000Z");
+    expect(params.get("to")).toBe("2026-11-07T07:04:56.000Z");
+    expect(params.get("include_filtered_results")).toBe("true");
+    controller.abort();
+    expect(init.signal?.aborted).toBe(true);
+    expect(init.credentials).toBe("include");
   });
 
   it("retries one transient GET failure and then decodes the response", async () => {

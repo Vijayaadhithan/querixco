@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { InternalQueryDetails } from "./queries/InternalQueryDetails";
 import { formatDateTime, humanizeKey } from "@/features/analytics/lib/format";
 import type { CompanyQueryRecord, InternalQueryRecord } from "@/features/analytics/model/types";
@@ -11,7 +12,7 @@ export function QueryTable({ items, internal }: { items: QueryRecord[]; internal
     <>
       <div className="hidden overflow-x-auto rounded-lg border border-workspace-line md:block">
         <table
-          className={`w-full text-left text-sm ${internal ? "min-w-[1280px]" : "min-w-[900px]"}`}
+          className={`w-full text-left text-sm ${internal ? "min-w-[850px]" : "min-w-[650px]"}`}
         >
           <caption className="sr-only">Individual query history</caption>
           <thead className="bg-workspace-wash text-xs uppercase tracking-wide text-workspace-muted">
@@ -42,6 +43,12 @@ export function QueryTable({ items, internal }: { items: QueryRecord[]; internal
               </div>
               <p className="mt-2 text-xs text-workspace-muted">{formatDateTime(item.created_at)}</p>
               <FilterChips filters={item.filters} requestKind={item.request_kind} />
+              {classification(item).length > 0 && (
+                <details className="mt-2 text-xs text-workspace-muted">
+                  <summary>Search context</summary>
+                  <p className="mt-2">{classification(item).join(" · ")}</p>
+                </details>
+              )}
               {internalItem ? (
                 <>
                   <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
@@ -74,16 +81,6 @@ export function QueryTable({ items, internal }: { items: QueryRecord[]; internal
                 </>
               ) : (
                 <>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {classification(item).map((value, valueIndex) => (
-                      <span
-                        key={`${value}-${valueIndex}`}
-                        className="rounded-full border border-workspace-line bg-workspace-wash px-2 py-1 text-xs text-workspace-body"
-                      >
-                        {value}
-                      </span>
-                    ))}
-                  </div>
                   <p className="mt-3 text-xs text-workspace-muted">
                     {count === null
                       ? "Result count unavailable"
@@ -115,21 +112,15 @@ function QueryTableRow({ item, internal }: { item: QueryRecord; internal: boolea
             <p className="mt-1 break-words text-xs text-workspace-muted">{normalizedQuery}</p>
           )}
           <FilterChips filters={item.filters} requestKind={item.request_kind} />
+          {classification(item).length > 0 && (
+            <details className="mt-2 text-xs text-workspace-muted">
+              <summary>Search context</summary>
+              <p className="mt-2">{classification(item).join(" · ")}</p>
+            </details>
+          )}
         </td>
         <td className="whitespace-nowrap px-4 py-4 text-workspace-muted">
           {formatDateTime(item.created_at)}
-        </td>
-        <td className="max-w-xs px-4 py-4">
-          <div className="flex flex-wrap gap-1.5">
-            {classification(item).map((value, valueIndex) => (
-              <span
-                key={`${value}-${valueIndex}`}
-                className="rounded-full border border-workspace-line bg-workspace-wash px-2 py-1 text-xs text-workspace-body"
-              >
-                {value}
-              </span>
-            ))}
-          </div>
         </td>
         <td className="px-4 py-4">
           <OutcomeBadge outcome={item.outcome} />
@@ -152,9 +143,6 @@ function CompanyTableHeaders() {
         Time
       </th>
       <th scope="col" className="px-4 py-3 font-medium">
-        Classification
-      </th>
-      <th scope="col" className="px-4 py-3 font-medium">
         Outcome
       </th>
       <th scope="col" className="px-4 py-3 text-right font-medium">
@@ -167,35 +155,24 @@ function CompanyTableHeaders() {
 function InternalTableHeaders() {
   return (
     <tr>
-      <th scope="col" className="px-4 py-3 font-medium">
-        Query
-      </th>
-      <th scope="col" className="px-4 py-3 font-medium">
-        Time
-      </th>
-      <th scope="col" className="px-4 py-3 font-medium">
-        Status / outcome
-      </th>
-      <th scope="col" className="px-4 py-3 font-medium">
-        Execution path
-      </th>
-      <th scope="col" className="px-4 py-3 text-right font-medium">
-        Server duration
-      </th>
-      <th scope="col" className="px-4 py-3 font-medium">
-        Cache
-      </th>
-      <th scope="col" className="px-4 py-3 text-right font-medium">
-        Results (returned / total)
-      </th>
-      <th scope="col" className="px-4 py-3 text-right font-medium">
-        Total tokens
-      </th>
+      {[
+        "Query",
+        "Time",
+        "Status / outcome",
+        "Execution path",
+        "Response time",
+        "Results (returned / total)",
+      ].map((label) => (
+        <th key={label} scope="col" className="px-4 py-3 font-medium">
+          {label}
+        </th>
+      ))}
     </tr>
   );
 }
 
 function InternalQueryTableRow({ item }: { item: InternalQueryRecord }) {
+  const [expanded, setExpanded] = useState(false);
   const query = textValue(item.query, "Query unavailable");
   const normalizedQuery = textValue(item.normalized_query);
 
@@ -208,6 +185,13 @@ function InternalQueryTableRow({ item }: { item: InternalQueryRecord }) {
             <p className="mt-1 break-words text-xs text-workspace-muted">{normalizedQuery}</p>
           )}
           <FilterChips filters={item.filters} requestKind={item.request_kind} />
+          <button
+            className="analytics-details-toggle"
+            aria-expanded={expanded}
+            onClick={() => setExpanded(!expanded)}
+          >
+            {expanded ? "Close request details" : "Inspect request"}
+          </button>
         </td>
         <td className="whitespace-nowrap px-4 py-4 text-workspace-muted">
           {formatDateTime(item.created_at)}
@@ -222,24 +206,17 @@ function InternalQueryTableRow({ item }: { item: InternalQueryRecord }) {
         <td className="whitespace-nowrap px-4 py-4 text-right font-medium text-workspace-ink">
           {formatDuration(item.performance?.total_server_duration_ms)}
         </td>
-        <td className="px-4 py-4">
-          <div className="flex flex-col items-start gap-1.5">
-            <CacheBadge label="Plan" value={item.performance?.cache?.plan_hit} />
-            <CacheBadge label="Result" value={item.performance?.cache?.result_hit} />
-          </div>
-        </td>
         <td className="whitespace-nowrap px-4 py-4 text-right font-medium text-workspace-ink">
           {formatInternalResults(item)}
         </td>
-        <td className="px-4 py-4 text-right font-medium text-workspace-ink">
-          {formatCount(item.token_usage?.total_tokens)}
-        </td>
       </tr>
-      <tr>
-        <td colSpan={8} className="px-4 pb-4">
-          <InternalQueryDetails item={item} />
-        </td>
-      </tr>
+      {expanded && (
+        <tr>
+          <td colSpan={6} className="px-4 pb-4">
+            <InternalQueryDetails item={item} defaultOpen />
+          </td>
+        </tr>
+      )}
     </>
   );
 }

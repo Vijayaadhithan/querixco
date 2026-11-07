@@ -1,5 +1,7 @@
-import { CalendarDays, ChevronDown, RotateCcw, Search, SlidersHorizontal } from "lucide-react";
-import type { ReactNode } from "react";
+import { CalendarDays, RotateCcw } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { formatDateTime } from "@/features/analytics/lib/format";
+import { emptyQueryFilters, validDate } from "@/features/analytics/lib/navigation";
 
 import { humanizeKey } from "@/features/analytics/lib/format";
 import type {
@@ -19,6 +21,16 @@ const outcomes: Array<{ value: QueryOutcome | ""; label: string }> = [
   { value: "telemetry_missing", label: "Telemetry unavailable" },
 ];
 
+const filterLabels: Record<string, string> = {
+  cityId: "City",
+  subcategoryId: "Subcategory",
+  adType: "Listing type",
+  executionPath: "Execution path",
+  requestKind: "Request type",
+  diagnosticCode: "Diagnosis",
+  includeFilteredResults: "Include browsing",
+  hasFilters: "Applied filters",
+};
 const knownExecutionPaths = ["semantic", "direct_semantic", "deterministic_filter"];
 const knownLanguages = ["English", "Hindi", "Tamil", "Likely Tamil (Latin script)", "Unknown"];
 
@@ -35,7 +47,140 @@ const internalSortOptions: Array<{ value: QuerySortBy; label: string }> = [
   { value: "tokens", label: "Total tokens" },
 ];
 
-export function QueryFilters({
+type FilterProps = {
+  audience: AnalyticsAudience;
+  value: QueryFiltersValue;
+  classificationOptions: string[];
+  executionPathOptions: string[];
+  languageOptions: string[];
+  facets?: QueryFacets;
+  onChange: (value: QueryFiltersValue) => void;
+  onReset: () => void;
+};
+export function QueryFilters(props: FilterProps) {
+  const { value, onChange, onReset } = props;
+  const [open, setOpen] = useState(false);
+  const active = Object.entries(value).filter(
+    ([key, item]) =>
+      !["sortBy", "sortDirection", "query", "exactFrom", "exactTo"].includes(key) &&
+      item !== "" &&
+      item !== false &&
+      item != null,
+  );
+  function dates(days: number | null) {
+    const end = new Date();
+    const start = new Date(end);
+    if (days) start.setDate(start.getDate() - (days - 1));
+    onChange({
+      ...value,
+      from: days ? dateInputValue(start) : "",
+      to: days ? dateInputValue(end) : "",
+      exactFrom: "",
+      exactTo: "",
+    });
+  }
+  return (
+    <section className="analytics-filterbar" aria-label="Search history filters">
+      <div className="analytics-query-toolbar">
+        <label>
+          Search text
+          <input
+            type="search"
+            aria-label="Search query text"
+            maxLength={1000}
+            value={value.query}
+            onChange={(e) => onChange({ ...value, query: e.target.value })}
+            placeholder="Find a customer search…"
+          />
+        </label>
+        <label>
+          Outcome
+          <select
+            aria-label="Outcome"
+            value={value.outcome}
+            onChange={(e) => onChange({ ...value, outcome: e.target.value as QueryOutcome | "" })}
+          >
+            {outcomes.map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button
+          className="analytics-filter-toggle"
+          aria-expanded={open}
+          onClick={() => setOpen(!open)}
+        >
+          More filters & sorting
+        </button>
+      </div>
+      <div className="analytics-query-presets">
+        <span>Date range</span>
+        <button onClick={() => dates(1)}>Today</button>
+        <button onClick={() => dates(7)}>Last 7 days</button>
+        <button onClick={() => dates(30)}>Last 30 days</button>
+        <button onClick={() => dates(null)}>All time</button>
+      </div>
+      {(value.exactFrom || value.exactTo) && (
+        <p className="analytics-small-note">
+          Exact dashboard range:{" "}
+          {value.exactFrom ? formatDateTime(value.exactFrom) : "Start of records"} —{" "}
+          {value.exactTo ? formatDateTime(value.exactTo) : "Latest records"}.{" "}
+          <button
+            className="underline"
+            onClick={() => onChange({ ...value, exactFrom: "", exactTo: "" })}
+          >
+            Clear range
+          </button>
+        </p>
+      )}
+      <div className="analytics-filter-chips" aria-label="Active query filters">
+        {active.map(([key, item]) => (
+          <button
+            key={key}
+            onClick={() => onChange({ ...value, [key]: typeof item === "boolean" ? false : "" })}
+            aria-label={`Remove ${filterLabels[key] ?? humanizeKey(key)} filter`}
+          >
+            {filterLabels[key] ?? humanizeKey(key)}:{" "}
+            {typeof item === "boolean" ? "On" : humanizeKey(String(item))} ×
+          </button>
+        ))}
+        <button
+          className="analytics-clear"
+          onClick={() => {
+            onReset();
+            setOpen(false);
+          }}
+        >
+          Clear filters
+        </button>
+      </div>
+      {open && (
+        <QueryFilterDraft key={JSON.stringify(value)} {...props} onClose={() => setOpen(false)} />
+      )}
+    </section>
+  );
+}
+function QueryFilterDraft(props: FilterProps & { onClose: () => void }) {
+  const [draft, setDraft] = useState(props.value);
+  return (
+    <div className="analytics-query-advanced">
+      <QueryFilterEditor
+        {...props}
+        value={draft}
+        onChange={setDraft}
+        onReset={() => setDraft(emptyQueryFilters)}
+        onApply={() => {
+          props.onChange(draft);
+          props.onClose();
+        }}
+        onCancel={props.onClose}
+      />
+    </div>
+  );
+}
+function QueryFilterEditor({
   audience,
   value,
   classificationOptions,
@@ -44,6 +189,8 @@ export function QueryFilters({
   facets,
   onChange,
   onReset,
+  onApply,
+  onCancel,
 }: {
   audience: AnalyticsAudience;
   value: QueryFiltersValue;
@@ -53,11 +200,15 @@ export function QueryFilters({
   facets?: QueryFacets;
   onChange: (next: QueryFiltersValue) => void;
   onReset: () => void;
+  onApply: () => void;
+  onCancel: () => void;
 }) {
   const internal = audience === "internal";
-  const availableExecutionPaths = Array.from(
-    new Set([...knownExecutionPaths, ...executionPathOptions]),
+  const availableExecutionPaths = optionsWithCurrent(
+    [...knownExecutionPaths, ...executionPathOptions],
+    value.executionPath,
   );
+  const [error, setError] = useState("");
   const availableClassifications = optionsWithCurrent(classificationOptions, value.category);
   const availableLanguages = optionsWithCurrent(
     [...knownLanguages, ...languageOptions],
@@ -66,65 +217,33 @@ export function QueryFilters({
   const sortOptions = internal ? internalSortOptions : commonSortOptions;
 
   function update<Key extends keyof QueryFiltersValue>(key: Key, next: QueryFiltersValue[Key]) {
-    onChange({ ...value, [key]: next });
-  }
-
-  function setDateRange(days: number | null) {
-    if (days === null) {
-      onChange({ ...value, from: "", to: "" });
-      return;
-    }
-
-    const end = new Date();
-    const start = new Date(end);
-    start.setDate(start.getDate() - (days - 1));
-    onChange({ ...value, from: dateInputValue(start), to: dateInputValue(end) });
+    setError("");
+    onChange({
+      ...value,
+      [key]: next,
+      ...(key === "from" || key === "to" ? { exactFrom: "", exactTo: "" } : {}),
+    });
   }
 
   return (
     <form
       className="rounded-lg border border-workspace-line bg-workspace-surface p-4 sm:p-5"
-      onSubmit={(event) => event.preventDefault()}
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (
+          (value.from && !validDate(value.from)) ||
+          (value.to && !validDate(value.to)) ||
+          (value.from && value.to && value.from > value.to)
+        ) {
+          setError("Enter a valid date range with the start before the end.");
+          return;
+        }
+        onApply();
+      }}
       aria-label="Filter query history"
     >
-      <div className="grid gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-4">
-          <label htmlFor="query-filter" className="text-xs font-medium text-workspace-body">
-            Search query text
-          </label>
-          <div className="relative mt-1.5">
-            <Search
-              className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-workspace-muted"
-              aria-hidden="true"
-            />
-            <input
-              id="query-filter"
-              type="search"
-              maxLength={1000}
-              value={value.query}
-              onChange={(event) => update("query", event.target.value)}
-              placeholder="Search query text"
-              className={`${inputClass} pr-3 pl-9`}
-            />
-          </div>
-        </div>
-
-        <FilterField label="Outcome" htmlFor="outcome-filter" className="lg:col-span-2">
-          <select
-            id="outcome-filter"
-            value={value.outcome}
-            onChange={(event) => update("outcome", event.target.value as QueryOutcome | "")}
-            className={inputClass}
-          >
-            {outcomes.map((outcome) => (
-              <option key={outcome.value} value={outcome.value}>
-                {outcome.label}
-              </option>
-            ))}
-          </select>
-        </FilterField>
-
-        <FilterField label="City" htmlFor="city-filter" className="lg:col-span-3">
+      <div className={`grid gap-4 ${internal ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
+        <FilterField label="City" htmlFor="city-filter" className="">
           <select
             id="city-filter"
             value={value.cityId}
@@ -132,6 +251,10 @@ export function QueryFilters({
             className={inputClass}
           >
             <option value="">All cities</option>
+            {value.cityId &&
+              !(facets?.cities ?? []).some((item) => String(item.id) === value.cityId) && (
+                <option value={value.cityId}>ID {value.cityId}</option>
+              )}
             {(facets?.cities ?? []).map((city) => (
               <option key={city.id} value={city.id}>
                 {city.label}
@@ -140,12 +263,8 @@ export function QueryFilters({
           </select>
         </FilterField>
 
-        {internal ? (
-          <FilterField
-            label="Execution path"
-            htmlFor="execution-path-filter"
-            className="lg:col-span-3"
-          >
+        {internal && (
+          <FilterField label="Execution path" htmlFor="execution-path-filter" className="">
             <select
               id="execution-path-filter"
               value={value.executionPath}
@@ -160,30 +279,25 @@ export function QueryFilters({
               ))}
             </select>
           </FilterField>
-        ) : (
-          <FilterField
-            label="Classification"
-            htmlFor="classification-filter"
-            className="lg:col-span-3"
-          >
-            <select
-              id="classification-filter"
-              value={value.category}
-              onChange={(event) => update("category", event.target.value)}
-              className={inputClass}
-            >
-              <option value="">All classifications</option>
-              {availableClassifications.map((classification) => (
-                <option key={classification} value={classification}>
-                  {classification}
-                </option>
-              ))}
-            </select>
-          </FilterField>
         )}
+        <FilterField label="Classification" htmlFor="classification-filter" className="">
+          <select
+            id="classification-filter"
+            value={value.category}
+            onChange={(event) => update("category", event.target.value)}
+            className={inputClass}
+          >
+            <option value="">All classifications</option>
+            {availableClassifications.map((classification) => (
+              <option key={classification} value={classification}>
+                {classification}
+              </option>
+            ))}
+          </select>
+        </FilterField>
       </div>
 
-      <div className="mt-4 grid gap-4 rounded-md border border-workspace-line bg-black/10 p-4 sm:grid-cols-2">
+      <div className="mt-4 grid gap-4 rounded-md border border-workspace-line bg-workspace-wash p-4 sm:grid-cols-2">
         <FilterField label="Sort results by" htmlFor="query-sort-field">
           <select
             id="query-sort-field"
@@ -211,7 +325,7 @@ export function QueryFilters({
         </FilterField>
       </div>
 
-      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-md border border-workspace-line bg-black/10 px-4 py-3">
+      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-md border border-workspace-line bg-workspace-wash px-4 py-3">
         <input
           type="checkbox"
           checked={value.includeFilteredResults}
@@ -228,121 +342,114 @@ export function QueryFilters({
         </span>
       </label>
 
-      <details className="group mt-4 rounded-md border border-workspace-line bg-black/10">
-        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-medium text-workspace-body [&::-webkit-details-marker]:hidden">
-          <span className="inline-flex items-center gap-2">
-            <SlidersHorizontal className="h-4 w-4 text-workspace-blue" aria-hidden="true" />
-            Advanced filters
-          </span>
-          <ChevronDown className="h-4 w-4 transition group-open:rotate-180" aria-hidden="true" />
-        </summary>
-        <div className="grid gap-4 border-t border-workspace-line p-4 sm:grid-cols-2 lg:grid-cols-4">
-          <FilterField label="Request type" htmlFor="request-kind-filter">
+      <div className="grid gap-4 border-t border-workspace-line p-4 sm:grid-cols-2 lg:grid-cols-4">
+        <FilterField label="Request type" htmlFor="request-kind-filter">
+          <select
+            id="request-kind-filter"
+            value={value.requestKind}
+            onChange={(event) => update("requestKind", event.target.value)}
+            className={inputClass}
+          >
+            <option value="">All request types</option>
+            {optionsWithCurrent(facets?.request_kinds ?? [], value.requestKind).map((kind) => (
+              <option key={kind} value={kind}>
+                {humanizeKey(kind)}
+              </option>
+            ))}
+          </select>
+        </FilterField>
+
+        <FilterField label="Subcategory" htmlFor="subcategory-filter">
+          <select
+            id="subcategory-filter"
+            value={value.subcategoryId}
+            onChange={(event) => update("subcategoryId", event.target.value)}
+            className={inputClass}
+          >
+            <option value="">All subcategories</option>
+            {value.subcategoryId &&
+              !(facets?.subcategories ?? []).some(
+                (item) => String(item.id) === value.subcategoryId,
+              ) && <option value={value.subcategoryId}>ID {value.subcategoryId}</option>}
+            {(facets?.subcategories ?? []).map((subcategory) => (
+              <option key={subcategory.id} value={subcategory.id}>
+                {subcategory.label}
+              </option>
+            ))}
+          </select>
+        </FilterField>
+
+        <FilterField label="Ad type" htmlFor="ad-type-filter">
+          <select
+            id="ad-type-filter"
+            value={value.adType}
+            onChange={(event) => update("adType", event.target.value)}
+            className={inputClass}
+          >
+            <option value="">All ad types</option>
+            {optionsWithCurrent(facets?.ad_types ?? [], value.adType).map((adType) => (
+              <option key={adType} value={adType}>
+                {humanizeKey(adType)}
+              </option>
+            ))}
+          </select>
+        </FilterField>
+
+        <FilterField label="Language" htmlFor="language-filter">
+          <select
+            id="language-filter"
+            value={value.language}
+            onChange={(event) => update("language", event.target.value)}
+            className={inputClass}
+          >
+            <option value="">All languages</option>
+            {availableLanguages.map((language) => (
+              <option key={language} value={language}>
+                {language}
+              </option>
+            ))}
+          </select>
+        </FilterField>
+
+        {internal && (
+          <FilterField label="Observed diagnosis" htmlFor="diagnostic-filter">
             <select
-              id="request-kind-filter"
-              value={value.requestKind}
-              onChange={(event) => update("requestKind", event.target.value)}
+              id="diagnostic-filter"
+              value={value.diagnosticCode}
+              onChange={(event) => update("diagnosticCode", event.target.value)}
               className={inputClass}
             >
-              <option value="">All request types</option>
-              {(facets?.request_kinds ?? []).map((kind) => (
-                <option key={kind} value={kind}>
-                  {humanizeKey(kind)}
-                </option>
-              ))}
-            </select>
-          </FilterField>
-
-          <FilterField label="Subcategory" htmlFor="subcategory-filter">
-            <select
-              id="subcategory-filter"
-              value={value.subcategoryId}
-              onChange={(event) => update("subcategoryId", event.target.value)}
-              className={inputClass}
-            >
-              <option value="">All subcategories</option>
-              {(facets?.subcategories ?? []).map((subcategory) => (
-                <option key={subcategory.id} value={subcategory.id}>
-                  {subcategory.label}
-                </option>
-              ))}
-            </select>
-          </FilterField>
-
-          <FilterField label="Ad type" htmlFor="ad-type-filter">
-            <select
-              id="ad-type-filter"
-              value={value.adType}
-              onChange={(event) => update("adType", event.target.value)}
-              className={inputClass}
-            >
-              <option value="">All ad types</option>
-              {(facets?.ad_types ?? []).map((adType) => (
-                <option key={adType} value={adType}>
-                  {humanizeKey(adType)}
-                </option>
-              ))}
-            </select>
-          </FilterField>
-
-          <FilterField label="Language" htmlFor="language-filter">
-            <select
-              id="language-filter"
-              value={value.language}
-              onChange={(event) => update("language", event.target.value)}
-              className={inputClass}
-            >
-              <option value="">All languages</option>
-              {availableLanguages.map((language) => (
-                <option key={language} value={language}>
-                  {language}
-                </option>
-              ))}
-            </select>
-          </FilterField>
-
-          {internal && (
-            <FilterField label="Observed diagnosis" htmlFor="diagnostic-filter">
-              <select
-                id="diagnostic-filter"
-                value={value.diagnosticCode}
-                onChange={(event) => update("diagnosticCode", event.target.value)}
-                className={inputClass}
-              >
-                <option value="">All diagnoses</option>
-                {(facets?.diagnostic_codes ?? []).map((code) => (
+              <option value="">All diagnoses</option>
+              {optionsWithCurrent(facets?.diagnostic_codes ?? [], value.diagnosticCode).map(
+                (code) => (
                   <option key={code} value={code}>
                     {humanizeKey(code)}
                   </option>
-                ))}
-              </select>
-            </FilterField>
-          )}
+                ),
+              )}
+            </select>
+          </FilterField>
+        )}
 
-          <label className="flex items-center gap-3 rounded-md border border-workspace-line px-3 py-2 text-sm text-workspace-body">
-            <input
-              type="checkbox"
-              checked={value.hasFilters}
-              onChange={(event) => update("hasFilters", event.target.checked)}
-              className="h-4 w-4 rounded border-workspace-line bg-workspace-surface text-workspace-blue"
-            />
-            Only requests with applied filters
-          </label>
-        </div>
-      </details>
+        <label className="flex items-center gap-3 rounded-md border border-workspace-line px-3 py-2 text-sm text-workspace-body">
+          <input
+            type="checkbox"
+            checked={value.hasFilters}
+            onChange={(event) => update("hasFilters", event.target.checked)}
+            className="h-4 w-4 rounded border-workspace-line bg-workspace-surface text-workspace-blue"
+          />
+          Only requests with applied filters
+        </label>
+      </div>
 
       <fieldset className="mt-5 border-t border-workspace-line pt-4">
         <legend className="sr-only">Date range</legend>
-        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-          <p className="text-sm font-semibold text-workspace-ink">Date range</p>
-          <div className="flex flex-wrap gap-2" aria-label="Quick date ranges">
-            <DatePreset label="All time" onClick={() => setDateRange(null)} />
-            <DatePreset label="Today" onClick={() => setDateRange(1)} />
-            <DatePreset label="Last 7 days" onClick={() => setDateRange(7)} />
-            <DatePreset label="Last 30 days" onClick={() => setDateRange(30)} />
-          </div>
-        </div>
-
+        <p className="text-sm font-semibold text-workspace-ink">Custom date range</p>
+        {(value.exactFrom || value.exactTo) && (
+          <p className="analytics-small-note">
+            The exact dashboard range stays active until you choose calendar dates.
+          </p>
+        )}
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-12">
           <FilterField label="Start date" htmlFor="from-filter" className="lg:col-span-4">
             <DateInput
@@ -372,6 +479,20 @@ export function QueryFilters({
           </div>
         </div>
       </fieldset>
+      {error && (
+        <p role="alert" className="text-sm text-workspace-danger mt-3">
+          {error}
+        </p>
+      )}
+      <div className="analytics-filter-actions">
+        <span>Apply all changes together.</span>
+        <button type="button" onClick={onCancel}>
+          Cancel
+        </button>
+        <button type="submit" className="qx-action bg-workspace-ink">
+          Apply filters
+        </button>
+      </div>
     </form>
   );
 }
@@ -434,18 +555,6 @@ function DateInput({
         className={`${inputClass} pr-3 pl-9 [color-scheme:light]`}
       />
     </div>
-  );
-}
-
-function DatePreset({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="rounded-lg border border-workspace-line bg-workspace-surface px-3 py-1.5 text-xs font-medium text-workspace-body transition hover:border-workspace-blue-line hover:bg-workspace-tint hover:text-workspace-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
-    >
-      {label}
-    </button>
   );
 }
 

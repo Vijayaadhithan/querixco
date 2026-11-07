@@ -60,11 +60,11 @@ export function PortalShell({ audience, company, username, current, children }: 
               <>
                 <a href={dashboardHref} aria-current={current === "dashboard" ? "page" : undefined}>
                   <BarChart3 size={15} aria-hidden="true" />
-                  <span>Dashboard</span>
+                  <span>Overview</span>
                 </a>
                 <a href={queriesHref} aria-current={current === "queries" ? "page" : undefined}>
                   <Search size={15} aria-hidden="true" />
-                  <span>Queries</span>
+                  <span>{internal ? "Requests" : "Search history"}</span>
                 </a>
               </>
             )}

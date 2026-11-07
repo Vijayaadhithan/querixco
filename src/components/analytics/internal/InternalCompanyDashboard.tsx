@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useAnalyticsLocation } from "@/features/analytics/lib/use-analytics-location";
+import { useRetainedResult } from "@/features/analytics/lib/use-retained-result";
 
 import { InternalAnalyticsShell } from "./InternalAnalyticsShell";
 import { DashboardView } from "../shared/DashboardView";
@@ -26,7 +27,9 @@ function InternalCompanyDashboardContent({
   session: AnalyticsSession;
 }) {
   const queryClient = useQueryClient();
-  const [filters, setFilters] = useState(createDashboardFilters);
+  const location = useAnalyticsLocation("internal");
+  const filters = location.dashboardFilters;
+  const setFilters = location.update;
   const dashboard = useQuery({
     queryKey: ["analytics", "internal", company, "dashboard", filters],
     queryFn: ({ signal }) => getInternalDashboard(company, filters, signal),
@@ -37,8 +40,14 @@ function InternalCompanyDashboardContent({
   });
   useUnauthorizedRedirect([dashboard.error], "internal", "/internal/analytics/login", queryClient);
 
+  const displayed = useRetainedResult(
+    dashboard.data,
+    dashboard.isPlaceholderData,
+    "internal:" + company,
+  );
+
   let content;
-  if (dashboard.isPending) {
+  if (dashboard.isPending && !displayed) {
     content = (
       <PortalState
         kind="loading"
@@ -47,7 +56,7 @@ function InternalCompanyDashboardContent({
         message="Retrieving the selected company snapshot."
       />
     );
-  } else if (dashboard.isError && !dashboard.data) {
+  } else if (dashboard.isError && !displayed) {
     content = (
       <PortalState
         kind={isAnalyticsApiError(dashboard.error, 403) ? "forbidden" : "error"}
@@ -64,9 +73,8 @@ function InternalCompanyDashboardContent({
       />
     );
   } else if (
-    dashboard.data &&
-    (dashboard.data.metadata.audience !== "internal" ||
-      dashboard.data.metadata.company_id !== company)
+    displayed &&
+    (displayed.metadata.audience !== "internal" || displayed.metadata.company_id !== company)
   ) {
     content = (
       <PortalState
@@ -76,7 +84,7 @@ function InternalCompanyDashboardContent({
         message="The analytics response did not match the selected internal company."
       />
     );
-  } else if (dashboard.data) {
+  } else if (displayed) {
     content = (
       <>
         {dashboard.isError && (
@@ -84,15 +92,26 @@ function InternalCompanyDashboardContent({
             role="alert"
             className="mx-auto mt-5 max-w-[1440px] rounded-md border border-workspace-warning-line bg-workspace-warning-tint px-4 py-3 text-sm text-workspace-warning"
           >
-            The saved snapshot remains visible, but a fresh request was unavailable.
+            The saved report remains visible, but the latest request failed.{" "}
+            <button className="font-semibold underline" onClick={() => void dashboard.refetch()}>
+              Retry
+            </button>
           </div>
         )}
         <DashboardView
-          dashboard={dashboard.data}
+          dashboard={displayed}
           company={company}
           audience="internal"
           filters={filters}
           isFetching={dashboard.isFetching}
+          stale={
+            dashboard.isPlaceholderData ||
+            dashboard.isError ||
+            (dashboard.isPending && Boolean(displayed))
+          }
+          view={location.view}
+          onViewChange={location.setView}
+          currentHref={location.href}
           onFiltersChange={setFilters}
           onFiltersReset={() => setFilters(createDashboardFilters())}
         />

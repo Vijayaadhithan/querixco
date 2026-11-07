@@ -154,8 +154,10 @@ function queryString(filters: QueryFilters, cursor: string | null): string {
     params.set("diagnostic_code", filters.diagnosticCode.slice(0, 128));
   }
   if (filters.hasFilters) params.set("has_filters", "true");
-  if (filters.from) params.set("from", dateBoundary(filters.from, "start"));
-  if (filters.to) params.set("to", dateBoundary(filters.to, "end"));
+  if (filters.exactFrom) params.set("from", filters.exactFrom);
+  else if (filters.from) params.set("from", dateBoundary(filters.from, "start"));
+  if (filters.exactTo) params.set("to", filters.exactTo);
+  else if (filters.to) params.set("to", dateBoundary(filters.to, "end"));
 
   return params.toString();
 }
