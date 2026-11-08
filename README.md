@@ -20,7 +20,7 @@ and comparisons of supplied catalog details. The two services have separate acce
 - `/developers/architecture` — serving architecture and trust boundaries
 - `/developers/data-pipeline` — catalog preparation and publishing lifecycle
 - `/developers/operations` — production health and reliability
-- `/api/ready` — same-origin server proxy for the public Querix Search API readiness endpoint
+- `/api/ready` — same-origin server proxy for the public Querix Search API liveness endpoint
 
 Private analytics routes are intentionally excluded from the public navigation and sitemap:
 
@@ -67,7 +67,7 @@ shown separately; snapshot reports explicitly disclose that activity filters do 
 ## Health-check implementation
 
 The website health endpoint is implemented in `src/routes/api/ready.ts`. It calls
-`https://api.querix.co/api/v1/ready` from the server with a four-second timeout, maps the upstream
+`https://api.querix.co/api/v1/live` from the server with a four-second timeout, maps the upstream
 payload to safe frontend fields, disables caching, and returns a controlled `502` or `503` response
 when the upstream API is unavailable.
 

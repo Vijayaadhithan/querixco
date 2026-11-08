@@ -783,17 +783,24 @@ function OperationsGuide() {
       />
       <Section number="01" title="Readiness and health contract">
         <p>
-          Querix exposes two health signals. Public readiness answers whether the shared serving
-          path can accept traffic. Authenticated tenant health reports whether one company's index,
-          source database, embedding runtime, cache, and search configuration are ready.
+          Public liveness confirms that the API is online. Readiness checks whether the shared
+          serving path can accept traffic. Authenticated tenant health reports whether one company's
+          index, source database, embedding runtime, cache, and search configuration are ready.
         </p>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <Endpoint
             icon={Activity}
             method="GET"
+            path="/api/v1/live"
+            title="API online"
+            detail="Checks whether the API is online; powers the live status indicator in this documentation."
+          />
+          <Endpoint
+            icon={Activity}
+            method="GET"
             path="/api/v1/ready"
             title="Public readiness"
-            detail="Used by load balancers, uptime checks, and the live status indicator in this documentation."
+            detail="Used by load balancers and serving-path readiness checks."
           />
           <Endpoint
             icon={ShieldCheck}
@@ -804,17 +811,19 @@ function OperationsGuide() {
           />
         </div>
         <CodeBlock
-          label="Public readiness response"
+          label="Public liveness response"
           code={`{
-  "status": "ok",
-  "tenant_mode": true,
-  "configured_companies": 1
+  "status": "ok"
 }`}
         />
+        <p className="mt-4">
+          <strong>API online:</strong>{" "}
+          <a href="https://api.querix.co/api/v1/live">https://api.querix.co/api/v1/live</a>
+        </p>
         <Callout icon={Activity} title="How this website checks health">
           The website calls its same-origin <Code>/api/ready</Code> route. That server route probes
-          the Querix Search API, applies a four-second timeout, removes internal detail, and returns
-          a cache-disabled status payload to the browser.
+          the Querix Search API's <Code>/api/v1/live</Code> endpoint, applies a four-second timeout,
+          removes internal detail, and returns a cache-disabled status payload to the browser.
         </Callout>
       </Section>
       <Section number="02" title="The serving data boundary">

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const READY_URL = "https://api.querix.co/api/v1/ready";
+const LIVE_URL = "https://api.querix.co/api/v1/live";
 
 type ReadyResponse = {
   status?: string;
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/api/ready")({
         const startedAt = Date.now();
 
         try {
-          const upstream = await fetch(READY_URL, {
+          const upstream = await fetch(LIVE_URL, {
             method: "GET",
             headers: { accept: "application/json" },
             signal: AbortSignal.timeout(4_000),

@@ -6,7 +6,7 @@ export function ApiStatusBadge({ detailed = false }: { detailed?: boolean }) {
   const { data, phase } = useApiHealth();
   const ready = phase === "ready";
   const label =
-    phase === "loading" ? "Checking API" : ready ? "API operational" : "API status unavailable";
+    phase === "loading" ? "Checking API" : ready ? "API online" : "API status unavailable";
 
   return (
     <a
@@ -21,7 +21,7 @@ export function ApiStatusBadge({ detailed = false }: { detailed?: boolean }) {
         <span className="block text-[11px] font-medium leading-none text-white">{label}</span>
         {detailed && (
           <span className="mt-1 block text-[10px] leading-none text-[#71869d]">
-            {data ? `${data.latencyMs} ms · serving path` : "Live serving-path probe"}
+            {data ? `${data.latencyMs} ms · liveness check` : "Checking API liveness"}
           </span>
         )}
       </span>
