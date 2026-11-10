@@ -1,0 +1,166 @@
+.qx-intro {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  place-items: center;
+  overflow: hidden;
+  background: #fafaf7;
+  opacity: 1;
+  transition: opacity 450ms ease;
+}
+html[data-qx-intro] .qx-intro {
+  display: grid;
+}
+html[data-qx-intro="active"] .qx-intro-content {
+  visibility: hidden;
+  opacity: 0;
+}
+.qx-intro-content {
+  opacity: 1;
+  transition: opacity 450ms ease;
+}
+.qx-intro-content:focus {
+  outline: none;
+}
+html[data-qx-intro="revealing"] .qx-intro {
+  opacity: 0;
+  pointer-events: none;
+}
+.qx-intro-logo {
+  animation: qx-intro-arrive 450ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 450ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+html[data-qx-intro="revealing"] .qx-intro-logo {
+  transform: scale(0.9);
+}
+.qx-intro .qx-mark {
+  width: clamp(112px, 22vw, 156px);
+  height: auto;
+}
+.qx-intro .qx-mark-ring {
+  animation: qx-draw 700ms ease-out both;
+}
+.qx-intro .qx-mark-dots circle,
+.qx-intro .qx-mark-tail circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: qx-intro-dance 1250ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.qx-intro .qx-mark-dots circle:nth-child(1) {
+  --from-x: -24px;
+  --from-y: -18px;
+  --gather-x: 7px;
+  --gather-y: -5px;
+  animation-delay: 180ms;
+}
+.qx-intro .qx-mark-dots circle:nth-child(2) {
+  --from-x: 0px;
+  --from-y: -32px;
+  --gather-x: 0px;
+  --gather-y: 4px;
+  animation-delay: 280ms;
+}
+.qx-intro .qx-mark-dots circle:nth-child(3) {
+  --from-x: 24px;
+  --from-y: -16px;
+  --gather-x: -7px;
+  --gather-y: -5px;
+  animation-delay: 380ms;
+}
+.qx-intro .qx-mark-tail circle:nth-child(1) {
+  --from-x: 22px;
+  --from-y: 8px;
+  --gather-x: -17.5px;
+  --gather-y: -21px;
+  animation-delay: 260ms;
+}
+.qx-intro .qx-mark-tail circle:nth-child(2) {
+  --from-x: 24px;
+  --from-y: -16px;
+  --gather-x: -23.5px;
+  --gather-y: -23.8px;
+  animation-delay: 360ms;
+}
+.qx-intro .qx-mark-tail circle:nth-child(3) {
+  --from-x: 18px;
+  --from-y: 14px;
+  --gather-x: -28.5px;
+  --gather-y: -24.4px;
+  animation-delay: 460ms;
+}
+.qx-intro-skip {
+  position: absolute;
+  bottom: max(28px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #52637b;
+  font:
+    500 13px/1.4 "Inter",
+    sans-serif;
+  cursor: pointer;
+}
+.qx-intro-skip:hover {
+  color: #122239;
+}
+.qx-intro-skip:focus-visible {
+  outline: 2px solid #2764ed;
+  outline-offset: 3px;
+}
+@keyframes qx-intro-arrive {
+  from {
+    opacity: 0;
+    scale: 0.92;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+@keyframes qx-intro-dance {
+  0% {
+    opacity: 0;
+    transform: translate(var(--from-x), var(--from-y)) scale(0.3);
+  }
+  32% {
+    opacity: 1;
+    transform: translate(var(--gather-x), var(--gather-y)) scale(1);
+  }
+  55% {
+    transform: translate(0, -3px) scale(1.12);
+  }
+  70% {
+    transform: translate(0, 1.8px) scale(0.94);
+  }
+  84% {
+    transform: translate(0, -1px) scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-qx-intro] .qx-intro {
+    display: none;
+  }
+  html[data-qx-intro] .qx-intro-content {
+    visibility: visible;
+    opacity: 1;
+  }
+  .qx-intro-content,
+  .qx-intro-logo,
+  .qx-intro .qx-brand * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

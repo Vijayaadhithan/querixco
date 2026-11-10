@@ -19,9 +19,11 @@ export function Brand({
           strokeWidth="6"
           pathLength="100"
         />
-        <circle cx="46.5" cy="50" r="3.4" fill="currentColor" />
-        <circle cx="52.5" cy="52.8" r="2.4" fill="currentColor" />
-        <circle cx="57.5" cy="53.4" r="1.6" fill="currentColor" />
+        <g className="qx-mark-tail" fill="currentColor">
+          <circle cx="46.5" cy="50" r="3.4" />
+          <circle cx="52.5" cy="52.8" r="2.4" />
+          <circle cx="57.5" cy="53.4" r="1.6" />
+        </g>
         <g fill="#2764ed" className="qx-mark-dots">
           <circle cx="19" cy="29" r="3.5" />
           <circle cx="29" cy="29" r="3.5" />
