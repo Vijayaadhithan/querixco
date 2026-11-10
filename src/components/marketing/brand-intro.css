@@ -89,32 +89,8 @@ html[data-qx-intro="revealing"] .qx-intro-logo {
   --gather-y: -24.4px;
   animation-delay: 460ms;
 }
-.qx-intro-skip {
-  position: absolute;
-  bottom: max(28px, env(safe-area-inset-bottom));
-  left: 50%;
-  transform: translateX(-50%);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  min-height: 44px;
-  padding: 8px 16px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  background: transparent;
-  color: #52637b;
-  font:
-    500 13px/1.4 "Inter",
-    sans-serif;
-  cursor: pointer;
-}
-.qx-intro-skip:hover {
-  color: #122239;
-}
-.qx-intro-skip:focus-visible {
-  outline: 2px solid #2764ed;
-  outline-offset: 3px;
+.qx-intro:focus {
+  outline: none;
 }
 @keyframes qx-intro-arrive {
   from {
