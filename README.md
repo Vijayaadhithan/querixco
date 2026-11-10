@@ -2,9 +2,9 @@
 
 Customer-facing product website and developer documentation for Querix AI.
 
-Querix brings together intelligent search and conversational commerce. Search helps stores,
+Querix brings together intelligent search and interactive commerce. Search helps stores,
 marketplaces, catalogs, and listing platforms match customer intent to relevant inventory.
-Conversational commerce maintains shopping requirements across turns and supports refinements
+Interactive commerce maintains shopping requirements across turns and supports refinements
 and comparisons of supplied catalog details. The two services have separate access contracts.
 
 ## Product surfaces
@@ -108,7 +108,7 @@ npm run build
 The site is built with TanStack Start, React, TypeScript, Tailwind CSS, and the Cloudflare Vite
 plugin.
 
-## Conversational commerce
+## Interactive commerce
 
 `/commerce/login` is the private tester sign-in. `/demo/commerce` shows the signed-in
 user's assigned categories. `/commerce/admin` manages users, category grants,

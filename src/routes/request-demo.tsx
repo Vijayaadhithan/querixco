@@ -12,7 +12,7 @@ export const Route = createFileRoute("/request-demo")({
       {
         name: "description",
         content:
-          "Explore intelligent search and conversational commerce for your catalog. Prepare a tailored demo request for the Querix team.",
+          "Explore intelligent search and interactive commerce for your catalog. Prepare a tailored demo request for the Querix team.",
       },
       { property: "og:title", content: "Request a demo — Querix AI" },
       {

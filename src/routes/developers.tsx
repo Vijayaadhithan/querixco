@@ -9,7 +9,7 @@ export const Route = createFileRoute("/developers")({
       {
         name: "description",
         content:
-          "Explore Querix search and conversational commerce integration guides, including authentication, conversation state, streaming, and deployment boundaries.",
+          "Explore Querix search and interactive commerce integration guides, including authentication, conversation state, streaming, and deployment boundaries.",
       },
     ],
   }),

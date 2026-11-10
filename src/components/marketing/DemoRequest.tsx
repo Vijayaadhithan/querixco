@@ -5,8 +5,8 @@ import { MarketingShell } from "./MarketingShell";
 type Product = "search" | "commerce" | "both";
 const productLabels: Record<Product, string> = {
   search: "Intelligent search",
-  commerce: "Conversational commerce",
-  both: "Search and conversational commerce",
+  commerce: "Interactive commerce",
+  both: "Search and interactive commerce",
 };
 
 export function DemoRequest({ initialProduct }: { initialProduct: Product }) {
@@ -63,7 +63,7 @@ export function DemoRequest({ initialProduct }: { initialProduct: Product }) {
               <span>01</span>
               <div>
                 <strong>Choose what you want to explore</strong>
-                <p>Intelligent search, conversational commerce, or both.</p>
+                <p>Intelligent search, interactive commerce, or both.</p>
               </div>
             </li>
             <li>
@@ -136,9 +136,9 @@ export function DemoRequest({ initialProduct }: { initialProduct: Product }) {
               <label>
                 I’m interested in
                 <select name="product" defaultValue={initialProduct}>
-                  <option value="both">Search and conversational commerce</option>
+                  <option value="both">Search and interactive commerce</option>
                   <option value="search">Intelligent search</option>
-                  <option value="commerce">Conversational commerce</option>
+                  <option value="commerce">Interactive commerce</option>
                 </select>
               </label>
               <label>

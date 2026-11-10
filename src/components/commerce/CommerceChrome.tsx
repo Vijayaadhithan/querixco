@@ -8,7 +8,7 @@ export function CommerceHeader({ demo = false }: { demo?: boolean }) {
       </a>
       <span className="commerce-header-divider" />
       <a className="commerce-header-label" href="/use-cases/conversational-commerce">
-        Conversational commerce
+        Interactive commerce
       </a>
       <a
         className="commerce-header-link"

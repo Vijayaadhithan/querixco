@@ -1,4 +1,4 @@
-# Conversational commerce demo
+# Interactive commerce demo
 
 ## Pages and local preview
 

@@ -35,7 +35,7 @@ type Guide =
 
 const titles: Record<Guide | "overview", string> = {
   overview: "API Documentation",
-  commerce: "Conversational Commerce",
+  commerce: "Interactive Commerce",
   platform: "Search API Behavior",
   integration: "Quickstart & API",
   operations: "Reliability & Health",
@@ -96,7 +96,7 @@ const guideSections: Record<Guide, string[]> = {
 
 const documentationNav = [
   {
-    label: "Conversational commerce",
+    label: "Interactive commerce",
     to: "/developers/commerce",
     key: "commerce",
     group: "Core concepts",

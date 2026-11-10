@@ -42,7 +42,7 @@ it("prepares an encoded commerce email without sending data or claiming delivery
   )!;
   const email = new URL(emailLink.href);
   expect(email.pathname).toBe("hello@querix.co");
-  expect(email.searchParams.get("subject")).toContain("Conversational commerce");
+  expect(email.searchParams.get("subject")).toContain("Interactive commerce");
   expect(email.searchParams.get("body")).toContain("Sam & Team");
   expect(email.searchParams.get("body")).toContain("Clothing & beauty\nCompare sizes + budgets.");
   expect(element.textContent).toContain("Nothing has been sent yet.");

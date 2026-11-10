@@ -74,46 +74,46 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Querix AI — Intelligent search & conversational commerce" },
+      { title: "Querix AI — Intelligent search & interactive commerce" },
       {
         name: "description",
         content:
           "Help shoppers find what they mean with intent-aware search and conversational shopping grounded in your catalog.",
       },
       { name: "theme-color", content: "#0A1B2E" },
-      { property: "og:title", content: "Querix AI — Intelligent search & conversational commerce" },
+      { property: "og:title", content: "Querix AI — Intelligent search & interactive commerce" },
       {
         property: "og:description",
         content: "Intelligent search and conversational shopping grounded in your catalog.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://querix.co" },
-      { property: "og:image", content: "https://querix.co/og-discovery.png" },
+      { property: "og:image", content: "https://querix.co/og-discovery.png?v=8" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       {
         property: "og:image:alt",
         content:
-          "Querix AI — From I need to that’s it. Intelligent search and conversational commerce.",
+          "Querix AI — From I need to that’s it. Intelligent search and interactive commerce.",
       },
       { name: "twitter:card", content: "summary_large_image" },
       {
         name: "twitter:title",
-        content: "Querix AI — Intelligent search & conversational commerce",
+        content: "Querix AI — Intelligent search & interactive commerce",
       },
       {
         name: "twitter:description",
         content: "Search, refine, and compare products with Querix AI.",
       },
-      { name: "twitter:image", content: "https://querix.co/og-discovery.png" },
+      { name: "twitter:image", content: "https://querix.co/og-discovery.png?v=8" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "canonical", href: `https://querix.co${matches.at(-1)?.pathname ?? "/"}` },
-      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg?v=7" },
-      { rel: "shortcut icon", href: "/favicon.ico?v=6" },
-      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png?v=6" },
-      { rel: "manifest", href: "/site.webmanifest" },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg?v=8" },
+      { rel: "shortcut icon", href: "/favicon.ico?v=8" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png?v=8" },
+      { rel: "manifest", href: "/site.webmanifest?v=8" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {

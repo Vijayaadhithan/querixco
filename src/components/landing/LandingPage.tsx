@@ -102,7 +102,7 @@ export function LandingPage() {
           <article className="qx-product-panel qx-panel-blue">
             <div className="qx-panel-top">
               <MessageCircle size={23} />
-              <span>02 — CONVERSATIONAL COMMERCE</span>
+              <span>02 — INTERACTIVE COMMERCE</span>
             </div>
             <h3>
               Keep the context.
@@ -120,7 +120,7 @@ export function LandingPage() {
               </p>
             </div>
             <a className="qx-text-link" href="/use-cases/conversational-commerce">
-              Explore conversational commerce <ArrowUpRight size={18} />
+              Explore interactive commerce <ArrowUpRight size={18} />
             </a>
           </article>
         </div>

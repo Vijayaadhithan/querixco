@@ -5,7 +5,7 @@ export function CommerceGuide() {
     <DeveloperShell active="commerce">
       <article className="max-w-4xl">
         <p className="text-xs font-medium uppercase tracking-widest text-workspace-blue">
-          Conversational commerce
+          Interactive commerce
         </p>
         <h1 className="mt-5 font-display text-4xl font-semibold tracking-tight text-workspace-ink sm:text-5xl">
           Build around the conversation.

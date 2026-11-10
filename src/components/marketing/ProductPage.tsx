@@ -47,7 +47,7 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
         <div className="qx-hero-copy">
           <p className="qx-eyebrow">
             {commerce ? <MessageCircle size={15} /> : <Search size={15} />}
-            {commerce ? "CONVERSATIONAL COMMERCE" : "INTELLIGENT SEARCH"}
+            {commerce ? "INTERACTIVE COMMERCE" : "INTELLIGENT SEARCH"}
           </p>
           <h1>
             {commerce ? (
@@ -221,7 +221,7 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
           className="qx-button qx-button-outline"
           href={commerce ? "/developers/commerce" : "/use-cases/conversational-commerce"}
         >
-          {commerce ? "Commerce integration" : "Explore conversational commerce"}
+          {commerce ? "Commerce integration" : "Explore interactive commerce"}
           <ArrowUpRight size={16} />
         </a>
       </section>

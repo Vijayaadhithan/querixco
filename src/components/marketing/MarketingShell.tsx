@@ -7,7 +7,7 @@ export function MarketingShell({ children, active }: { children: ReactNode; acti
   const [open, setOpen] = useState(false);
   const links = [
     ["Search", "/products/search"],
-    ["Conversational commerce", "/use-cases/conversational-commerce"],
+    ["Interactive commerce", "/use-cases/conversational-commerce"],
     ["Developers", "/developers"],
   ];
   return (
@@ -79,7 +79,7 @@ export function MarketingShell({ children, active }: { children: ReactNode; acti
             <div>
               <span className="qx-label">PRODUCTS</span>
               <a href="/products/search">Intelligent search</a>
-              <a href="/use-cases/conversational-commerce">Conversational commerce</a>
+              <a href="/use-cases/conversational-commerce">Interactive commerce</a>
               <a href="/request-demo">Request a demo</a>
             </div>
             <div>

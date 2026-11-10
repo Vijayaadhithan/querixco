@@ -20,7 +20,7 @@ const guides = [
   {
     icon: BookOpen,
     to: "/developers/commerce" as const,
-    eyebrow: "Conversational commerce",
+    eyebrow: "Interactive commerce",
     title: "Build around a persistent shopping conversation.",
     body: "Session ownership, structured preferences, streamed replies, idempotent retries, and current catalog boundaries.",
   },
@@ -140,7 +140,7 @@ export function DevelopersPage() {
       <section className="grid max-w-6xl gap-10 xl:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] xl:items-center">
         <div>
           <div className="inline-flex items-center gap-2 rounded-md border border-workspace-blue-line bg-workspace-tint px-2.5 py-1 text-xs font-medium text-workspace-blue">
-            <ShieldCheck className="h-3.5 w-3.5" /> Search & conversational commerce
+            <ShieldCheck className="h-3.5 w-3.5" /> Search & interactive commerce
           </div>
           <h1 className="mt-5 max-w-4xl font-display text-4xl font-semibold leading-tight text-workspace-ink sm:text-5xl">
             Connect your catalog to search and conversation.
