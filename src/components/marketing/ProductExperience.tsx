@@ -132,7 +132,9 @@ export function ProductExperience({
               </div>
             )}
             <div className="qx-demo-answer">
-              <span className="qx-answer-mark">q</span>
+              <span className="qx-answer-mark">
+                <Brand light markOnly />
+              </span>
               <p>{mode === "commerce" ? example.answer : "Matching the details that matter."}</p>
             </div>
             <div className="qx-filter-line">

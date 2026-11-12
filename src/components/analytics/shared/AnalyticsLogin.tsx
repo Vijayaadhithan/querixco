@@ -68,10 +68,10 @@ export function AnalyticsLogin(props: AnalyticsLoginProps) {
   }
 
   return (
-    <main className="qx-workspace qx-auth">
+    <main className="qx-workspace qx-analytics-theme qx-auth">
       <aside className="qx-auth-story">
         <a href="/" aria-label="Querix AI home">
-          <Brand />
+          <Brand light />
         </a>
         <div>
           <p className="qx-auth-caption">QUERIX ANALYTICS</p>
@@ -91,7 +91,7 @@ export function AnalyticsLogin(props: AnalyticsLoginProps) {
       <div className="qx-auth-form">
         <section>
           <a className="qx-auth-brand-mobile" href="/" aria-label="Querix AI home">
-            <Brand />
+            <Brand light />
           </a>
           <div className="mt-8">
             <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-workspace-tint text-workspace-blue">

@@ -1,6 +1,16 @@
-import { ArrowRight, ArrowUpRight, Check, MessageCircle, Search } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  Footprints,
+  MessageCircle,
+  Search,
+  Watch,
+} from "lucide-react";
 import { MarketingShell, DemoCta } from "./MarketingShell";
 import { ProductExperience } from "./ProductExperience";
+import { CommerceShowcase } from "@/components/landing/CommerceShowcase";
+import "@/components/landing/landing.css";
 
 export function ProductPage({ product }: { product: "search" | "commerce" }) {
   const commerce = product === "commerce";
@@ -52,9 +62,9 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
           <h1>
             {commerce ? (
               <>
-                The next question
+                Every next question.
                 <br />
-                makes the <em>difference.</em>
+                <em>A better discovery.</em>
               </>
             ) : (
               <>
@@ -73,7 +83,7 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
           </p>
           <div className="qx-actions">
             <a className="qx-button" href={`/request-demo?product=${product}`}>
-              Request a {commerce ? "commerce" : "search"} demo <ArrowUpRight size={16} />
+              Book a demo <ArrowUpRight size={16} />
             </a>
           </div>
           <a
@@ -84,8 +94,8 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
             <ArrowRight size={15} />
           </a>
         </div>
-        <div className="qx-hero-stage">
-          <ProductExperience initialMode={product} />
+        <div className={commerce ? "ql-commerce-stage" : "qx-hero-stage"}>
+          {commerce ? <CommerceShowcase /> : <ProductExperience initialMode={product} />}
         </div>
       </section>
       <section className="qx-section qx-container">
@@ -156,7 +166,11 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
                     />
                   ) : (
                     <div className="qx-type-art" aria-hidden="true">
-                      {index === 2 ? "step." : "detail."}
+                      {index === 2 ? (
+                        <Footprints size={66} strokeWidth={1} />
+                      ) : (
+                        <Watch size={66} strokeWidth={1} />
+                      )}
                     </div>
                   )}
                   <h3>{title}</h3>

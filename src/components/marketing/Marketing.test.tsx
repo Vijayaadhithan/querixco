@@ -132,3 +132,47 @@ it("lets visitors pause, change search scenarios, and replay without losing the 
   expect(element.querySelector(".qx-filter-line")?.textContent).toContain("Under $30");
   expect(button("Skincare").getAttribute("aria-pressed")).toBe("true");
 });
+
+it.each([
+  ["integration", "Discuss integration"],
+  ["poc", "Request a proof of concept"],
+] as const)("preserves the %s enquiry intent in the email draft", async (intent, label) => {
+  await act(async () => root.render(<DemoRequest initialProduct="both" initialIntent={intent} />));
+  expect((element.querySelector('[name="intent"]') as HTMLSelectElement).value).toBe(intent);
+  (element.querySelector('[name="name"]') as HTMLInputElement).value = "Sam";
+  (element.querySelector('[name="email"]') as HTMLInputElement).value = "sam@example.com";
+  (element.querySelector('[name="company"]') as HTMLInputElement).value = "Example Store";
+  await act(async () => button("Prepare email request").click());
+  const link = [...element.querySelectorAll("a")].find((a) =>
+    a.textContent?.includes("Open email draft"),
+  )!;
+  expect(new URL(link.href).searchParams.get("subject")).toContain(label);
+  expect(
+    (element.querySelector(".qx-email-draft textarea") as HTMLTextAreaElement).value,
+  ).toContain(`Request: ${label}`);
+});
+
+it("closes product navigation with Escape and returns focus to its control", async () => {
+  await act(async () => root.render(<DemoRequest initialProduct="both" />));
+  const products = element.querySelector(".qx-product-menu") as HTMLDetailsElement;
+  products.open = true;
+  const link = products.querySelector(
+    'a[href="/use-cases/conversational-commerce"]',
+  ) as HTMLAnchorElement;
+  link.focus();
+  await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" })));
+  expect(products.open).toBe(false);
+  expect(document.activeElement).toBe(products.querySelector("summary"));
+  products.open = true;
+  await act(async () => document.body.dispatchEvent(new Event("pointerdown", { bubbles: true })));
+  expect(products.open).toBe(false);
+});
+it("closes mobile navigation with Escape and restores the menu button", async () => {
+  await act(async () => root.render(<DemoRequest initialProduct="both" />));
+  const menu = element.querySelector('button[aria-label="Open menu"]') as HTMLButtonElement;
+  await act(async () => menu.click());
+  (element.querySelector("#qx-mobile-nav a") as HTMLAnchorElement).focus();
+  await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" })));
+  expect(element.querySelector("#qx-mobile-nav")).toBeNull();
+  expect(document.activeElement).toBe(menu);
+});

@@ -27,6 +27,7 @@ import {
 
 import { ApiStatusBadge } from "@/components/ApiStatus";
 import "@/components/workspace/workspace.css";
+import "./developers.css";
 import { Brand } from "@/components/marketing/Brand";
 import { Reveal } from "@/components/Reveal";
 
@@ -181,12 +182,15 @@ export function DeveloperShell({
 
   return (
     <div className="qx-workspace qx-docs min-h-screen">
+      <a className="qx-workspace-skip docs-skip" href="#developer-content">
+        Skip to documentation
+      </a>
       <header className="sticky top-0 z-50 border-b border-workspace-line bg-workspace-paper/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-5 lg:px-8">
           <a href="/" className="flex items-center gap-2.5" aria-label="Querix AI home">
-            <Brand />
+            <Brand light />
             <span className="hidden border-l border-workspace-line pl-3 text-sm text-workspace-muted sm:inline">
-              Docs
+              Developers
             </span>
           </a>
           <div className="flex items-center gap-2">
@@ -201,7 +205,7 @@ export function DeveloperShell({
               className="inline-flex h-9 items-center gap-2 rounded-lg qx-action bg-workspace-ink px-2.5 text-xs font-medium text-workspace-ink transition hover:bg-workspace-blue sm:px-3.5 sm:text-sm"
             >
               <span className="sm:hidden">Demo</span>
-              <span className="hidden sm:inline">Request a demo</span>
+              <span className="hidden sm:inline">Book a demo</span>
               <ArrowRight className="hidden h-3.5 w-3.5 sm:block" />
             </a>
             <button
@@ -221,6 +225,7 @@ export function DeveloperShell({
         {mobileOpen && (
           <nav
             id="docs-mobile-navigation"
+            aria-label="Documentation navigation"
             className="border-t border-workspace-line px-5 py-4 lg:hidden"
           >
             <div className="mx-auto grid max-w-[1440px] gap-1 sm:grid-cols-2">
@@ -228,6 +233,7 @@ export function DeveloperShell({
                 <a
                   key={to}
                   href={to}
+                  aria-current={key === active ? "page" : undefined}
                   onClick={() => setMobileOpen(false)}
                   className={`rounded-lg px-3 py-2.5 text-sm transition ${
                     key === active
@@ -251,6 +257,7 @@ export function DeveloperShell({
             <a
               key={to}
               href={to}
+              aria-current={key === active ? "page" : undefined}
               className={`shrink-0 rounded-md px-3 py-2 text-xs transition ${
                 key === active ? "bg-workspace-tint text-workspace-blue" : "text-workspace-muted"
               }`}
@@ -262,7 +269,7 @@ export function DeveloperShell({
       </div>
       <div className="mx-auto grid max-w-[1440px] lg:grid-cols-[250px_minmax(0,1fr)] 2xl:grid-cols-[250px_minmax(0,1fr)_230px]">
         <aside className="hidden border-r border-workspace-line px-6 py-10 lg:block">
-          <nav className="sticky top-24 text-sm">
+          <nav className="sticky top-24 text-sm" aria-label="Documentation navigation">
             {documentationGroups.map((group, groupIndex) => (
               <div key={group} className={groupIndex === 0 ? "" : "mt-7"}>
                 <p className="mb-2 px-3 text-[10px] font-medium uppercase tracking-[0.16em] text-workspace-muted">
@@ -275,6 +282,7 @@ export function DeveloperShell({
                       <a
                         key={to}
                         href={to}
+                        aria-current={key === active ? "page" : undefined}
                         className={`docs-nav-link block rounded-md px-3 py-2 pl-4 transition ${
                           key === active
                             ? "is-active bg-workspace-tint text-workspace-blue"
@@ -303,7 +311,11 @@ export function DeveloperShell({
             </div>
           </nav>
         </aside>
-        <main className="min-w-0 px-5 py-12 sm:px-8 lg:px-12 lg:py-16 xl:px-14">
+        <main
+          id="developer-content"
+          tabIndex={-1}
+          className="min-w-0 px-5 py-12 sm:px-8 lg:px-12 lg:py-16 xl:px-14"
+        >
           {active !== "overview" && (
             <div className="mb-8 flex flex-wrap items-center gap-2 text-xs text-workspace-muted">
               <a href="/developers" className="transition hover:text-workspace-blue">
@@ -331,7 +343,7 @@ export function DeveloperShell({
         </main>
         {sections.length > 0 && (
           <aside className="hidden border-l border-workspace-line px-6 py-10 2xl:block">
-            <nav className="sticky top-24">
+            <nav className="sticky top-24" aria-label="On this page">
               <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-workspace-muted">
                 On this page
               </p>
@@ -340,6 +352,7 @@ export function DeveloperShell({
                   <li key={section}>
                     <a
                       href={`#${sectionId(section)}`}
+                      aria-current={activeSection === sectionId(section) ? "location" : undefined}
                       className={`flex gap-2 border-l pl-3 text-xs leading-5 transition ${
                         activeSection === sectionId(section)
                           ? "border-workspace-blue-line text-workspace-blue"
@@ -1374,7 +1387,7 @@ function CodeBlock({ label, code }: { label: string; code: string }) {
   }
 
   return (
-    <div className="mt-6 overflow-hidden rounded-lg border border-workspace-line bg-workspace-wash">
+    <div className="docs-code-panel mt-6 overflow-hidden rounded-lg border border-workspace-line bg-workspace-wash">
       <div className="flex items-center justify-between gap-3 border-b border-workspace-line px-4 py-2.5 font-mono text-[11px] text-workspace-muted">
         <span>{label}</span>
         <button

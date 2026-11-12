@@ -8,7 +8,12 @@ import type {
   InternalDashboardOverview,
   QueryOutcome,
 } from "@/features/analytics/model/types";
-const graphColors = ["#275fe8", "#7b51b5", "#23755a", "#b84853"];
+const graphColors = [
+  "var(--color-workspace-blue)",
+  "var(--analytics-series-cyan, #18c7d9)",
+  "var(--analytics-series-soft, #a9c9ff)",
+  "var(--analytics-series-warning, #f4cd86)",
+];
 export function DashboardActivityOverview({
   dashboard,
   audience,
@@ -207,13 +212,13 @@ function ActivityGraph({ graph }: { graph: DashboardMainGraph }) {
                     x2={width - padding.right}
                     y1={y}
                     y2={y}
-                    stroke="#dce1e5"
+                    stroke="var(--color-workspace-line)"
                   />
                   <text
                     x={padding.left - 8}
                     y={y + 4}
                     textAnchor="end"
-                    fill="#64748b"
+                    fill="var(--color-workspace-muted)"
                     fontSize="11"
                   >
                     {formatMetricValue(value)}
@@ -250,7 +255,7 @@ function ActivityGraph({ graph }: { graph: DashboardMainGraph }) {
                   textAnchor={
                     index === 0 ? "start" : index === graph.labels.length - 1 ? "end" : "middle"
                   }
-                  fill="#64748b"
+                  fill="var(--color-workspace-muted)"
                   fontSize="11"
                 >
                   {shortLabel(graph.labels[index])}

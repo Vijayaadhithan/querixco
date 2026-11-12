@@ -16,13 +16,13 @@ export function PortalState({ kind, title, message, internal = false, action }: 
     kind === "loading" ? LoaderCircle : kind === "forbidden" ? LockKeyhole : AlertTriangle;
 
   return (
-    <div className="qx-workspace qx-state">
+    <div className="qx-workspace qx-analytics-theme qx-state">
       <section
         className="qx-surface w-full max-w-lg rounded-xl p-8 text-center"
         aria-live={kind === "loading" ? "polite" : "assertive"}
       >
         <div className="qx-state-brand">
-          <Brand />
+          <Brand light />
         </div>
         {internal && (
           <p className="mb-5 text-xs font-semibold uppercase tracking-[0.24em] text-workspace-blue">

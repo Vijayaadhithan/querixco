@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RequestDemoRouteImport } from './routes/request-demo'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as LegalRouteImport } from './routes/legal'
 import { Route as FootwearRouteImport } from './routes/footwear'
 import { Route as FashionRouteImport } from './routes/fashion'
 import { Route as DevelopersRouteImport } from './routes/developers'
@@ -41,6 +43,16 @@ import { Route as InternalAnalyticsCompanyQueriesRouteImport } from './routes/in
 const RequestDemoRoute = RequestDemoRouteImport.update({
   id: '/request-demo',
   path: '/request-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalRoute = LegalRouteImport.update({
+  id: '/legal',
+  path: '/legal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FootwearRoute = FootwearRouteImport.update({
@@ -190,6 +202,8 @@ export interface FileRoutesByFullPath {
   '/developers': typeof DevelopersRouteWithChildren
   '/fashion': typeof FashionRoute
   '/footwear': typeof FootwearRoute
+  '/legal': typeof LegalRoute
+  '/privacy': typeof PrivacyRoute
   '/request-demo': typeof RequestDemoRoute
   '/analytics/$company': typeof AnalyticsCompanyRouteWithChildren
   '/api/ready': typeof ApiReadyRoute
@@ -220,6 +234,8 @@ export interface FileRoutesByTo {
   '/developers': typeof DevelopersRouteWithChildren
   '/fashion': typeof FashionRoute
   '/footwear': typeof FootwearRoute
+  '/legal': typeof LegalRoute
+  '/privacy': typeof PrivacyRoute
   '/request-demo': typeof RequestDemoRoute
   '/analytics/$company': typeof AnalyticsCompanyRouteWithChildren
   '/api/ready': typeof ApiReadyRoute
@@ -251,6 +267,8 @@ export interface FileRoutesById {
   '/developers': typeof DevelopersRouteWithChildren
   '/fashion': typeof FashionRoute
   '/footwear': typeof FootwearRoute
+  '/legal': typeof LegalRoute
+  '/privacy': typeof PrivacyRoute
   '/request-demo': typeof RequestDemoRoute
   '/analytics/$company': typeof AnalyticsCompanyRouteWithChildren
   '/api/ready': typeof ApiReadyRoute
@@ -283,6 +301,8 @@ export interface FileRouteTypes {
     | '/developers'
     | '/fashion'
     | '/footwear'
+    | '/legal'
+    | '/privacy'
     | '/request-demo'
     | '/analytics/$company'
     | '/api/ready'
@@ -313,6 +333,8 @@ export interface FileRouteTypes {
     | '/developers'
     | '/fashion'
     | '/footwear'
+    | '/legal'
+    | '/privacy'
     | '/request-demo'
     | '/analytics/$company'
     | '/api/ready'
@@ -343,6 +365,8 @@ export interface FileRouteTypes {
     | '/developers'
     | '/fashion'
     | '/footwear'
+    | '/legal'
+    | '/privacy'
     | '/request-demo'
     | '/analytics/$company'
     | '/api/ready'
@@ -374,6 +398,8 @@ export interface RootRouteChildren {
   DevelopersRoute: typeof DevelopersRouteWithChildren
   FashionRoute: typeof FashionRoute
   FootwearRoute: typeof FootwearRoute
+  LegalRoute: typeof LegalRoute
+  PrivacyRoute: typeof PrivacyRoute
   RequestDemoRoute: typeof RequestDemoRoute
   ApiReadyRoute: typeof ApiReadyRoute
   CommerceAccountRoute: typeof CommerceAccountRoute
@@ -392,6 +418,20 @@ declare module '@tanstack/react-router' {
       path: '/request-demo'
       fullPath: '/request-demo'
       preLoaderRoute: typeof RequestDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal': {
+      id: '/legal'
+      path: '/legal'
+      fullPath: '/legal'
+      preLoaderRoute: typeof LegalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/footwear': {
@@ -668,6 +708,8 @@ const rootRouteChildren: RootRouteChildren = {
   DevelopersRoute: DevelopersRouteWithChildren,
   FashionRoute: FashionRoute,
   FootwearRoute: FootwearRoute,
+  LegalRoute: LegalRoute,
+  PrivacyRoute: PrivacyRoute,
   RequestDemoRoute: RequestDemoRoute,
   ApiReadyRoute: ApiReadyRoute,
   CommerceAccountRoute: CommerceAccountRoute,

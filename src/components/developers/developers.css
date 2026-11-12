@@ -1,0 +1,190 @@
+/* Developer documentation shares the product palette, with readable code and dense tables. */
+.qx-docs {
+  background:
+    radial-gradient(ellipse 60% 400px at 65% 0, #245bdb0d, transparent 90%),
+    var(--color-workspace-paper);
+}
+.qx-docs input,
+.qx-docs select,
+.qx-docs textarea {
+  color-scheme: dark;
+}
+.qx-docs > header {
+  min-height: 84px;
+  background: #101e38ed;
+}
+.qx-docs > header > div:first-child {
+  min-height: 83px;
+}
+.qx-docs .qx-logo {
+  width: 154px;
+  height: 44px;
+}
+.qx-docs .docs-skip {
+  color: #101e38;
+  background: #e8f0ff;
+}
+.qx-docs #developer-content:focus {
+  outline: none;
+}
+.qx-docs aside {
+  background: #101e384d;
+}
+.qx-docs aside nav {
+  top: 110px;
+}
+.qx-docs .docs-nav-link {
+  border: 1px solid transparent;
+  border-radius: 5px;
+  font-size: 12px;
+  padding-block: 11px;
+}
+.qx-docs .docs-nav-link.is-active,
+.qx-docs #docs-mobile-navigation a[aria-current="page"] {
+  background: #245bdb24;
+  border-color: #65a5ff4d;
+  color: #d2e4ff;
+}
+.qx-docs .docs-nav-link::before {
+  width: 2px;
+  background: #65a5ff;
+}
+.qx-docs .docs-title-accent {
+  color: #65a5ff;
+}
+.qx-docs .docs-page-enter > section:first-child h1 {
+  font-size: clamp(36px, 3.7vw, 53px);
+  line-height: 1.13;
+  text-wrap: balance;
+}
+.qx-docs .docs-page-enter h2,
+.qx-docs .docs-page-enter h3 {
+  text-wrap: balance;
+}
+.qx-docs .docs-page-enter p,
+.qx-docs .docs-page-enter li {
+  overflow-wrap: anywhere;
+}
+.qx-docs .docs-page-enter h2 {
+  scroll-margin-top: 120px;
+}
+.qx-workspace.qx-docs .qx-action {
+  background: #245bdb;
+  color: white;
+  border: 1px solid #245bdb;
+}
+.qx-workspace.qx-docs .qx-action:hover {
+  background: #316aee;
+  border-color: #316aee;
+}
+.qx-docs .docs-code-panel {
+  background: #0c192e;
+  border-color: #abc9ff33;
+  border-radius: 10px;
+  box-shadow: 0 20px 50px -35px #0009;
+}
+.qx-docs .docs-code-panel > div:first-child {
+  background: #142641;
+}
+.qx-docs .docs-code-panel pre {
+  color: #d5e3f8;
+  font-size: 12px;
+  line-height: 1.9;
+  scrollbar-color: #41638e #0c192e;
+}
+.qx-docs code:not(pre code) {
+  overflow-wrap: anywhere;
+}
+.qx-docs .code-copy-button {
+  color: #b7d4ff;
+  background: #65a5ff12;
+  border-color: #65a5ff33;
+  min-height: 30px;
+  border-radius: 4px;
+}
+.qx-docs .code-copy-button:hover {
+  color: #e8f0ff;
+  background: #1d3558;
+  border-color: #65a5ff66;
+}
+.qx-docs .api-status-badge {
+  background: #142641;
+  border-color: #abc9ff26;
+  box-shadow: none;
+  border-radius: 6px;
+}
+.qx-docs .api-status-badge:hover {
+  background: #1d3558;
+  border-color: #65a5ff4d;
+}
+.qx-docs .api-status-orb {
+  background: #f4cd86;
+  box-shadow: 0 0 0 4px #f4cd8612;
+}
+.qx-docs .api-status-badge.is-ready .api-status-orb {
+  background: #18c7d9;
+  box-shadow: 0 0 0 4px #18c7d912;
+}
+.qx-docs .api-status-badge.is-unavailable .api-status-orb {
+  background: #ffa5b0;
+  box-shadow: 0 0 0 4px #ffa5b012;
+}
+.qx-docs .docs-guide-card {
+  border-radius: 10px;
+}
+.qx-docs .docs-guide-card:hover {
+  background: #1d355880;
+  border-color: #65a5ff66;
+}
+.qx-docs table {
+  background: #142641;
+}
+.qx-docs table thead {
+  background: #1d3558;
+}
+.qx-docs table tbody tr:hover {
+  background: #1d35584d;
+}
+.qx-docs table td {
+  line-height: 1.8;
+}
+.qx-docs .docs-flow::before {
+  background: #abc9ff26;
+}
+.qx-docs .docs-flow::after {
+  background: linear-gradient(90deg, transparent, #65a5ff, #18c7d9, transparent);
+}
+.qx-docs .scan-line {
+  background: linear-gradient(90deg, transparent, #65a5ff50, transparent);
+}
+@media (max-width: 1023px) {
+  .qx-docs > header,
+  .qx-docs > header > div:first-child {
+    min-height: 74px;
+  }
+  .qx-docs #docs-mobile-navigation {
+    background: #142641;
+    max-height: 65dvh;
+    overflow-y: auto;
+  }
+  .qx-docs #docs-mobile-navigation a {
+    border: 1px solid transparent;
+  }
+}
+@media (max-width: 640px) {
+  .qx-docs > header,
+  .qx-docs > header > div:first-child {
+    min-height: 70px;
+  }
+  .qx-docs .qx-logo {
+    width: 126px;
+    height: 36px;
+  }
+  .qx-docs .docs-page-enter > section:first-child h1 {
+    font-size: clamp(32px, 8.4vw, 40px);
+    line-height: 1.15;
+  }
+  .qx-docs .docs-code-panel pre {
+    font-size: 11px;
+  }
+}

@@ -1,15 +1,77 @@
-import { useState, type ReactNode } from "react";
-import { ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  BarChart3,
+  ChevronDown,
+  Menu,
+  MessageCircle,
+  Search,
+  X,
+} from "lucide-react";
 import { Brand } from "./Brand";
 import "./marketing.css";
+import "./marketing-theme.css";
+
+const products = [
+  {
+    title: "Intelligent search",
+    body: "Match the intent behind every search.",
+    href: "/products/search",
+    icon: Search,
+  },
+  {
+    title: "Interactive commerce",
+    body: "Discover, refine and compare in conversation.",
+    href: "/use-cases/conversational-commerce",
+    icon: MessageCircle,
+  },
+  {
+    title: "Commerce intelligence",
+    body: "Explore the insights behind discovery.",
+    href: "/#intelligence",
+    icon: BarChart3,
+  },
+];
+const links = [
+  ["Industries", "/#industries"],
+  ["Developers", "/developers"],
+  ["Company", "/#company"],
+];
 
 export function MarketingShell({ children, active }: { children: ReactNode; active?: string }) {
   const [open, setOpen] = useState(false);
-  const links = [
-    ["Search", "/products/search"],
-    ["Interactive commerce", "/use-cases/conversational-commerce"],
-    ["Developers", "/developers"],
-  ];
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const productMenu = useRef<HTMLDetailsElement>(null);
+
+  useEffect(() => {
+    function outside(event: PointerEvent) {
+      if (
+        event.target instanceof Node &&
+        !productMenu.current?.contains(event.target) &&
+        productMenu.current
+      )
+        productMenu.current.open = false;
+    }
+    function escape(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      if (productMenu.current?.open) {
+        productMenu.current.open = false;
+        productMenu.current.querySelector("summary")?.focus();
+      }
+      if (open) {
+        setOpen(false);
+        menuButton.current?.focus();
+      }
+    }
+    document.addEventListener("pointerdown", outside);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", outside);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [open]);
+
   return (
     <div className="qx-site">
       <a href="#main-content" className="qx-skip">
@@ -18,9 +80,33 @@ export function MarketingShell({ children, active }: { children: ReactNode; acti
       <header className="qx-header">
         <div className="qx-container qx-nav">
           <a href="/" aria-label="Querix AI home">
-            <Brand />
+            <Brand light />
           </a>
           <nav className="qx-desktop-nav" aria-label="Main navigation">
+            <details ref={productMenu} className="qx-product-menu">
+              <summary>
+                Products <ChevronDown size={13} />
+              </summary>
+              <div className="qx-product-links">
+                {products.map(({ title, body, href, icon: Icon }) => (
+                  <a
+                    href={href}
+                    key={href}
+                    aria-current={active === href ? "page" : undefined}
+                    onClick={() => {
+                      if (productMenu.current) productMenu.current.open = false;
+                    }}
+                  >
+                    <Icon size={18} />
+                    <span>
+                      <strong>{title}</strong>
+                      <small>{body}</small>
+                    </span>
+                    <ArrowUpRight size={13} />
+                  </a>
+                ))}
+              </div>
+            </details>
             {links.map(([label, href]) => (
               <a key={href} href={href} aria-current={active === href ? "page" : undefined}>
                 {label}
@@ -28,9 +114,10 @@ export function MarketingShell({ children, active }: { children: ReactNode; acti
             ))}
           </nav>
           <a href="/request-demo" className="qx-button qx-button-small qx-nav-cta">
-            Request a demo <ArrowUpRight size={15} />
+            Book a demo <ArrowUpRight size={15} />
           </a>
           <button
+            ref={menuButton}
             className="qx-menu"
             onClick={() => setOpen(!open)}
             aria-expanded={open}
@@ -42,22 +129,36 @@ export function MarketingShell({ children, active }: { children: ReactNode; acti
         </div>
         {open && (
           <nav id="qx-mobile-nav" className="qx-mobile-nav" aria-label="Mobile navigation">
-            {links.map(([label, href]) => (
+            <span className="qx-mobile-group">EXPLORE THE PRODUCT</span>
+            {products.map(({ title, href, icon: Icon }) => (
               <a
-                key={href}
                 href={href}
+                key={href}
                 aria-current={active === href ? "page" : undefined}
                 onClick={() => setOpen(false)}
               >
-                {label}
-                <ArrowUpRight size={16} />
+                <span>
+                  <Icon size={16} />
+                  {title}
+                </span>
+                <ArrowUpRight size={15} />
               </a>
             ))}
+            <span className="qx-mobile-group">QUERIXAI</span>
+            {links.map(([label, href]) => (
+              <a key={href} href={href} onClick={() => setOpen(false)}>
+                {label}
+                <ArrowUpRight size={15} />
+              </a>
+            ))}
+            <a href="/#faq" onClick={() => setOpen(false)}>
+              Common questions <ArrowUpRight size={15} />
+            </a>
             <a href="/request-demo">
-              Request a demo <ArrowUpRight size={16} />
+              Book a demo <ArrowUpRight size={15} />
             </a>
             <a href="/commerce/login">
-              Demo sign-in <ArrowUpRight size={16} />
+              Demo sign-in <ArrowUpRight size={15} />
             </a>
           </nav>
         )}
@@ -71,7 +172,7 @@ export function MarketingShell({ children, active }: { children: ReactNode; acti
                 <Brand light />
               </a>
               <p>
-                Better discovery.
+                From intent to discovery.
                 <br />
                 One search. One conversation.
               </p>
@@ -80,26 +181,28 @@ export function MarketingShell({ children, active }: { children: ReactNode; acti
               <span className="qx-label">PRODUCTS</span>
               <a href="/products/search">Intelligent search</a>
               <a href="/use-cases/conversational-commerce">Interactive commerce</a>
-              <a href="/request-demo">Request a demo</a>
+              <a href="/#intelligence">Commerce intelligence</a>
+              <a href="/#industries">Industries</a>
             </div>
             <div>
               <span className="qx-label">RESOURCES</span>
               <a href="/developers">Developer documentation</a>
               <a href="/developers/commerce">Commerce integration</a>
+              <a href="/#faq">Common questions</a>
               <a href="/commerce/login">
                 Demo sign-in <ArrowUpRight size={13} />
               </a>
             </div>
             <div>
-              <span className="qx-label">LET’S TALK</span>
+              <span className="qx-label">COMPANY</span>
+              <a href="/#company">About QuerixAI</a>
+              <a href="/#why-querix">Why QuerixAI</a>
+              <a href="/request-demo">Contact & demos</a>
+              <a href="/privacy">Privacy</a>
+              <a href="/legal">Website terms</a>
               <a href="mailto:hello@querix.co">
                 hello@querix.co <ArrowUpRight size={13} />
               </a>
-              <p>
-                Bring your catalog.
-                <br />
-                Start with your customers.
-              </p>
             </div>
           </div>
           <div className="qx-footer-bottom">
@@ -126,7 +229,7 @@ export function DemoCta({ product = "both" }: { product?: "search" | "commerce" 
           <p>Bring the searches and shopping journeys that matter to you.</p>
         </div>
         <a className="qx-button qx-button-white" href={`/request-demo?product=${product}`}>
-          Request a demo <ArrowRight size={18} />
+          Book a demo <ArrowRight size={18} />
         </a>
       </div>
     </section>

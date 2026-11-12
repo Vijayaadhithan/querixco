@@ -143,7 +143,8 @@ export function DevelopersPage() {
             <ShieldCheck className="h-3.5 w-3.5" /> Search & interactive commerce
           </div>
           <h1 className="mt-5 max-w-4xl font-display text-4xl font-semibold leading-tight text-workspace-ink sm:text-5xl">
-            Connect your catalog to search and conversation.
+            Connect your catalog to{" "}
+            <span className="docs-title-accent">search and conversation.</span>
           </h1>
           <p className="mt-5 max-w-3xl text-base leading-7 text-workspace-muted sm:text-lg">
             Choose the integration that fits your customer journey: a tenant-scoped Search API or a
@@ -166,7 +167,7 @@ export function DevelopersPage() {
           </div>
         </div>
 
-        <div className="relative overflow-hidden rounded-md border border-workspace-line bg-workspace-wash shadow-sm">
+        <div className="docs-code-panel relative overflow-hidden rounded-md border border-workspace-line bg-workspace-wash shadow-sm">
           <div className="scan-line" />
           <div className="flex items-center justify-between border-b border-workspace-line px-4 py-3">
             <span className="font-mono text-[11px] text-workspace-muted">First search request</span>
@@ -321,7 +322,7 @@ export function DevelopersPage() {
               <a
                 key={to}
                 href={to}
-                className={`group rounded-lg border p-6 transition hover:border-workspace-blue-line hover:bg-workspace-wash ${featured ? "border-workspace-blue-line bg-workspace-tint md:col-span-2" : "border-workspace-line bg-workspace-surface"}`}
+                className={`docs-guide-card group rounded-lg border p-6 transition hover:border-workspace-blue-line hover:bg-workspace-wash ${featured ? "border-workspace-blue-line bg-workspace-tint md:col-span-2" : "border-workspace-line bg-workspace-surface"}`}
               >
                 <div
                   className={

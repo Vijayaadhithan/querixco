@@ -137,12 +137,22 @@ requires login and no longer offers anonymous live access. The historical
 ## Public design system
 
 Public pages use the scoped `qx-*` styles in `src/components/marketing/marketing.css`.
-The vector brand mark has a one-time draw animation, a hover signal, and a reduced-motion
-alternative. Developer documentation and company/internal analytics share the same palette through
-`workspace-*` tokens and `src/components/workspace/workspace.css`, including authentication,
-filters, tables, charts, and portal states. Existing access and data contracts are preserved.
-The homepage walkthrough uses explicitly illustrative products and makes no live AI requests.
-Search examples animate query interpretation, filter selection, and result entry; visitors can
-pause or replay the sequence, and reduced-motion preferences show the final state immediately.
-The demo form prepares a reviewable email draft; it does not transmit form data or report delivery.
-`public/og-discovery.svg` is the editable source for the social preview PNG.
+The shared brand component uses the original commerce/login artwork on public, developer and
+analytics pages, with light and dark treatments that preserve the logo's geometry. Marketing pages
+use the supplied navy/blue palette. Analytics and interactive commerce share the navy/blue palette, including sign-in, dashboard,
+query history, category selection, chat, account and admin surfaces. Workspace colour utilities
+resolve CSS variables so table, chart, form and status colours follow their scoped theme.
+Developer documentation shares that palette across the overview and every guide, including
+code examples, tables, sidebar navigation, status badges and mobile controls.
+The public homepage includes an animated sample-catalogue shopping preview with product details,
+Fashion and Beauty examples, budget refinement, comparison, playback controls and reduced-motion support. Autoplay only advances when the preview is visible, the browser tab is active and the opening animation has finished; opening product details or using journey controls pauses it. The public interactive commerce product page reuses this preview. The separate live
+commerce demo retains its approved-account sign-in boundary. The intelligence dashboard uses
+synthetic activity only; catalogue and period filters recalculate its totals, trends, interests,
+price preferences and unmet demand without requesting private customer data. Industry examples
+are explicitly illustrative, including categories outside the live demo's current scope.
+The demo form supports demo, integration and proof-of-concept intents and prepares a reviewable
+email draft; it does not transmit form data or report delivery. Public privacy and website
+information are at `/privacy` and `/legal`. The opening icon animation plays once per tab session on public product pages, using the
+original artwork and blue signal dots. It fades into the page after 2.4 seconds, supports Escape
+and reduced motion, skips private workflows, and fails open if hydration is unavailable. Scroll reveals leave server-rendered content visible until JavaScript enables them. Company-focused information, documented product/access boundaries, a practical evaluation process and FAQs support public enquiries without unverified customer claims. Product navigation links directly to search, commerce and intelligence; mobile navigation and the product dropdown support Escape with focus restoration.
+`public/og-discovery.svg` is the editable source for the existing social preview PNG.

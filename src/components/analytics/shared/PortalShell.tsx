@@ -27,14 +27,14 @@ export function PortalShell({ audience, company, username, current, children }: 
     : `/analytics/${company}/queries`;
   const logoutDestination = internal ? "/internal/analytics/login" : `/analytics/${company}/login`;
   return (
-    <div className="qx-workspace qx-analytics">
+    <div className="qx-workspace qx-analytics-theme qx-analytics">
       <a className="qx-workspace-skip" href="#analytics-content">
         Skip to analytics
       </a>
       <header className="qx-workspace-header">
         <div className="qx-workspace-header-inner">
           <a href="/" aria-label="Querix AI home">
-            <Brand />
+            <Brand light />
           </a>
           <div className="qx-workspace-identity">
             <p>

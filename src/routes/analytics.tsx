@@ -21,10 +21,10 @@ function AnalyticsRoot() {
   if (pathname !== "/analytics" && pathname !== "/analytics/") return <Outlet />;
 
   return (
-    <main className="qx-workspace qx-state">
+    <main className="qx-workspace qx-analytics-theme qx-state">
       <section className="qx-surface w-full max-w-md rounded-xl p-8 text-center">
         <div className="qx-state-brand">
-          <Brand />
+          <Brand light />
         </div>
         <LockKeyhole className="mx-auto mt-8 h-7 w-7 text-workspace-blue" aria-hidden="true" />
         <h1 className="mt-4 text-xl font-semibold text-workspace-ink">Private analytics portal</h1>

@@ -1,0 +1,112 @@
+/* Shared product palette, scoped to authenticated analytics and its access screens. */
+.qx-workspace.qx-analytics-theme {
+  --analytics-series-cyan: #18c7d9;
+  --analytics-series-soft: #a9c9ff;
+  --analytics-series-warning: #f4cd86;
+  color-scheme: dark;
+}
+.qx-analytics-theme input,
+.qx-analytics-theme select,
+.qx-analytics-theme textarea {
+  color-scheme: dark;
+}
+.qx-analytics-theme .qx-workspace-header {
+  background: #101e38ed;
+}
+.qx-analytics-theme .qx-workspace-header-inner {
+  min-height: 84px;
+}
+.qx-analytics-theme .qx-workspace-nav a[aria-current="page"] {
+  background: #245bdb2b;
+  border-color: #65a5ff4d;
+  color: #d2e4ff;
+}
+.qx-analytics-theme .qx-workspace-skip {
+  background: #e8f0ff;
+  color: #101e38;
+}
+.qx-workspace.qx-analytics-theme .qx-action {
+  background: #245bdb;
+  color: white;
+}
+.qx-workspace.qx-analytics-theme .qx-action:hover {
+  background: #316aee;
+}
+.qx-analytics-theme .qx-auth-story {
+  background: radial-gradient(ellipse at 0% 80%, #245bdb24, transparent 70%), #142641;
+}
+.qx-analytics-theme .qx-auth-caption {
+  color: #65a5ff;
+}
+.qx-analytics-theme .qx-auth-form > section {
+  padding: 32px;
+  max-width: 460px;
+  background: var(--color-workspace-surface);
+  border: 1px solid var(--color-workspace-line);
+  border-radius: 12px;
+}
+.qx-analytics-theme .analytics-filterbar,
+.qx-analytics-theme .analytics-summary-card,
+.qx-analytics-theme .analytics-report-picker select {
+  background: var(--color-workspace-surface);
+}
+.qx-analytics-theme .analytics-filterbar {
+  border-radius: 10px;
+  padding: 18px;
+}
+.qx-analytics-theme .analytics-summary-card {
+  border-radius: 10px;
+  border-top: 2px solid #65a5ff66;
+  box-shadow: 0 10px 28px -22px #0009;
+}
+.qx-analytics-theme .analytics-summary-card > strong {
+  color: #e8f0ff;
+  font-variant-numeric: tabular-nums;
+}
+.qx-analytics-theme .analytics-filter-chips button {
+  color: #b7d4ff;
+}
+.qx-analytics-theme .analytics-filter-chips .analytics-clear {
+  color: var(--color-workspace-muted);
+}
+.qx-analytics-theme tbody tr:hover {
+  background: #1d355880;
+}
+.qx-analytics-theme .analytics-view-tabs {
+  gap: 5px;
+}
+.qx-analytics-theme .analytics-view-tabs button[aria-pressed="true"] {
+  background: #65a5ff0d;
+  color: #b9d6ff;
+}
+.qx-analytics-theme .analytics-filter-toggle:hover,
+.qx-analytics-theme .analytics-filter-actions button:hover,
+.qx-analytics-theme .analytics-query-presets button:hover {
+  background: var(--color-workspace-wash);
+}
+.qx-analytics-theme .analytics-filter-toggle[aria-expanded="true"] {
+  border-color: var(--color-workspace-blue-line);
+  color: var(--color-workspace-blue);
+}
+.qx-analytics-theme .qx-state .qx-surface,
+.qx-analytics-theme.qx-state .qx-surface {
+  box-shadow: 0 24px 70px -35px #0009;
+}
+@media (max-width: 640px) {
+  .qx-analytics-theme .qx-auth-form {
+    padding: 28px 20px;
+  }
+  .qx-analytics-theme .qx-auth-form > section {
+    padding: 25px 20px;
+  }
+  .qx-analytics-theme .qx-workspace-header-inner {
+    min-height: 70px;
+  }
+  .qx-analytics-theme .qx-workspace-identity {
+    max-width: calc(100% - 150px);
+  }
+  .qx-analytics-theme .qx-workspace-header .qx-logo {
+    width: 128px;
+    height: 37px;
+  }
+}

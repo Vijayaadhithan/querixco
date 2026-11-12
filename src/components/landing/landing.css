@@ -1,0 +1,2722 @@
+.ql-home {
+  --ql-cyan: #18c7d9;
+  --ql-bright: #65a5ff;
+  --ql-soft: #a9bdd8;
+  background: radial-gradient(ellipse 55% 15% at 78% 6%, #245bdb16, transparent 90%);
+}
+.ql-home h1,
+.ql-home h2,
+.ql-home h3 {
+  text-wrap: balance;
+}
+.ql-home em {
+  color: #65a5ff;
+  font-style: normal;
+}
+.ql-home .qx-eyebrow {
+  color: #65a5ff;
+  font-size: 10px;
+  letter-spacing: 1.7px;
+}
+.ql-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 0.93fr 1.2fr;
+  column-gap: 64px;
+  align-items: center;
+  min-height: min(850px, calc(100svh - 84px));
+  padding-block: 70px 95px;
+}
+.ql-hero h1 {
+  font-size: clamp(44px, 4.65vw, 72px);
+  line-height: 1.07;
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  margin-block: 27px 25px;
+}
+.ql-hero-description {
+  max-width: 370px;
+  font-size: 19px;
+  line-height: 1.5;
+  color: #e8f0ff;
+  letter-spacing: -0.3px;
+}
+.ql-home .ql-hero-body {
+  margin-top: 16px;
+  color: #a9bdd8;
+  max-width: 365px;
+  font-size: 14px;
+  line-height: 1.85;
+}
+.ql-hero .qx-actions {
+  gap: 24px;
+  margin-top: 32px;
+}
+.ql-hero-proof {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+  font-size: 10px;
+  color: #9eb2cf;
+}
+.ql-hero-proof > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ql-hero-proof svg {
+  color: #18c7d9;
+}
+.ql-scroll-cue {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 8px;
+  letter-spacing: 1.4px;
+  color: #839bbd;
+}
+.ql-scroll-cue svg {
+  color: #65a5ff;
+}
+.ql-showcase {
+  min-width: 0;
+  scroll-margin-top: 110px;
+  animation: ql-arrive 0.8s ease both;
+}
+.ql-showcase:focus {
+  outline: none;
+}
+.ql-showcase:focus-visible {
+  outline: 2px solid #65a5ff;
+  outline-offset: 12px;
+  border-radius: 12px;
+}
+.ql-preview-caption,
+.ql-preview-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 9px;
+  color: #9eb2cf;
+}
+.ql-preview-caption {
+  margin-bottom: 12px;
+}
+.ql-preview-caption > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  letter-spacing: 1.2px;
+  color: #c7d7ee;
+  font-size: 8px;
+}
+.ql-preview-caption i,
+.ql-dash-foot i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #18c7d9;
+  display: inline-block;
+}
+.ql-storefront {
+  position: relative;
+  background: #f5f8ff;
+  color: #152842;
+  border: 1px solid #6b96d34d;
+  border-radius: 13px;
+  overflow: hidden;
+  box-shadow:
+    0 28px 90px -35px #0009,
+    0 0 0 7px #65a5ff08;
+}
+.ql-storefront-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: #1a3151;
+  color: #e8f0ff;
+  padding: 15px 20px;
+}
+.ql-storefront-header > svg {
+  color: #65a5ff;
+}
+.ql-storefront-header > strong {
+  font-size: 11px;
+  font-weight: 500;
+}
+.ql-storefront-header > span {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  font-size: 7px;
+  color: #a9bdd8;
+  gap: 5px;
+}
+.ql-storefront-header .qx-logo {
+  width: 63px;
+  height: 18px;
+}
+.ql-conversation {
+  padding: 23px 22px 18px;
+}
+.ql-shopper {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  align-items: center;
+}
+.ql-shopper > span:first-child {
+  background: #e2edff;
+  padding: 12px 14px;
+  border-radius: 9px 9px 2px 9px;
+  font-size: 11px;
+  color: #214575;
+}
+.ql-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #d5e3f8;
+  display: grid;
+  place-items: center;
+  font-size: 8px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.ql-assistant {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 24px;
+}
+.ql-assistant .qx-mark {
+  width: 25px;
+  height: 25px;
+}
+.ql-assistant p {
+  font-size: 11px;
+  color: #3a4d65;
+  line-height: 1.6;
+}
+.ql-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 10px 0 17px 33px;
+}
+.ql-filter-chips > span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #e9eff8;
+  color: #536b8c;
+  border: 1px solid #d8e3f2;
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-size: 8px;
+}
+.ql-filter-chips > .is-changed {
+  color: #1e5894;
+  background: #d7ebff;
+  border-color: #bad7f7;
+}
+.ql-product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.ql-product-grid.is-refined {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.ql-product {
+  text-align: left;
+  padding: 0;
+  background: white;
+  border: 1px solid #dce4ee;
+  border-radius: 7px;
+  overflow: hidden;
+  min-width: 0;
+  color: #172b48;
+  animation: ql-arrive 0.45s ease both;
+  transition:
+    border-color 0.2s,
+    transform 0.2s;
+}
+.ql-product:hover {
+  transform: translateY(-3px);
+  border-color: #65a5ff;
+}
+.ql-product-art {
+  position: relative;
+}
+.ql-product-art > img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+.ql-product-art > span {
+  position: absolute;
+  left: 7px;
+  bottom: 7px;
+  padding: 3px 5px;
+  background: #ffffffd9;
+  color: #526477;
+  font-size: 7px;
+  border-radius: 3px;
+}
+.ql-product-info {
+  padding: 10px 9px 12px;
+}
+.ql-product-info > span {
+  font-size: 6px;
+  letter-spacing: 0.7px;
+  color: #66778e;
+}
+.ql-product-info h3 {
+  font-family: Inter, sans-serif;
+  font-size: 10px;
+  line-height: 1.45;
+  font-weight: 500;
+  letter-spacing: -0.15px;
+  min-height: 29px;
+  margin-top: 4px;
+}
+.ql-product-info > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  margin-top: 8px;
+}
+.ql-product-info strong {
+  font-size: 12px;
+  font-weight: 600;
+}
+.ql-product-info > div > span {
+  display: flex;
+  align-items: center;
+  font-size: 8px;
+  color: #3b65a7;
+}
+.ql-followup-message {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  color: #2c6481;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.ql-followup-message > span:last-child {
+  margin-left: auto;
+  color: #687c92;
+  font-size: 8px;
+}
+.ql-comparison {
+  margin-top: 14px;
+  font-size: 9px;
+  border: 1px solid #dce5f2;
+  border-radius: 5px;
+  overflow: hidden;
+  animation: ql-arrive 0.3s ease both;
+}
+.ql-comparison > div {
+  display: grid;
+  grid-template-columns: 0.7fr 1fr 1fr;
+  border-bottom: 1px solid #e4eaf5;
+}
+.ql-comparison > div:last-child {
+  border-bottom: 0;
+}
+.ql-comparison > div:first-child {
+  background: #e8eff9;
+}
+.ql-comparison span,
+.ql-comparison strong {
+  padding: 8px;
+  font-size: 8px;
+  font-weight: 500;
+}
+.ql-comparison > div > :first-child {
+  color: #667b97;
+}
+.ql-prompt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 19px;
+}
+.ql-prompt > span {
+  font-size: 8px;
+  color: #75859a;
+}
+.ql-prompt > button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 10px 11px;
+  min-height: 40px;
+  background: #fff;
+  border: 1px solid #b7cff4;
+  border-radius: 5px;
+  color: #2456a6;
+  font-size: 10px;
+  margin-left: auto;
+}
+.ql-prompt > button:hover {
+  background: #e8f0ff;
+}
+.ql-showcase-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  padding: 11px 20px;
+  border-top: 1px solid #e0e7f2;
+  background: #edf2fb;
+}
+.ql-steps {
+  display: flex;
+  gap: 13px;
+}
+.ql-steps button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: #6d7d94;
+  font-size: 8px;
+  min-height: 28px;
+}
+.ql-steps button > span {
+  border: 1px solid #bacbe2;
+  width: 15px;
+  height: 15px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 7px;
+}
+.ql-steps button[aria-pressed="true"] {
+  color: #245bdb;
+}
+.ql-steps button[aria-pressed="true"] > span {
+  background: #245bdb;
+  border-color: #245bdb;
+  color: white;
+}
+.ql-player {
+  display: flex;
+  gap: 3px;
+}
+.ql-player button {
+  display: grid;
+  place-items: center;
+  background: none;
+  color: #527097;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+}
+.ql-player button:hover {
+  background: #dce7f9;
+}
+.ql-preview-note {
+  margin-top: 12px;
+  font-size: 8px;
+}
+.ql-preview-note > a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #b4ccf0;
+}
+.ql-product-detail {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(430px, calc(100vw - 32px));
+  max-height: 90svh;
+  color: #152842;
+  border: 1px solid #bfd1e9;
+  border-radius: 12px;
+  background: #f5f8ff;
+  padding: 25px;
+  overflow-y: auto;
+}
+.ql-product-detail > img {
+  display: block;
+  width: 130px;
+  height: 130px;
+  border-radius: 8px;
+  margin: 0 auto 18px;
+}
+.ql-product-detail h3 {
+  font-size: 24px;
+  margin-block: 10px;
+}
+.ql-product-detail > strong {
+  color: #245bdb;
+  font-size: 20px;
+}
+.ql-product-detail dl {
+  margin-block: 15px;
+}
+.ql-product-detail dl > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 0;
+  font-size: 11px;
+  border-bottom: 1px solid #dce4ee;
+}
+.ql-product-detail dt {
+  text-transform: capitalize;
+  color: #6a7e96;
+}
+.ql-product-detail dd {
+  margin: 0;
+  color: #18314e;
+}
+.ql-detail-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #d0ddec;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+.ql-platform-strip {
+  border-block: 1px solid #abc9ff1c;
+  background: #142540;
+}
+.ql-platform-strip > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding-block: 27px;
+}
+.ql-platform-strip > div > span {
+  color: #809abb;
+  font-size: 8px;
+  letter-spacing: 1.3px;
+  max-width: 100px;
+  line-height: 1.8;
+}
+.ql-platform-strip a {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+  color: #c9d8ee;
+}
+.ql-platform-strip a > svg:first-child {
+  color: #65a5ff;
+}
+.ql-platform-strip a > svg:last-child {
+  margin-left: 16px;
+  color: #6c88af;
+}
+.ql-platform-strip i {
+  width: 1px;
+  height: 20px;
+  background: #abc9ff26;
+}
+.ql-section {
+  padding-block: 105px;
+  scroll-margin-top: 65px;
+}
+.ql-section-heading {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 90px;
+  align-items: end;
+  margin-bottom: 44px;
+}
+.ql-section-heading h2 {
+  font-size: clamp(33px, 3.2vw, 48px);
+  line-height: 1.14;
+  letter-spacing: -0.045em;
+  margin-top: 19px;
+  font-weight: 500;
+}
+.ql-section-heading > p {
+  font-size: 14px;
+  line-height: 1.85;
+  color: #a9bdd8;
+  max-width: 390px;
+  padding-bottom: 2px;
+}
+.ql-dashboard {
+  border: 1px solid #a9c6ef2b;
+  border-radius: 12px;
+  background: #142641;
+  box-shadow: 0 28px 70px -35px #0007;
+  overflow: hidden;
+}
+.ql-dash-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 19px 25px;
+  border-bottom: 1px solid #a9c6ef1f;
+  background: #182d4b;
+}
+.ql-dash-top > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.ql-dash-top svg {
+  color: #65a5ff;
+}
+.ql-dash-top strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+.ql-sample-badge {
+  color: #98c4f6;
+  font-size: 8px;
+  background: #65a5ff12;
+  border: 1px solid #65a5ff29;
+  border-radius: 4px;
+  padding: 3px 7px;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+.ql-dash-filters {
+  display: flex;
+  gap: 8px;
+}
+.ql-dash-filters select {
+  background: #14243b;
+  color: #bfcee3;
+  border: 1px solid #abc9ff26;
+  border-radius: 4px;
+  padding: 7px 9px;
+  font-size: 10px;
+  min-height: 34px;
+}
+.ql-dash-body {
+  padding: 25px;
+}
+.ql-dash-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid #abc9ff1c;
+  padding-bottom: 24px;
+}
+.ql-dash-metrics > div {
+  padding-inline: 25px;
+  border-left: 1px solid #abc9ff1c;
+}
+.ql-dash-metrics > div:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.ql-dash-metrics > div:last-child {
+  padding-right: 0;
+}
+.ql-dash-metrics > div > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  color: #9eb4d3;
+  font-size: 10px;
+}
+.ql-dash-metrics svg {
+  color: #65a5ff;
+}
+.ql-dash-metrics strong {
+  display: block;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  font-size: 32px;
+  letter-spacing: -1px;
+  margin-top: 9px;
+  line-height: 1.3;
+}
+.ql-dash-metrics p {
+  color: #91a9c9;
+  font-size: 9px;
+  margin-top: 5px;
+}
+.ql-dash-main {
+  display: grid;
+  grid-template-columns: 1.65fr 1fr;
+  gap: 30px;
+  margin-top: 26px;
+}
+.ql-chart-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.ql-chart-heading h3 {
+  font:
+    500 12px Inter,
+    sans-serif;
+  color: #d9e5f7;
+}
+.ql-chart-heading > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 8px;
+  color: #94aaca;
+}
+.ql-chart-heading i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #65a5ff;
+}
+.ql-chart-heading > svg {
+  color: #65a5ff;
+}
+.ql-trend {
+  min-width: 0;
+  padding-right: 28px;
+  border-right: 1px solid #abc9ff1c;
+}
+.ql-trend-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 9px;
+  color: #94aaca;
+  margin-top: 27px;
+}
+.ql-trend-label strong {
+  font-weight: 500;
+  color: #c9defd;
+  font-size: 10px;
+}
+.ql-trend-plot {
+  position: relative;
+  margin-top: 3px;
+}
+.ql-trend-plot > svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+.ql-chart-targets {
+  position: absolute;
+  inset: 0 2.8% 9%;
+  display: grid;
+}
+.ql-chart-targets button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  min-width: 0;
+}
+.ql-chart-targets button:hover {
+  background: #65a5ff06;
+}
+.ql-axis {
+  display: flex;
+  justify-content: space-between;
+  color: #819bbb;
+  font-size: 8px;
+  padding-inline: 2.8%;
+}
+.ql-interest-row {
+  display: block;
+  width: 100%;
+  border: none;
+  background: none;
+  color: #a9bdd8;
+  padding: 11px 0 0;
+  text-align: left;
+}
+.ql-interest-row > span {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  gap: 8px;
+}
+.ql-interest-row strong {
+  font-weight: 400;
+  color: #8da9cc;
+}
+.ql-interest-row > i {
+  display: block;
+  height: 4px;
+  background: #243d5e;
+  border-radius: 3px;
+  margin-top: 7px;
+  overflow: hidden;
+}
+.ql-interest-row > i > i {
+  display: block;
+  height: 100%;
+  background: #365b8e;
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+.ql-interest-row[aria-pressed="true"] > span {
+  color: #e8f0ff;
+}
+.ql-interest-row[aria-pressed="true"] > i > i {
+  background: linear-gradient(90deg, #245bdb, #18c7d9);
+}
+.ql-query-detail {
+  border-top: 1px solid #abc9ff1c;
+  margin-top: 17px;
+  padding-top: 13px;
+}
+.ql-query-detail > span {
+  font-size: 7px;
+  letter-spacing: 1px;
+  color: #86a1c4;
+}
+.ql-query-detail p {
+  font-size: 11px;
+  color: #c7daf5;
+  margin-top: 5px;
+}
+.ql-query-detail small {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 8px;
+  color: #83a4d2;
+  margin-top: 5px;
+}
+.ql-dash-secondary {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 30px;
+  border-top: 1px solid #abc9ff1c;
+  padding-top: 22px;
+  margin-top: 25px;
+}
+.ql-price-buckets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 22px;
+}
+.ql-price-buckets > div > span {
+  display: block;
+  font-size: 9px;
+  color: #9eb4d3;
+}
+.ql-price-buckets strong {
+  display: block;
+  font-weight: 500;
+  font-size: 19px;
+  margin-top: 6px;
+}
+.ql-price-buckets > div > i {
+  display: block;
+  height: 4px;
+  border-radius: 2px;
+  background: #28415f;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.ql-price-buckets > div > i > i {
+  display: block;
+  height: 100%;
+  background: #65a5ff;
+  transition: width 0.3s;
+}
+.ql-unmet {
+  border-left: 1px solid #abc9ff1c;
+  padding-left: 30px;
+}
+.ql-unmet > button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  color: #b1c7e4;
+  border: 1px solid transparent;
+  background: #1d35587a;
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 10px;
+  font-size: 9px;
+}
+.ql-unmet > button > span {
+  flex: 1;
+}
+.ql-unmet > button > strong {
+  color: #94accc;
+  font-weight: 500;
+  font-size: 8px;
+}
+.ql-unmet > button > svg {
+  color: #65a5ff;
+  flex-shrink: 0;
+}
+.ql-unmet > button[aria-pressed="true"],
+.ql-unmet > button:hover {
+  border-color: #65a5ff5c;
+}
+.ql-dash-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 13px 25px;
+  border-top: 1px solid #abc9ff1c;
+  font-size: 8px;
+  color: #8ba5c8;
+}
+.ql-dash-foot > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ql-section-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 23px;
+  font-size: 10px;
+}
+.ql-section-foot p {
+  color: #91a9c9;
+}
+.ql-section-foot a {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #b1cfff;
+}
+.ql-industry-section {
+  background: #142540;
+  border-block: 1px solid #abc9ff14;
+}
+.ql-industry-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 26px;
+}
+.ql-industry-tabs > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  flex: 1;
+  color: #9cb4d5;
+  font-size: 11px;
+  background: transparent;
+  border: 1px solid #abc9ff26;
+  border-radius: 5px;
+  padding: 14px 12px;
+}
+.ql-industry-tabs > button[aria-pressed="true"] {
+  background: #245bdb24;
+  color: #d8e7ff;
+  border-color: #65a5ff85;
+}
+.ql-industry-tabs > button[aria-pressed="true"] svg {
+  color: #65a5ff;
+}
+.ql-industry-panel {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 80px;
+  border: 1px solid #abc9ff26;
+  border-radius: 10px;
+  padding: 40px;
+  background: #101e38;
+}
+.ql-industry-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+.ql-section-index {
+  font-family: monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #6e91c4;
+}
+.ql-industry-copy h3 {
+  font-size: 30px;
+  letter-spacing: -1px;
+  line-height: 1.25;
+  margin-top: 26px;
+  max-width: 300px;
+  font-weight: 500;
+}
+.ql-industry-copy > p {
+  color: #9eb4d3;
+  font-size: 12px;
+  line-height: 1.9;
+  margin-top: 19px;
+  max-width: 310px;
+}
+.ql-industry-copy > a {
+  margin-top: 20px;
+  color: #b7d2fb;
+  font-size: 11px;
+}
+.ql-industry-disclosure {
+  color: #849dbf;
+  font-size: 8px;
+  margin-top: 35px;
+}
+.ql-industry-demo {
+  background: #edf3ff;
+  border-radius: 8px;
+  padding: 22px;
+  color: #1d3558;
+  min-width: 0;
+}
+.ql-industry-query > span {
+  font-size: 7px;
+  letter-spacing: 1px;
+  color: #6d819d;
+}
+.ql-industry-query > p {
+  font-size: 13px;
+  margin-top: 7px;
+}
+.ql-industry-demo .ql-filter-chips {
+  margin: 12px 0 17px;
+}
+.ql-industry-products {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.ql-industry-products > article {
+  min-width: 0;
+  border: 1px solid #d6e2f2;
+  border-radius: 5px;
+  overflow: hidden;
+  background: #fff;
+}
+.ql-industry-products > article > svg,
+.ql-industry-products > article > img {
+  display: block;
+  width: 100%;
+  height: 155px;
+  object-fit: cover;
+  background: #dfe8f0;
+}
+.ql-industry-products > article > div {
+  padding: 12px;
+}
+.ql-industry-products h4 {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.ql-industry-products p {
+  font-size: 8px;
+  color: #75849b;
+  margin-top: 5px;
+}
+.ql-industry-products strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 9px;
+}
+.ql-industry-refine {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  border: 1px solid #b6ceef;
+  border-radius: 4px;
+  background: #f8faff;
+  color: #28549a;
+  padding: 11px;
+  font-size: 10px;
+  margin-top: 15px;
+}
+.ql-industry-refine[aria-pressed="true"] {
+  justify-content: flex-start;
+}
+.ql-industry-refine > span {
+  margin-left: auto;
+  text-decoration: underline;
+  font-size: 9px;
+}
+.ql-integration-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+.ql-architecture {
+  padding: 28px;
+  border: 1px solid #abc9ff26;
+  border-radius: 9px;
+  background: #142641;
+}
+.ql-architecture-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+}
+.ql-architecture-top > span {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 10px;
+  background: #1d35587a;
+  border: 1px solid #abc9ff20;
+  border-radius: 6px;
+}
+.ql-architecture-top > span > svg {
+  color: #65a5ff;
+  margin-bottom: 11px;
+}
+.ql-architecture-top > svg {
+  color: #779bc9;
+  flex-shrink: 0;
+}
+.ql-architecture-top strong {
+  font-size: 11px;
+  font-weight: 500;
+}
+.ql-architecture-top small {
+  color: #8ba5c8;
+  font-size: 8px;
+  margin-top: 6px;
+}
+.ql-connectors {
+  display: flex;
+  justify-content: space-around;
+  padding-inline: 5%;
+}
+.ql-connectors > span {
+  width: 1px;
+  height: 35px;
+  background: linear-gradient(#65a5ff33, #65a5ff);
+  position: relative;
+}
+.ql-connectors > span::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -2px;
+  width: 5px;
+  height: 5px;
+  background: #65a5ff;
+  border-radius: 50%;
+}
+.ql-engine {
+  background: linear-gradient(135deg, #245bdb1f, #1d3558);
+  border: 1px solid #65a5ff63;
+  border-radius: 7px;
+  padding: 20px 18px;
+  text-align: center;
+}
+.ql-engine > span:not(.qx-brand) {
+  display: block;
+  font-size: 7px;
+  letter-spacing: 1.3px;
+  color: #81a9df;
+  margin: 4px 0 18px;
+}
+.ql-engine > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.ql-engine > div > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #b5cff3;
+  font-size: 9px;
+  padding: 7px 9px;
+  border: 1px solid #65a5ff29;
+  border-radius: 4px;
+  background: #101e3880;
+}
+.ql-engine > div svg {
+  color: #65a5ff;
+}
+.ql-integration-assurances {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  color: #8ba5c8;
+  font-size: 9px;
+  margin-top: 24px;
+}
+.ql-integration-assurances > span {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.ql-code {
+  min-width: 0;
+  padding: 25px;
+  background: #0c192e;
+  border: 1px solid #abc9ff26;
+  border-radius: 9px;
+}
+.ql-code > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  border-bottom: 1px solid #abc9ff1c;
+  padding-bottom: 16px;
+}
+.ql-code > div:first-child > span,
+.ql-code > div:first-child > a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #91b7ed;
+  font-size: 9px;
+}
+.ql-code > div:first-child > span {
+  letter-spacing: 1px;
+}
+.ql-code > p {
+  font-size: 14px;
+  margin-top: 22px;
+  color: #c3d7f3;
+}
+.ql-code > pre {
+  padding-block: 25px;
+  margin: 0;
+  overflow-x: auto;
+  font:
+    11px/1.9 ui-monospace,
+    monospace;
+  color: #c7d7ee;
+}
+.ql-code-muted {
+  color: #8ba5c8;
+}
+.ql-code-blue {
+  color: #65a5ff;
+}
+.ql-code-key {
+  color: #c1d3f3;
+}
+.ql-code-string {
+  color: #59d2d8;
+}
+.ql-code .ql-code-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #91a9c9;
+  font-size: 9px;
+  padding: 13px 0;
+  border-block: 1px solid #abc9ff1c;
+}
+.ql-code .ql-code-note svg {
+  color: #18c7d9;
+  flex-shrink: 0;
+}
+.ql-code > a {
+  color: #a6c7f7;
+  font-size: 10px;
+  margin-top: 13px;
+}
+.ql-doc-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 35px;
+  margin-top: 27px;
+}
+.ql-doc-links a {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  color: #a4bbdc;
+}
+.ql-why {
+  background: #142540;
+  border-block: 1px solid #abc9ff14;
+}
+.ql-benefits {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+}
+.ql-benefits article {
+  padding-top: 22px;
+  border-top: 1px solid #abc9ff33;
+}
+.ql-benefits article > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ql-benefits svg {
+  color: #65a5ff;
+}
+.ql-benefits article > div > span {
+  font: 9px monospace;
+  color: #7797c2;
+}
+.ql-benefits h3 {
+  font-size: 18px;
+  letter-spacing: -0.4px;
+  margin-top: 28px;
+  font-weight: 500;
+}
+.ql-benefits p {
+  font-size: 12px;
+  color: #9eb4d3;
+  line-height: 1.85;
+  margin-top: 13px;
+}
+.ql-conversion {
+  position: relative;
+  text-align: center;
+  padding-block: 105px;
+  isolation: isolate;
+  overflow: hidden;
+}
+.ql-conversion .qx-eyebrow {
+  justify-content: center;
+}
+.ql-conversion h2 {
+  font-size: clamp(35px, 4.1vw, 59px);
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+  margin-top: 23px;
+}
+.ql-conversion > p:not(.qx-eyebrow) {
+  font-size: 13px;
+  line-height: 1.9;
+  color: #9eb4d3;
+  margin-top: 25px;
+}
+.ql-conversion .qx-actions {
+  justify-content: center;
+  margin-top: 30px;
+  gap: 12px;
+}
+.ql-conversion > a {
+  margin-top: 20px;
+  color: #9bb8df;
+  font-size: 10px;
+}
+.ql-conversion-orbit {
+  position: absolute;
+  z-index: -1;
+  width: 550px;
+  height: 550px;
+  border: 1px solid #65a5ff0c;
+  box-shadow:
+    0 0 0 65px #65a5ff04,
+    0 0 0 130px #65a5ff03;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, #245bdb12, transparent 65%);
+}
+@keyframes ql-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (min-width: 1500px) {
+  .ql-hero {
+    min-height: 780px;
+  }
+  .ql-product-art > img {
+    height: 175px;
+  }
+}
+@media (max-width: 1150px) {
+  .ql-hero {
+    gap: 35px;
+  }
+  .ql-hero h1 {
+    font-size: 51px;
+  }
+  .ql-hero-description {
+    font-size: 17px;
+  }
+  .ql-product-art > img {
+    height: 125px;
+  }
+  .ql-hero .qx-actions {
+    gap: 18px;
+  }
+  .ql-section-heading {
+    gap: 50px;
+  }
+  .ql-industry-panel {
+    gap: 40px;
+    padding: 30px;
+  }
+  .ql-platform-strip a {
+    font-size: 10px;
+  }
+  .ql-platform-strip a > svg:last-child {
+    margin-left: 4px;
+  }
+  .ql-benefits {
+    gap: 22px;
+  }
+}
+@media (max-width: 900px) {
+  .ql-hero {
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 25px;
+    padding-block: 55px 80px;
+    min-height: 730px;
+  }
+  .ql-hero h1 {
+    font-size: 43px;
+  }
+  .ql-home .ql-hero-body {
+    font-size: 12px;
+  }
+  .ql-hero .qx-button {
+    padding-inline: 14px;
+    font-size: 11px;
+    gap: 9px;
+  }
+  .ql-hero .qx-text-link {
+    font-size: 11px;
+  }
+  .ql-hero .qx-actions {
+    gap: 9px 15px;
+  }
+  .ql-storefront-header {
+    padding: 13px;
+  }
+  .ql-storefront-header > span {
+    font-size: 0;
+  }
+  .ql-conversation {
+    padding: 17px 13px;
+  }
+  .ql-shopper > span:first-child {
+    padding: 9px;
+    font-size: 10px;
+  }
+  .ql-assistant p {
+    font-size: 10px;
+  }
+  .ql-product-grid {
+    gap: 6px;
+  }
+  .ql-product-art > img {
+    height: 105px;
+  }
+  .ql-product-info {
+    padding: 8px 6px;
+  }
+  .ql-product-info > span {
+    font-size: 5px;
+  }
+  .ql-product-info h3 {
+    font-size: 9px;
+    min-height: 38px;
+  }
+  .ql-product-info strong {
+    font-size: 10px;
+  }
+  .ql-product-info > div > span {
+    font-size: 7px;
+  }
+  .ql-prompt > span {
+    display: none;
+  }
+  .ql-showcase-bottom {
+    padding: 10px 12px;
+  }
+  .ql-steps {
+    gap: 8px;
+  }
+  .ql-steps button {
+    font-size: 7px;
+  }
+  .ql-platform-strip > div > span {
+    display: none;
+  }
+  .ql-platform-strip > div {
+    gap: 14px;
+  }
+  .ql-section {
+    padding-block: 78px;
+  }
+  .ql-dash-top {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .ql-dash-filters {
+    margin-left: auto;
+  }
+  .ql-industry-tabs {
+    gap: 7px;
+  }
+  .ql-industry-tabs > button {
+    font-size: 10px;
+    padding-inline: 8px;
+    gap: 7px;
+  }
+  .ql-industry-panel {
+    gap: 30px;
+    padding: 25px;
+  }
+  .ql-industry-copy h3 {
+    font-size: 26px;
+  }
+  .ql-industry-demo {
+    padding: 16px;
+  }
+  .ql-industry-products > article > svg,
+  .ql-industry-products > article > img {
+    height: 130px;
+  }
+  .ql-benefits {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+  .ql-integration-grid {
+    gap: 16px;
+  }
+  .ql-architecture {
+    padding: 22px 16px;
+  }
+  .ql-architecture-top {
+    gap: 8px;
+  }
+  .ql-architecture-top small {
+    font-size: 7px;
+  }
+  .ql-code {
+    padding: 22px 18px;
+  }
+  .ql-code > pre {
+    font-size: 10px;
+  }
+}
+@media (max-width: 720px) {
+  .ql-hero {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding-block: 44px 74px;
+    min-height: auto;
+  }
+  .ql-hero h1 {
+    font-size: clamp(43px, 8.5vw, 62px);
+    margin-block: 21px 20px;
+  }
+  .ql-desktop-break {
+    display: none;
+  }
+  .ql-hero-copy {
+    max-width: 550px;
+  }
+  .ql-hero-description {
+    font-size: 18px;
+    max-width: 400px;
+  }
+  .ql-home .ql-hero-body {
+    font-size: 13px;
+    max-width: 450px;
+  }
+  .ql-hero .qx-actions {
+    gap: 24px;
+    margin-top: 25px;
+  }
+  .ql-hero .qx-button {
+    font-size: 12px;
+    padding: 14px 19px;
+    gap: 13px;
+  }
+  .ql-hero-proof {
+    margin-top: 23px;
+  }
+  .ql-showcase {
+    max-width: 580px;
+    width: 100%;
+    margin-inline: auto;
+  }
+  .ql-scroll-cue {
+    bottom: 23px;
+    font-size: 7px;
+  }
+  .ql-conversation {
+    padding: 22px;
+  }
+  .ql-storefront-header {
+    padding: 15px 20px;
+  }
+  .ql-storefront-header > span {
+    font-size: 7px;
+  }
+  .ql-shopper > span:first-child,
+  .ql-assistant p {
+    font-size: 11px;
+  }
+  .ql-product-grid {
+    gap: 10px;
+  }
+  .ql-product-art > img {
+    height: 145px;
+  }
+  .ql-product-info {
+    padding: 11px 9px;
+  }
+  .ql-product-info > span {
+    font-size: 6px;
+  }
+  .ql-product-info h3 {
+    font-size: 10px;
+    min-height: 29px;
+  }
+  .ql-product-info strong {
+    font-size: 12px;
+  }
+  .ql-prompt > span {
+    display: inline;
+  }
+  .ql-showcase-bottom {
+    padding: 10px 20px;
+  }
+  .ql-steps {
+    gap: 15px;
+  }
+  .ql-steps button {
+    font-size: 8px;
+  }
+  .ql-section-heading {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .ql-section-heading > p {
+    max-width: 470px;
+    font-size: 13px;
+  }
+  .ql-section-heading h2 {
+    font-size: 36px;
+  }
+  .ql-dash-body {
+    padding: 20px;
+  }
+  .ql-dash-main {
+    grid-template-columns: 1fr;
+    gap: 27px;
+  }
+  .ql-trend {
+    padding-right: 0;
+    border-right: 0;
+  }
+  .ql-interest {
+    border-top: 1px solid #abc9ff1c;
+    padding-top: 23px;
+  }
+  .ql-dash-secondary {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  .ql-unmet {
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px solid #abc9ff1c;
+    padding-top: 22px;
+  }
+  .ql-dash-metrics strong {
+    font-size: 26px;
+  }
+  .ql-dash-metrics > div {
+    padding-inline: 14px;
+  }
+  .ql-dash-metrics p {
+    font-size: 8px;
+    line-height: 1.6;
+  }
+  .ql-dash-metrics > div > span {
+    font-size: 9px;
+    min-height: 28px;
+  }
+  .ql-dash-metrics svg {
+    display: none;
+  }
+  .ql-dash-foot {
+    padding-inline: 20px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .ql-dash-foot > span:last-child {
+    margin-left: auto;
+  }
+  .ql-section-foot {
+    flex-direction: column;
+    gap: 10px;
+    line-height: 1.7;
+  }
+  .ql-industry-tabs {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ql-industry-tabs > button {
+    flex: 1 1 calc(33% - 8px);
+    padding: 12px 9px;
+    font-size: 10px;
+  }
+  .ql-industry-panel {
+    grid-template-columns: 1fr;
+    gap: 27px;
+    padding: 25px;
+  }
+  .ql-industry-copy h3 {
+    max-width: 420px;
+    font-size: 28px;
+    margin-top: 17px;
+  }
+  .ql-industry-copy > p {
+    max-width: 430px;
+  }
+  .ql-industry-disclosure {
+    margin-top: 12px;
+  }
+  .ql-industry-products > article > svg,
+  .ql-industry-products > article > img {
+    height: 180px;
+  }
+  .ql-industry-copy > a {
+    margin-top: 12px;
+  }
+  .ql-integration-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .ql-architecture {
+    padding: 25px;
+  }
+  .ql-architecture-top small {
+    font-size: 8px;
+  }
+  .ql-code {
+    padding: 25px;
+  }
+  .ql-code > pre {
+    font-size: 12px;
+  }
+  .ql-conversion {
+    padding-block: 80px;
+  }
+  .ql-conversion h2 {
+    font-size: 39px;
+  }
+}
+@media (max-width: 420px) {
+  .ql-home .qx-eyebrow {
+    font-size: 8px;
+    letter-spacing: 1.2px;
+  }
+  .ql-hero h1 {
+    font-size: 44px;
+  }
+  .ql-hero-description {
+    font-size: 17px;
+  }
+  .ql-hero-proof {
+    font-size: 9px;
+    gap: 10px;
+  }
+  .ql-platform-strip > div {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 19px;
+    padding-block: 24px;
+  }
+  .ql-platform-strip i {
+    display: none;
+  }
+  .ql-platform-strip a {
+    font-size: 11px;
+    width: 100%;
+  }
+  .ql-platform-strip a > svg:last-child {
+    margin-left: auto;
+  }
+  .ql-conversation {
+    padding: 18px 12px;
+  }
+  .ql-storefront-header {
+    padding: 13px;
+  }
+  .ql-storefront-header > strong {
+    font-size: 10px;
+  }
+  .ql-storefront-header > span {
+    font-size: 6px;
+  }
+  .ql-storefront-header .qx-logo {
+    width: 52px;
+    height: 15px;
+  }
+  .ql-shopper > span:first-child {
+    font-size: 9px;
+    padding: 10px;
+  }
+  .ql-assistant p {
+    font-size: 10px;
+  }
+  .ql-filter-chips {
+    margin-left: 0;
+  }
+  .ql-product-grid {
+    gap: 6px;
+  }
+  .ql-product-art > img {
+    height: 102px;
+  }
+  .ql-product-art > span {
+    font-size: 6px;
+    left: 5px;
+    bottom: 5px;
+  }
+  .ql-product-info {
+    padding: 8px 6px;
+  }
+  .ql-product-info > span {
+    font-size: 5px;
+  }
+  .ql-product-info h3 {
+    font-size: 8px;
+    min-height: 34px;
+  }
+  .ql-product-info > div > span {
+    font-size: 7px;
+  }
+  .ql-product-info strong {
+    font-size: 10px;
+  }
+  .ql-showcase-bottom {
+    padding-inline: 12px;
+  }
+  .ql-steps {
+    gap: 10px;
+  }
+  .ql-steps button {
+    font-size: 7px;
+  }
+  .ql-player button {
+    width: 25px;
+  }
+  .ql-prompt > span {
+    font-size: 7px;
+  }
+  .ql-prompt > button {
+    font-size: 9px;
+    padding: 9px;
+    gap: 10px;
+  }
+  .ql-preview-note {
+    font-size: 7px;
+  }
+  .ql-section {
+    padding-block: 60px;
+  }
+  .ql-section-heading h2 {
+    font-size: 33px;
+  }
+  .ql-dash-top {
+    padding: 17px;
+    gap: 13px;
+  }
+  .ql-dash-top strong {
+    font-size: 11px;
+  }
+  .ql-sample-badge {
+    font-size: 7px;
+    margin-left: 0;
+  }
+  .ql-dash-filters {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .ql-dash-filters select {
+    font-size: 9px;
+  }
+  .ql-dash-body {
+    padding: 17px;
+  }
+  .ql-dash-metrics strong {
+    font-size: 24px;
+  }
+  .ql-dash-metrics > div {
+    padding-inline: 10px;
+  }
+  .ql-dash-metrics > div > span {
+    font-size: 8px;
+    line-height: 1.5;
+  }
+  .ql-dash-metrics p {
+    font-size: 7px;
+  }
+  .ql-dash-foot {
+    font-size: 7px;
+    padding-inline: 17px;
+  }
+  .ql-chart-heading > span {
+    font-size: 7px;
+  }
+  .ql-price-buckets {
+    gap: 12px;
+  }
+  .ql-price-buckets > div > span {
+    font-size: 8px;
+  }
+  .ql-industry-panel {
+    padding: 18px;
+  }
+  .ql-industry-demo {
+    padding: 13px;
+  }
+  .ql-industry-products {
+    gap: 8px;
+  }
+  .ql-industry-products > article > svg,
+  .ql-industry-products > article > img {
+    height: 120px;
+  }
+  .ql-industry-products > article > div {
+    padding: 9px;
+  }
+  .ql-industry-products h4 {
+    font-size: 9px;
+  }
+  .ql-industry-products p {
+    font-size: 7px;
+  }
+  .ql-benefits {
+    gap: 28px 20px;
+  }
+  .ql-benefits h3 {
+    font-size: 17px;
+    margin-top: 20px;
+  }
+  .ql-benefits p {
+    font-size: 11px;
+  }
+  .ql-conversion h2 {
+    font-size: 34px;
+  }
+  .ql-conversion > p:not(.qx-eyebrow) {
+    font-size: 12px;
+  }
+  .ql-conversion .qx-actions {
+    gap: 10px;
+  }
+  .ql-conversion .qx-button {
+    gap: 9px;
+    padding-inline: 13px;
+    font-size: 11px;
+  }
+  .ql-conversion > a {
+    font-size: 9px;
+    gap: 7px;
+  }
+  .ql-code {
+    padding: 20px;
+  }
+  .ql-code > pre {
+    font-size: 10px;
+  }
+  .ql-architecture {
+    padding: 20px 15px;
+  }
+  .ql-doc-links {
+    gap: 15px 22px;
+  }
+  .ql-doc-links a {
+    font-size: 9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ql-player button:first-child {
+    display: none;
+  }
+  .ql-home *,
+  .ql-home *::before,
+  .ql-home *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.ql-product-detail::backdrop {
+  background: #06101fcc;
+  backdrop-filter: blur(5px);
+}
+
+/* Second pass: a compact first viewport, readable previews, and a steady journey. */
+.ql-hero {
+  grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.14fr);
+  column-gap: 46px;
+  min-height: min(760px, calc(100svh - 84px));
+  padding-block: 36px 65px;
+}
+.ql-hero h1 {
+  font-size: clamp(40px, 3.85vw, 60px);
+  line-height: 1.07;
+  margin-block: 22px;
+}
+.ql-headline-line {
+  display: block;
+}
+.ql-no-break {
+  white-space: nowrap;
+}
+.ql-hero-description {
+  font-size: 18px;
+  max-width: 390px;
+}
+.ql-home .ql-hero-body {
+  font-size: 13px;
+  max-width: 390px;
+}
+.ql-hero .qx-actions {
+  gap: 12px;
+  margin-top: 25px;
+}
+.ql-hero .qx-actions > .qx-button {
+  min-height: 46px;
+}
+.ql-hero-proof {
+  margin-top: 24px;
+  font-size: 11px;
+  gap: 9px 16px;
+}
+.ql-scroll-cue {
+  bottom: 23px;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+.ql-scenario-switch {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 11px;
+}
+.ql-scenario-switch > span {
+  color: #a9bdd8;
+  font-size: 10px;
+  margin-right: auto;
+}
+.ql-scenario-switch button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 7px 11px;
+  border: 1px solid #abc9ff26;
+  border-radius: 5px;
+  color: #a9bdd8;
+  background: transparent;
+  font-size: 10px;
+}
+.ql-scenario-switch button[aria-pressed="true"] {
+  color: #d2e4ff;
+  border-color: #65a5ff66;
+  background: #245bdb24;
+}
+.ql-showcase .ql-preview-caption {
+  font-size: 10px;
+  margin-bottom: 9px;
+}
+.ql-showcase .ql-preview-caption > span:first-child {
+  font-size: 9px;
+}
+.ql-showcase .ql-storefront-header {
+  padding: 11px 17px;
+}
+.ql-showcase .ql-storefront-header > strong {
+  font-size: 12px;
+}
+.ql-showcase .ql-conversation {
+  padding: 16px 18px 14px;
+}
+.ql-showcase .ql-shopper > span:first-child {
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.ql-showcase .ql-avatar {
+  font-size: 9px;
+}
+.ql-showcase .ql-assistant {
+  margin-top: 14px;
+  min-height: 30px;
+}
+.ql-showcase .ql-assistant p {
+  font-size: 11px;
+}
+.ql-showcase .ql-filter-chips {
+  margin: 8px 0 12px 33px;
+}
+.ql-showcase .ql-filter-chips > span {
+  font-size: 9px;
+}
+.ql-product-area {
+  height: 192px;
+}
+.ql-showcase .ql-product-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  height: 100%;
+}
+.ql-showcase .ql-product {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.ql-showcase .ql-product-art {
+  flex: 0 0 105px;
+  overflow: hidden;
+  width: 100%;
+}
+.ql-showcase .ql-product-art > img {
+  height: 105px;
+  width: 100%;
+  object-fit: cover;
+}
+.ql-showcase .ql-product-art > span {
+  font-size: 8px;
+  color: #3b5272;
+}
+.ql-showcase .ql-product-info {
+  padding: 10px 11px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.ql-showcase .ql-product-info > span {
+  display: none;
+}
+.ql-showcase .ql-product-info h3 {
+  margin: 0;
+  min-height: 30px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+.ql-showcase .ql-product-info > div {
+  margin-top: auto;
+  padding-top: 6px;
+}
+.ql-showcase .ql-product-info strong {
+  font-size: 13px;
+}
+.ql-showcase .ql-product-info > div > span {
+  font-size: 10px;
+}
+.ql-stage-feedback {
+  min-height: 65px;
+  padding-top: 14px;
+}
+.ql-journey-feedback {
+  animation: ql-arrive 0.3s ease both;
+}
+.ql-journey-feedback > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #285882;
+  font-size: 11px;
+  font-weight: 500;
+}
+.ql-journey-feedback p {
+  color: #5f738e;
+  font-size: 10px;
+  line-height: 1.6;
+  margin-top: 4px;
+}
+.ql-showcase .ql-comparison {
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1.4fr repeat(3, 1fr);
+  margin: 0;
+  background: #fff;
+}
+.ql-showcase .ql-comparison > div {
+  align-items: stretch;
+}
+.ql-showcase .ql-comparison > div > span,
+.ql-showcase .ql-comparison > div > strong {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.ql-showcase .ql-comparison button {
+  display: inline-flex;
+  text-align: left;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: #2456a6;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.ql-comparison button > svg {
+  flex-shrink: 0;
+}
+.ql-showcase .ql-prompt {
+  margin-top: 10px;
+}
+.ql-showcase .ql-prompt > span {
+  font-size: 10px;
+}
+.ql-showcase .ql-prompt > button {
+  min-height: 38px;
+  font-size: 11px;
+}
+.ql-showcase .ql-showcase-bottom {
+  padding: 7px 17px;
+}
+.ql-showcase .ql-steps button {
+  font-size: 10px;
+  min-height: 30px;
+}
+.ql-showcase .ql-steps button > span {
+  font-size: 9px;
+  width: 17px;
+  height: 17px;
+}
+.ql-showcase .ql-player button {
+  width: 32px;
+  height: 32px;
+}
+.ql-showcase .ql-preview-note {
+  font-size: 9px;
+}
+.ql-company {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 95px;
+  align-items: center;
+}
+.ql-company h2,
+.ql-faq h2,
+.ql-evaluation h2 {
+  font-size: clamp(32px, 3.1vw, 46px);
+  line-height: 1.15;
+  letter-spacing: -0.045em;
+  margin-top: 19px;
+}
+.ql-company-story > p:not(.qx-eyebrow) {
+  color: #a9bdd8;
+  font-size: 14px;
+  line-height: 1.85;
+  margin-top: 23px;
+  max-width: 440px;
+}
+.ql-company-story > .qx-text-link {
+  color: #c0d8fc;
+  margin-top: 17px;
+}
+.ql-company-email {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  color: #9cb9df;
+  font-size: 12px;
+  margin-top: 12px;
+}
+.ql-proof-links {
+  display: grid;
+}
+.ql-proof-links > a {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  border-top: 1px solid #abc9ff26;
+  padding-block: 25px;
+}
+.ql-proof-links > a:last-child {
+  border-bottom: 1px solid #abc9ff26;
+}
+.ql-proof-links > a > svg {
+  flex-shrink: 0;
+  color: #65a5ff;
+  margin-top: 2px;
+}
+.ql-proof-links strong {
+  display: block;
+  color: #dbe8fc;
+  font-size: 16px;
+  font-weight: 500;
+}
+.ql-proof-links > a > span > span {
+  display: block;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #a9bdd8;
+  margin-top: 8px;
+}
+.ql-proof-links small {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  color: #9bbfee;
+  font-size: 11px;
+}
+.ql-proof-links > a:hover small {
+  color: #e8f0ff;
+}
+.ql-evaluation {
+  padding-block: 65px;
+  border-block: 1px solid #abc9ff1c;
+  background: #142540;
+}
+.ql-evaluation > div {
+  display: grid;
+  grid-template-columns: 0.9fr 1.6fr;
+  column-gap: 70px;
+  row-gap: 25px;
+}
+.ql-evaluation h2 {
+  font-size: 30px;
+}
+.ql-evaluation ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+.ql-evaluation li > span {
+  color: #65a5ff;
+  font:
+    11px ui-monospace,
+    monospace;
+}
+.ql-evaluation h3 {
+  font-size: 16px;
+  letter-spacing: -0.3px;
+  margin-top: 20px;
+}
+.ql-evaluation li p {
+  color: #a9bdd8;
+  font-size: 12px;
+  line-height: 1.85;
+  margin-top: 10px;
+}
+.ql-evaluation .ql-evaluation-note {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #9bb7db;
+  font-size: 10px;
+}
+.ql-evaluation-note svg {
+  color: #18c7d9;
+  flex-shrink: 0;
+}
+.ql-faq {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 95px;
+  align-items: start;
+}
+.ql-faq > div:first-child > p:not(.qx-eyebrow) {
+  color: #a9bdd8;
+  font-size: 13px;
+  line-height: 1.85;
+  margin-top: 23px;
+  max-width: 290px;
+}
+.ql-faq > div:first-child > a {
+  color: #b7d4ff;
+  margin-top: 18px;
+  font-size: 12px;
+}
+.ql-faq-list > details {
+  border-bottom: 1px solid #abc9ff26;
+}
+.ql-faq-list > details:first-child {
+  border-top: 1px solid #abc9ff26;
+}
+.ql-faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  list-style: none;
+  cursor: pointer;
+  padding-block: 22px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #dbe8fc;
+}
+.ql-faq summary::-webkit-details-marker {
+  display: none;
+}
+.ql-faq summary > svg {
+  flex-shrink: 0;
+  color: #7da7e2;
+  transition: transform 0.2s;
+}
+.ql-faq details[open] summary > svg {
+  transform: rotate(180deg);
+}
+.ql-faq details > div {
+  font-size: 13px;
+  color: #a9bdd8;
+  line-height: 1.9;
+  padding-bottom: 24px;
+  max-width: 570px;
+}
+.ql-faq details a {
+  color: #a8cbff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ql-home .ql-dash-metrics > div > span,
+.ql-home .ql-chart-heading h3 {
+  font-size: 12px;
+}
+.ql-home .ql-interest-row > span,
+.ql-home .ql-price-buckets > div > span {
+  font-size: 11px;
+}
+.ql-home .ql-query-detail p {
+  font-size: 12px;
+}
+.ql-home .ql-unmet > button {
+  font-size: 11px;
+}
+.ql-home .ql-dash-filters select {
+  font-size: 11px;
+}
+.ql-home .ql-industry-refine {
+  font-size: 12px;
+  min-height: 42px;
+}
+.ql-home .ql-industry-products h4 {
+  font-size: 12px;
+}
+.ql-home .ql-industry-products p {
+  font-size: 10px;
+}
+.ql-home .ql-industry-products strong {
+  font-size: 14px;
+}
+@media (min-width: 1500px) {
+  .ql-hero {
+    min-height: 760px;
+  }
+}
+@media (min-width: 1000px) and (max-height: 800px) {
+  .ql-hero {
+    padding-block: 28px 55px;
+  }
+  .ql-hero h1 {
+    font-size: clamp(39px, 3.5vw, 54px);
+  }
+}
+@media (max-width: 1100px) {
+  .ql-hero {
+    gap: 30px;
+  }
+  .ql-hero h1 {
+    font-size: 42px;
+  }
+  .ql-company,
+  .ql-faq {
+    gap: 55px;
+  }
+  .ql-evaluation > div {
+    column-gap: 40px;
+  }
+  .ql-evaluation ol {
+    gap: 18px;
+  }
+}
+@media (max-width: 900px) {
+  .ql-hero {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding-block: 40px 70px;
+    min-height: auto;
+  }
+  .ql-hero-copy {
+    max-width: 620px;
+  }
+  .ql-hero h1 {
+    font-size: 54px;
+  }
+  .ql-hero-description {
+    max-width: 450px;
+  }
+  .ql-home .ql-hero-body {
+    max-width: 500px;
+  }
+  .ql-hero .qx-actions {
+    gap: 12px;
+  }
+  .ql-showcase {
+    max-width: 640px;
+  }
+  .ql-company {
+    gap: 40px;
+  }
+  .ql-evaluation > div {
+    grid-template-columns: 1fr;
+    row-gap: 30px;
+  }
+  .ql-evaluation .ql-evaluation-note {
+    grid-column: 1;
+  }
+}
+@media (max-width: 640px) {
+  .ql-hero h1 {
+    font-size: clamp(36px, 8.9vw, 52px);
+    margin-block: 20px;
+  }
+  .ql-hero-description {
+    font-size: 17px;
+  }
+  .ql-hero .qx-actions > .qx-button {
+    font-size: 12px;
+    gap: 10px;
+    padding-inline: 15px;
+  }
+  .ql-hero-proof {
+    font-size: 10px;
+  }
+  .ql-scroll-cue {
+    font-size: 8px;
+    letter-spacing: 0.4px;
+  }
+  .ql-showcase .ql-conversation {
+    padding: 15px 13px;
+  }
+  .ql-showcase .ql-storefront-header {
+    padding-inline: 13px;
+  }
+  .ql-showcase .ql-storefront-header > span {
+    font-size: 0;
+  }
+  .ql-showcase .ql-shopper > span:first-child {
+    font-size: 11px;
+  }
+  .ql-showcase .ql-filter-chips {
+    margin-left: 0;
+  }
+  .ql-showcase .ql-filter-chips > span {
+    font-size: 10px;
+  }
+  .ql-product-area {
+    height: 220px;
+  }
+  .ql-showcase .ql-product-art,
+  .ql-showcase .ql-product-art > img {
+    height: 122px;
+    flex-basis: 122px;
+  }
+  .ql-showcase .ql-product-info h3 {
+    min-height: 33px;
+    font-size: 12px;
+  }
+  .ql-showcase .ql-product-info strong {
+    font-size: 14px;
+  }
+  .ql-showcase .ql-product-info > div > span {
+    font-size: 10px;
+  }
+  .ql-showcase .ql-comparison > div > span,
+  .ql-showcase .ql-comparison > div > strong {
+    font-size: 11px;
+    padding: 7px;
+  }
+  .ql-showcase .ql-comparison button {
+    font-size: 11px;
+  }
+  .ql-stage-feedback {
+    min-height: 76px;
+  }
+  .ql-journey-feedback p {
+    font-size: 11px;
+  }
+  .ql-showcase .ql-prompt > span {
+    display: none;
+  }
+  .ql-showcase .ql-prompt > button {
+    width: 100%;
+    min-height: 42px;
+    font-size: 12px;
+  }
+  .ql-showcase .ql-steps {
+    gap: 12px;
+  }
+  .ql-showcase .ql-steps button {
+    font-size: 10px;
+    min-height: 40px;
+  }
+  .ql-showcase .ql-player button {
+    width: 40px;
+    height: 40px;
+  }
+  .ql-showcase .ql-preview-note {
+    font-size: 9px;
+  }
+  .ql-scenario-switch button {
+    min-height: 40px;
+    font-size: 11px;
+  }
+  .ql-company,
+  .ql-faq {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .ql-company h2,
+  .ql-faq h2 {
+    font-size: 34px;
+  }
+  .ql-company-story > p:not(.qx-eyebrow) {
+    font-size: 13px;
+  }
+  .ql-proof-links > a {
+    padding-block: 22px;
+  }
+  .ql-evaluation {
+    padding-block: 45px;
+  }
+  .ql-evaluation ol {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  .ql-evaluation li {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    column-gap: 12px;
+  }
+  .ql-evaluation li > span {
+    grid-row: 1 / 3;
+    padding-top: 2px;
+  }
+  .ql-evaluation h3 {
+    margin-top: 0;
+  }
+  .ql-evaluation li p {
+    grid-column: 2;
+    margin-top: 7px;
+  }
+  .ql-faq > div:first-child > p:not(.qx-eyebrow) {
+    max-width: 430px;
+  }
+  .ql-faq summary {
+    font-size: 14px;
+    padding-block: 19px;
+  }
+  .ql-home .ql-dash-metrics p {
+    font-size: 10px;
+  }
+  .ql-home .ql-dash-metrics > div > span {
+    font-size: 10px;
+  }
+  .ql-home .ql-dash-filters select {
+    font-size: 11px;
+    min-height: 40px;
+  }
+  .ql-home .ql-chart-heading > span {
+    font-size: 10px;
+  }
+  .ql-home .ql-interest-row {
+    padding-top: 15px;
+  }
+  .ql-home .ql-unmet > button {
+    min-height: 42px;
+    font-size: 11px;
+  }
+  .ql-home .ql-dash-foot {
+    font-size: 9px;
+    line-height: 1.7;
+  }
+}
+@media (max-width: 360px) {
+  .ql-hero h1 {
+    font-size: 35px;
+  }
+  .ql-hero .qx-actions {
+    gap: 10px;
+  }
+  .ql-hero .qx-actions > .qx-button {
+    padding-inline: 12px;
+    font-size: 11px;
+  }
+  .ql-hero-proof {
+    font-size: 9px;
+  }
+  .ql-showcase .ql-preview-caption > span:first-child {
+    font-size: 8px;
+  }
+  .ql-showcase .ql-product-info {
+    padding: 9px 8px;
+  }
+  .ql-showcase .ql-product-info h3 {
+    font-size: 11px;
+  }
+  .ql-showcase .ql-steps {
+    gap: 8px;
+    flex: 1 0 100%;
+    justify-content: space-between;
+  }
+  .ql-showcase .ql-showcase-bottom {
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .ql-showcase .ql-player {
+    margin-left: auto;
+  }
+  .ql-showcase .ql-steps button {
+    font-size: 9px;
+  }
+  .ql-showcase .ql-preview-note {
+    font-size: 8px;
+  }
+  .ql-home .ql-dash-filters select {
+    font-size: 10px;
+    padding-inline: 7px;
+  }
+}

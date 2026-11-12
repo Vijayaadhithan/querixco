@@ -3,259 +3,361 @@ import {
   ArrowRight,
   ArrowUpRight,
   Check,
+  Code2,
   Database,
+  Headphones,
+  Layers3,
   MessageCircle,
+  RefreshCw,
   Search,
+  ShieldCheck,
+  ShoppingBag,
+  Workflow,
 } from "lucide-react";
-import { MarketingShell, DemoCta } from "@/components/marketing/MarketingShell";
-import { ProductExperience } from "@/components/marketing/ProductExperience";
+import { MarketingShell } from "@/components/marketing/MarketingShell";
+import { Brand } from "@/components/marketing/Brand";
+import { CommerceShowcase } from "./CommerceShowcase";
+import { IntelligenceDashboard } from "./IntelligenceDashboard";
+import { IndustryShowcase } from "./IndustryShowcase";
+import { BuyerConfidence } from "./BuyerConfidence";
+import { Reveal } from "@/components/Reveal";
+import "./landing.css";
 
 export function LandingPage() {
   return (
     <MarketingShell>
-      <section className="qx-hero qx-container">
-        <div className="qx-hero-copy">
-          <p className="qx-eyebrow">
-            <span /> INTELLIGENCE FOR PRODUCT DISCOVERY
-          </p>
-          <h1>
-            From “I need”
-            <br />
-            to <em>“that’s it.”</em>
-          </h1>
-          <p className="qx-hero-description">Help shoppers find what they mean.</p>
-          <p className="qx-hero-body">
-            Intent-aware search and conversational shopping that turn customer needs into relevant
-            choices from your catalog.
-          </p>
-          <div className="qx-actions">
-            <a className="qx-button" href="/request-demo">
-              Request a demo <ArrowUpRight size={18} />
+      <div className="ql-home">
+        <section className="ql-hero qx-container" aria-labelledby="hero-title">
+          <div className="ql-hero-copy">
+            <p className="qx-eyebrow">
+              <span /> THE NEXT CHAPTER OF COMMERCE
+            </p>
+            <h1 id="hero-title">
+              <span className="ql-headline-line">
+                From <span className="ql-no-break">e-commerce</span>
+              </span>
+              <span className="ql-headline-line">
+                to <em>interactive</em>
+              </span>
+              <span className="ql-headline-line">
+                <em>commerce.</em>
+              </span>
+            </h1>
+            <p className="ql-hero-description">
+              A better shopping experience starts with a conversation.
+            </p>
+            <p className="ql-hero-body">
+              Understand what shoppers mean. Help them discover, refine and compare products — with
+              your catalogue at the centre.
+            </p>
+            <div className="qx-actions">
+              <a className="qx-button" href="/request-demo">
+                Book a demo <ArrowUpRight size={16} />
+              </a>
+              <a
+                className="qx-button qx-button-outline"
+                href="#commerce-preview"
+                onClick={() => document.getElementById("commerce-preview")?.focus()}
+              >
+                <PlayIcon />
+                See it in action
+              </a>
+            </div>
+            <div className="ql-hero-proof">
+              <span>
+                <Check size={13} />
+                Intent-aware discovery
+              </span>
+              <span>
+                <Check size={13} />
+                Context that carries forward
+              </span>
+            </div>
+          </div>
+          <CommerceShowcase />
+          <a className="ql-scroll-cue" href="#intelligence">
+            <ArrowDown size={13} /> FROM SHOPPER INTENT TO BUSINESS INSIGHT
+          </a>
+        </section>
+        <div className="ql-platform-strip">
+          <div className="qx-container">
+            <span>ONE CONNECTED EXPERIENCE</span>
+            <a href="/products/search">
+              <Search size={18} />
+              Intelligent search
+              <ArrowUpRight size={12} />
             </a>
-            <a className="qx-text-link" href="#discovery">
-              Explore the platform <ArrowDown size={15} />
+            <i />
+            <a href="/use-cases/conversational-commerce">
+              <MessageCircle size={18} />
+              Interactive commerce
+              <ArrowUpRight size={12} />
+            </a>
+            <i />
+            <a href="#intelligence">
+              <Workflow size={18} />
+              Commerce intelligence
+              <ArrowDown size={12} />
             </a>
           </div>
-          <div className="qx-hero-note">
-            <span>BUILT AROUND YOUR CATALOG</span>
-            <span>Search. Refine. Compare.</span>
-          </div>
         </div>
-        <div className="qx-hero-stage">
-          <ProductExperience />
-        </div>
-      </section>
-      <div className="qx-audience">
-        <div className="qx-container">
-          <span>MADE FOR THE WAY PEOPLE SHOP</span>
-          <p>E-commerce</p>
-          <i />
-          <p>Marketplaces</p>
-          <i />
-          <p>Product catalogs</p>
-          <i />
-          <p>Listing platforms</p>
-        </div>
-      </div>
-      <section id="discovery" className="qx-section qx-container">
-        <div className="qx-section-heading">
-          <p className="qx-eyebrow">01 / TWO WAYS TO FIND THE RIGHT FIT</p>
-          <div>
+        <Reveal>
+          <section id="intelligence" className="ql-section qx-container">
+            <div className="ql-section-heading">
+              <div>
+                <p className="qx-eyebrow">01 / COMMERCE INTELLIGENCE</p>
+                <h2>
+                  Every interaction.
+                  <br />
+                  <em>A clearer picture.</em>
+                </h2>
+              </div>
+              <p>
+                See what customers want, what they explore and what they can’t find. Turn discovery
+                into direction for your business.
+              </p>
+            </div>
+            <IntelligenceDashboard />
+            <div className="ql-section-foot">
+              <p>From the words shoppers use to the opportunities your catalogue could meet.</p>
+              <a href="/request-demo?intent=demo">
+                Explore your insights <ArrowRight size={14} />
+              </a>
+            </div>
+          </section>
+        </Reveal>
+        <Reveal>
+          <section id="industries" className="ql-section ql-industry-section">
+            <div className="qx-container">
+              <div className="ql-section-heading">
+                <div>
+                  <p className="qx-eyebrow">02 / BUILT AROUND YOUR BUSINESS</p>
+                  <h2>
+                    Different products.
+                    <br />
+                    <em>The same intelligence.</em>
+                  </h2>
+                </div>
+                <p>
+                  From everyday essentials to detailed specifications, explore how conversational
+                  discovery adapts to different catalogues.
+                </p>
+              </div>
+              <IndustryShowcase />
+            </div>
+          </section>
+        </Reveal>
+        <Reveal>
+          <section id="integration" className="ql-section qx-container">
+            <div className="ql-section-heading">
+              <div>
+                <p className="qx-eyebrow">03 / TECHNOLOGY & INTEGRATION</p>
+                <h2>
+                  Your storefront.
+                  <br />
+                  <em>Querix underneath.</em>
+                </h2>
+              </div>
+              <p>
+                Keep the experience you’ve built. Connect search and conversation through your
+                backend, with a clear path from catalogue to customer.
+              </p>
+            </div>
+            <div className="ql-integration-grid">
+              <div className="ql-architecture">
+                <div className="ql-architecture-top">
+                  <span>
+                    <ShoppingBag size={21} />
+                    <strong>Your storefront</strong>
+                    <small>Your customer experience</small>
+                  </span>
+                  <ArrowRight size={20} />
+                  <span>
+                    <Database size={21} />
+                    <strong>Your catalogue</strong>
+                    <small>Products & listing attributes</small>
+                  </span>
+                </div>
+                <div className="ql-connectors" aria-hidden="true">
+                  <span />
+                  <span />
+                </div>
+                <div className="ql-engine">
+                  <Brand light />
+                  <span>THE DISCOVERY LAYER</span>
+                  <div>
+                    <span>
+                      <Search size={14} />
+                      Intelligent search
+                    </span>
+                    <span>
+                      <MessageCircle size={14} />
+                      Interactive commerce
+                    </span>
+                    <span>
+                      <Workflow size={14} />
+                      Search insights
+                    </span>
+                  </div>
+                </div>
+                <div className="ql-integration-assurances">
+                  <span>
+                    <ShieldCheck size={14} />
+                    Server-side credentials
+                  </span>
+                  <span>
+                    <Layers3 size={14} />
+                    Documented API contracts
+                  </span>
+                </div>
+              </div>
+              <div className="ql-code">
+                <div>
+                  <span>
+                    <Code2 size={15} />
+                    SEARCH API
+                  </span>
+                  <a href="/developers/integration">
+                    View docs <ArrowUpRight size={13} />
+                  </a>
+                </div>
+                <p>One request. Relevant possibilities.</p>
+                <pre aria-label="Illustrative search API request">
+                  <code>
+                    <span className="ql-code-muted">// Send from your backend</span>
+                    {"\n"}
+                    <span className="ql-code-blue">POST</span>
+                    {" /api/v1/{tenant}/search\n\n"}
+                    {"{\n"}
+                    {"  "}
+                    <span className="ql-code-key">"query"</span>
+                    {": "}
+                    <span className="ql-code-string">"cotton shirt under $40"</span>
+                    {",\n"}
+                    {"  "}
+                    <span className="ql-code-key">"page_size"</span>
+                    {": "}
+                    <span className="ql-code-blue">20</span>
+                    {"\n}"}
+                  </code>
+                </pre>
+                <div className="ql-code-note">
+                  <Check size={14} />
+                  <span>Tenant-scoped search. Keep API keys on your server.</span>
+                </div>
+                <a className="qx-text-link" href="/developers/commerce">
+                  Explore the conversation lifecycle <ArrowRight size={14} />
+                </a>
+              </div>
+            </div>
+            <div className="ql-doc-links">
+              <a href="/developers/architecture">
+                Architecture <ArrowUpRight size={13} />
+              </a>
+              <a href="/developers/data-pipeline">
+                Catalogue integration <ArrowUpRight size={13} />
+              </a>
+              <a href="/developers/operations">
+                Security & operations <ArrowUpRight size={13} />
+              </a>
+              <a href="/developers">
+                Developer documentation <ArrowUpRight size={13} />
+              </a>
+            </div>
+          </section>
+        </Reveal>
+        <Reveal>
+          <section id="why-querix" className="ql-section ql-why">
+            <div className="qx-container">
+              <div className="ql-section-heading">
+                <div>
+                  <p className="qx-eyebrow">04 / WHY QUERIXAI</p>
+                  <h2>
+                    More possibility.
+                    <br />
+                    <em>Less complexity.</em>
+                  </h2>
+                </div>
+                <p>
+                  A practical path to better product discovery, built around your business, your
+                  catalogue and your team.
+                </p>
+              </div>
+              <div className="ql-benefits">
+                {[
+                  {
+                    icon: Layers3,
+                    title: "Fits what you’ve built",
+                    text: "Connect with your existing storefront and backend. Plan the integration around your current infrastructure.",
+                  },
+                  {
+                    icon: Workflow,
+                    title: "A considered cost",
+                    text: "Scope the service around your catalogue, workloads and customer journeys. Start with a focused proof of concept.",
+                  },
+                  {
+                    icon: RefreshCw,
+                    title: "Keep getting better",
+                    text: "Use search trends, unmet demand and customer interactions to guide ongoing discovery improvements.",
+                  },
+                  {
+                    icon: Headphones,
+                    title: "Support from day one",
+                    text: "Work through catalogue mapping, integration and evaluation with implementation support.",
+                  },
+                ].map(({ icon: Icon, title, text }, i) => (
+                  <article key={title}>
+                    <div>
+                      <Icon size={24} />
+                      <span>0{i + 1}</span>
+                    </div>
+                    <h3>{title}</h3>
+                    <p>{text}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        </Reveal>
+        <Reveal>
+          <BuyerConfidence />
+        </Reveal>
+        <Reveal>
+          <section className="ql-conversion qx-container">
+            <span className="ql-conversion-orbit" aria-hidden="true" />
+            <p className="qx-eyebrow">YOUR CATALOGUE. THE NEXT CONVERSATION.</p>
             <h2>
-              A better answer.
-              <br />A natural next question.
+              Let’s make discovery
+              <br />
+              <em>work for your business.</em>
             </h2>
             <p>
-              Some customers know exactly what to search for. Others need a conversation to get
-              there. Give both a clear path forward.
-            </p>
-          </div>
-        </div>
-        <div className="qx-product-pair">
-          <article className="qx-product-panel">
-            <div className="qx-panel-top">
-              <Search size={23} />
-              <span>01 — INTELLIGENT SEARCH</span>
-            </div>
-            <h3>
-              Understand the search.
+              Bring your products and the shopping journeys that matter.
               <br />
-              Find the right products.
-            </h3>
-            <p>
-              Match customer intent, product names, and explicit requirements—even when the query is
-              incomplete or imprecise.
+              We’ll explore the right starting point together.
             </p>
-            <div className="qx-search-example">
-              <span>“blue cotton shirt for work under $40”</span>
-              <div>
-                <span>Blue</span>
-                <span>Cotton</span>
-                <span>Workwear</span>
-                <span>≤ $40</span>
-              </div>
+            <div className="qx-actions">
+              <a className="qx-button" href="/request-demo?intent=demo">
+                Book a demo <ArrowRight size={17} />
+              </a>
+              <a className="qx-button qx-button-outline" href="/request-demo?intent=integration">
+                Discuss integration <ArrowUpRight size={16} />
+              </a>
             </div>
-            <a className="qx-text-link" href="/products/search">
-              Explore intelligent search <ArrowUpRight size={18} />
+            <a className="qx-text-link" href="/request-demo?intent=poc">
+              Have a specific use case? Request a proof of concept <ArrowRight size={14} />
             </a>
-          </article>
-          <article className="qx-product-panel qx-panel-blue">
-            <div className="qx-panel-top">
-              <MessageCircle size={23} />
-              <span>02 — INTERACTIVE COMMERCE</span>
-            </div>
-            <h3>
-              Keep the context.
-              <br />
-              Move the choice forward.
-            </h3>
-            <p>
-              Turn a first request into a useful dialogue. Remember requirements, refine results,
-              and compare supplied product details.
-            </p>
-            <div className="qx-conversation-example">
-              <span>“Under $30 instead.”</span>
-              <p>
-                <Check size={16} /> New budget. Same cotton preference.
-              </p>
-            </div>
-            <a className="qx-text-link" href="/use-cases/conversational-commerce">
-              Explore interactive commerce <ArrowUpRight size={18} />
-            </a>
-          </article>
-        </div>
-      </section>
-      <section className="qx-journey">
-        <div className="qx-container qx-section">
-          <div className="qx-section-heading">
-            <p className="qx-eyebrow">02 / EVERY TURN HAS A PURPOSE</p>
-            <div>
-              <h2>
-                Discovery doesn’t stop
-                <br />
-                at the first result.
-              </h2>
-              <p>
-                Build on what the shopper has already told you. Keep their requirements connected to
-                the products they see.
-              </p>
-            </div>
-          </div>
-          <div className="qx-journey-grid">
-            {[
-              [
-                "01",
-                "Start with a need",
-                "“A cotton shirt for work.”",
-                "Interpret the request and ask for missing context when needed.",
-              ],
-              [
-                "02",
-                "Make it more specific",
-                "“Keep it under $30.”",
-                "Update the budget while preserving the other saved requirements.",
-              ],
-              [
-                "03",
-                "Understand the choices",
-                "“Compare these two.”",
-                "Put supplied attributes side by side, with missing information left unknown.",
-              ],
-            ].map(([number, title, quote, body]) => (
-              <article key={number}>
-                <span className="qx-step-number">{number}</span>
-                <h3>{title}</h3>
-                <blockquote>{quote}</blockquote>
-                <p>{body}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-      <section className="qx-section qx-container qx-catalog-section">
-        <div>
-          <p className="qx-eyebrow">03 / GROUNDED IN THE CATALOG</p>
-          <h2>
-            The conversation
-            <br />
-            starts with your products.
-          </h2>
-          <p className="qx-section-body">
-            Explore the shopping journeys supported by the commerce demo. Each storefront keeps its
-            own conversation and requirements.
-          </p>
-          <a className="qx-text-link" href="/use-cases/conversational-commerce#storefronts">
-            Explore the use cases <ArrowRight size={17} />
-          </a>
-          <p className="qx-small-note">Live demo access is provided to approved testers.</p>
-        </div>
-        <div className="qx-category-list">
-          {[
-            ["01", "Clothing", "Fabric, fit, occasion & budget"],
-            ["02", "Beauty & personal care", "Preferences, routines & listing details"],
-            ["03", "Footwear", "Style, use & price range"],
-            ["04", "Fashion accessories", "The finishing touches"],
-          ].map(([number, name, detail]) => (
-            <a href="/request-demo?product=commerce" key={name}>
-              <span>{number}</span>
-              <div>
-                <h3>{name}</h3>
-                <p>{detail}</p>
-              </div>
-              <ArrowUpRight size={20} />
-            </a>
-          ))}
-        </div>
-      </section>
-      <section className="qx-foundation">
-        <div className="qx-container qx-section">
-          <div className="qx-section-heading">
-            <p className="qx-eyebrow">04 / A CLEAR PATH TO INTEGRATION</p>
-            <div>
-              <h2>
-                Your experience.
-                <br />
-                Querix underneath.
-              </h2>
-              <p>
-                Start with the catalog and the journeys you want to support. Connect the right
-                service through your backend.
-              </p>
-            </div>
-          </div>
-          <div className="qx-foundation-flow">
-            <div>
-              <Database size={24} />
-              <h3>Prepare the catalog</h3>
-              <p>
-                Map source data, approved fields, and the requirements your experience must respect.
-              </p>
-            </div>
-            <ArrowRight className="qx-flow-arrow" />
-            <div>
-              <Search size={24} />
-              <h3>Connect discovery</h3>
-              <p>
-                Integrate search or conversation with server-side credentials and explicit access
-                rules.
-              </p>
-            </div>
-            <ArrowRight className="qx-flow-arrow" />
-            <div>
-              <Check size={24} />
-              <h3>Validate real journeys</h3>
-              <p>
-                Review relevant results, follow-ups, and failure states against your own customer
-                needs.
-              </p>
-            </div>
-          </div>
-          <a className="qx-text-link" href="/developers">
-            Read the developer documentation <ArrowUpRight size={17} />
-          </a>
-        </div>
-      </section>
-      <DemoCta />
+          </section>
+        </Reveal>
+      </div>
     </MarketingShell>
+  );
+}
+
+function PlayIcon() {
+  return (
+    <svg width="13" height="14" viewBox="0 0 13 14" fill="none" aria-hidden="true">
+      <path d="M2 1.5 11 7l-9 5.5z" fill="currentColor" />
+    </svg>
   );
 }

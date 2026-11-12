@@ -4,16 +4,22 @@ type QuerixLogoProps = {
   className?: string;
   size?: number;
   tone?: "dark" | "light";
+  markOnly?: boolean;
 };
 
-export function QuerixLogo({ className = "", size = 40, tone = "dark" }: QuerixLogoProps) {
+export function QuerixLogo({
+  className = "",
+  size = 40,
+  tone = "dark",
+  markOnly = false,
+}: QuerixLogoProps) {
   const filterId = `querix-logo-${useId().replaceAll(":", "")}`;
 
   return (
     <svg
-      width={Math.round(size * 3.5)}
+      width={markOnly ? size : Math.round(size * 3.5)}
       height={size}
-      viewBox="40 435 1050 300"
+      viewBox={markOnly ? "48 435 250 250" : "40 435 1050 300"}
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       role="img"

@@ -14,12 +14,14 @@ export function Reveal({ children, className = "", delay = 0 }: RevealProps) {
     const element = elementRef.current;
     if (!element) return;
 
+    const motion = window.matchMedia?.("(prefers-reduced-motion: reduce)");
     const supportsIntersectionObserver = typeof window.IntersectionObserver === "function";
-    if (!supportsIntersectionObserver) {
+    if (!supportsIntersectionObserver || motion?.matches) {
       const frame = window.requestAnimationFrame(() => setVisible(true));
       return () => window.cancelAnimationFrame(frame);
     }
 
+    element.dataset.reveal = "pending";
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
@@ -33,12 +35,24 @@ export function Reveal({ children, className = "", delay = 0 }: RevealProps) {
     );
 
     observer.observe(element);
-    return () => observer.disconnect();
+    function motionChanged(event: MediaQueryListEvent) {
+      if (event.matches) {
+        setVisible(true);
+        observer.disconnect();
+      }
+    }
+    motion?.addEventListener("change", motionChanged);
+    return () => {
+      observer.disconnect();
+      motion?.removeEventListener("change", motionChanged);
+      element.removeAttribute("data-reveal");
+    };
   }, []);
 
   return (
     <div
       ref={elementRef}
+      data-reveal={visible ? "visible" : undefined}
       className={`reveal-on-scroll ${visible ? "is-visible" : ""} ${className}`}
       style={{ "--reveal-delay": `${delay}ms` } as CSSProperties}
     >

@@ -8,7 +8,6 @@ import {
   Plus,
   RotateCcw,
   SlidersHorizontal,
-  Sparkles,
   Square,
   Trash2,
   X,
@@ -39,6 +38,7 @@ import {
 import { sampleTurn } from "@/features/commerce/sample";
 import { PortalAccountBar } from "./Portal";
 import { CommerceHeader } from "./CommerceChrome";
+import { Brand } from "@/components/marketing/Brand";
 import { ProductCard } from "./ProductCard";
 import "./commerce.css";
 import "./chat.css";
@@ -774,7 +774,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
           {state.messages.length === 0 && !pending && (
             <div className="chat-welcome">
               <span className="chat-welcome-mark">
-                <Sparkles size={26} />
+                <Brand light markOnly />
               </span>
               <h1>{section?.welcome ?? "What are you looking for?"}</h1>
               <p>Tell me what matters to you. We’ll find a few good options together.</p>
@@ -808,7 +808,10 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
                   "You"
                 ) : (
                   <>
-                    <span className="chat-avatar">q</span> Querix
+                    <span className="chat-avatar">
+                      <Brand light markOnly />
+                    </span>{" "}
+                    Querix
                   </>
                 )}
               </div>
@@ -835,7 +838,10 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
           {busy && (
             <article className="chat-turn assistant chat-incoming">
               <div className="chat-speaker">
-                <span className="chat-avatar">q</span> Querix
+                <span className="chat-avatar">
+                  <Brand light markOnly />
+                </span>{" "}
+                Querix
               </div>
               {streamText ? (
                 <AssistantResponse

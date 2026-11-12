@@ -3,7 +3,8 @@ import { DemoRequest } from "@/components/marketing/DemoRequest";
 export const Route = createFileRoute("/request-demo")({
   validateSearch: (
     search: Record<string, unknown>,
-  ): { product: "search" | "commerce" | "both" } => ({
+  ): { product: "search" | "commerce" | "both"; intent: "demo" | "integration" | "poc" } => ({
+    intent: search.intent === "integration" || search.intent === "poc" ? search.intent : "demo",
     product: search.product === "search" || search.product === "commerce" ? search.product : "both",
   }),
   head: () => ({
@@ -25,6 +26,8 @@ export const Route = createFileRoute("/request-demo")({
   component: RequestDemoRoute,
 });
 function RequestDemoRoute() {
-  const { product } = Route.useSearch();
-  return <DemoRequest key={product} initialProduct={product} />;
+  const { product, intent } = Route.useSearch();
+  return (
+    <DemoRequest key={`${product}-${intent}`} initialProduct={product} initialIntent={intent} />
+  );
 }

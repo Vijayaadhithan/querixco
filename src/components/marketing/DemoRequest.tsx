@@ -2,6 +2,13 @@ import { useRef, useState, type FormEvent } from "react";
 import { ArrowRight, ArrowUpRight, Copy } from "lucide-react";
 import { MarketingShell } from "./MarketingShell";
 
+type Intent = "demo" | "integration" | "poc";
+const intentLabels: Record<Intent, string> = {
+  demo: "Book a demo",
+  integration: "Discuss integration",
+  poc: "Request a proof of concept",
+};
+
 type Product = "search" | "commerce" | "both";
 const productLabels: Record<Product, string> = {
   search: "Intelligent search",
@@ -9,7 +16,13 @@ const productLabels: Record<Product, string> = {
   both: "Search and interactive commerce",
 };
 
-export function DemoRequest({ initialProduct }: { initialProduct: Product }) {
+export function DemoRequest({
+  initialProduct,
+  initialIntent = "demo",
+}: {
+  initialProduct: Product;
+  initialIntent?: Intent;
+}) {
   const [draft, setDraft] = useState<{ text: string; href: string } | null>(null);
   const [status, setStatus] = useState("");
   const draftRef = useRef<HTMLHeadingElement>(null);
@@ -17,6 +30,7 @@ export function DemoRequest({ initialProduct }: { initialProduct: Product }) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const product = String(data.get("product")) as Product;
+    const intent = String(data.get("intent")) as Intent;
     const name = String(data.get("name") ?? "").trim();
     const email = String(data.get("email") ?? "").trim();
     const company = String(data.get("company") ?? "").trim();
@@ -24,8 +38,8 @@ export function DemoRequest({ initialProduct }: { initialProduct: Product }) {
       setStatus("Please enter your name and company or website.");
       return;
     }
-    const text = `Hello Querix team,\n\nI'd like a demo of ${productLabels[product]}.\n\nName: ${name}\nWork email: ${email}\nCompany / website: ${company}\n\nWhat we'd like to explore:\n${String(data.get("message") ?? "").trim() || "Please help us explore the right fit for our catalog."}\n\nThank you,\n${name}`;
-    const subject = `Querix demo request — ${productLabels[product]}`;
+    const text = `Hello Querix team,\n\nRequest: ${intentLabels[intent]}\n\nI'd like to explore ${productLabels[product]}.\n\nName: ${name}\nWork email: ${email}\nCompany / website: ${company}\n\nWhat we'd like to explore:\n${String(data.get("message") ?? "").trim() || "Please help us explore the right fit for our catalog."}\n\nThank you,\n${name}`;
+    const subject = `Querix — ${intentLabels[intent]} — ${productLabels[product]}`;
     setDraft({
       text,
       href: `mailto:hello@querix.co?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`,
@@ -139,6 +153,14 @@ export function DemoRequest({ initialProduct }: { initialProduct: Product }) {
                   <option value="both">Search and interactive commerce</option>
                   <option value="search">Intelligent search</option>
                   <option value="commerce">Interactive commerce</option>
+                </select>
+              </label>
+              <label>
+                How can we help?
+                <select name="intent" defaultValue={initialIntent}>
+                  <option value="demo">Book a demo</option>
+                  <option value="integration">Discuss integration</option>
+                  <option value="poc">Request a proof of concept</option>
                 </select>
               </label>
               <label>

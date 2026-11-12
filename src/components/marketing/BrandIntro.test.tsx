@@ -80,6 +80,8 @@ it("does not replay on another page load within the same tab session", async () 
 it.each([
   "/commerce/login",
   "/demo/commerce",
+  "/clothing",
+  "/commerce/account",
   "/analytics/company/login",
   "/internal/analytics/login",
 ])("keeps the intro out of private workflows at %s", async (pathname) => {
@@ -112,13 +114,22 @@ it("restores keyboard access after Escape without later trapping Tab", async () 
   expect(document.documentElement.hasAttribute("data-qx-intro")).toBe(false);
 });
 
-it("shows the logo without visible controls", async () => {
+it("shows only the animated logo and keeps focus within the intro until it finishes", async () => {
   bootstrap();
   await render();
   const intro = host.querySelector('[role="dialog"]')!;
   expect(intro.querySelector(".qx-intro-logo")).not.toBeNull();
+  expect(intro.querySelector("image")?.getAttribute("href")).toBe("/querixai-logo.png");
+  expect(intro.querySelectorAll(".qx-intro-signals circle")).toHaveLength(3);
   expect(intro.querySelector("button")).toBeNull();
   expect(intro.textContent?.trim()).toBe("");
+  const tab = new KeyboardEvent("keydown", { key: "Tab", cancelable: true });
+  await act(async () => document.dispatchEvent(tab));
+  expect(document.activeElement).toBe(intro);
+  await act(async () => vi.advanceTimersByTime(2420));
+  expect(host.querySelector('[role="dialog"]')).toBeNull();
+  expect(host.querySelector(".qx-intro-content")?.hasAttribute("inert")).toBe(false);
+  expect(document.activeElement).toBe(host.querySelector(".qx-intro-content"));
 });
 
 it("dismisses immediately when reduced motion is enabled during playback", async () => {

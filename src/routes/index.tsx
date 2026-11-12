@@ -15,7 +15,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "From “I need” to “that’s it.” Search, refine, and compare products with Querix AI.",
+          "From e-commerce to interactive commerce. Discover, refine and compare products with QuerixAI.",
       },
     ],
   }),

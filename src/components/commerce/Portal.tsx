@@ -354,9 +354,14 @@ export function Workspace() {
               const Icon = ICONS[id];
               return (
                 <a className="portal-category" href={`/${id}`} key={id}>
-                  <span className="portal-icon">
-                    <Icon size={27} />
-                  </span>
+                  <div className="portal-category-top">
+                    <span className="portal-icon">
+                      <Icon size={24} />
+                    </span>
+                    <span className="portal-category-number">
+                      0{(Object.keys(STOREFRONTS) as StorefrontID[]).indexOf(id) + 1} / COLLECTION
+                    </span>
+                  </div>
                   <h2>{STOREFRONTS[id].label}</h2>
                   <p>{DESCRIPTIONS[id]}</p>
                   <span className="portal-category-link">

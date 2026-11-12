@@ -1,0 +1,23 @@
+/* One navy/blue palette for product workspaces and developer documentation. */
+.qx-workspace:is(.qx-analytics-theme, .qx-docs) {
+  --color-workspace-paper: #101e38;
+  --color-workspace-surface: #142641;
+  --color-workspace-wash: #1d3558;
+  --color-workspace-ink: #e8f0ff;
+  --color-workspace-body: #bdcee7;
+  --color-workspace-muted: #a9bdd8;
+  --color-workspace-line: #abc9ff26;
+  --color-workspace-blue: #65a5ff;
+  --color-workspace-tint: #65a5ff12;
+  --color-workspace-blue-line: #65a5ff4d;
+  --color-workspace-success: #68dfd1;
+  --color-workspace-success-tint: #18c7d912;
+  --color-workspace-success-line: #18c7d945;
+  --color-workspace-warning: #f4cd86;
+  --color-workspace-warning-tint: #f4cd8612;
+  --color-workspace-warning-line: #f4cd8640;
+  --color-workspace-danger: #ffa5b0;
+  --color-workspace-danger-tint: #ffa5b012;
+  --color-workspace-danger-line: #ffa5b040;
+  color-scheme: dark;
+}

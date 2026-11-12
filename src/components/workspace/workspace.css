@@ -1,3 +1,6 @@
+@import "./workspace-palette.css";
+@import "./analytics-theme.css";
+
 .qx-workspace {
   min-height: 100vh;
   color: var(--color-workspace-ink);

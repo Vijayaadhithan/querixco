@@ -1,10 +1,10 @@
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
-import { QuerixLogo } from "@/components/QuerixLogo";
+import { Brand } from "@/components/marketing/Brand";
 export function CommerceHeader({ demo = false }: { demo?: boolean }) {
   return (
     <header className="commerce-header">
       <a href="/" aria-label="Querix home">
-        <QuerixLogo size={36} className="h-8 w-auto" />
+        <Brand light />
       </a>
       <span className="commerce-header-divider" />
       <a className="commerce-header-label" href="/use-cases/conversational-commerce">
