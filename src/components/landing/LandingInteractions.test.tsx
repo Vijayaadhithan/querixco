@@ -8,14 +8,22 @@ import { IntelligenceDashboard } from "./IntelligenceDashboard";
 let root: Root;
 let host: HTMLDivElement;
 let motionChange: ((event: { matches: boolean }) => void) | undefined;
+let motionMatches = false;
 beforeEach(() => {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
+  motionMatches = false;
+  motionChange = undefined;
   vi.stubGlobal(
     "matchMedia",
     vi.fn(() => ({
-      matches: false,
+      get matches() {
+        return motionMatches;
+      },
       addEventListener: (_name: string, listener: typeof motionChange) => {
-        motionChange = listener;
+        motionChange = (event) => {
+          motionMatches = event.matches;
+          listener?.(event);
+        };
       },
       removeEventListener: vi.fn(),
     })),
@@ -126,6 +134,16 @@ it("pauses and resumes an in-progress draft without losing its position", async 
   await act(async () => button("Play preview").click());
   await tick(1600);
   expect(host.querySelectorAll(".qc-turn")).toHaveLength(2);
+});
+it("finishes a long playback interval without skipping or duplicating conversation turns", async () => {
+  vi.useFakeTimers();
+  await act(async () => root.render(<CommerceShowcase />));
+  await tick(30000);
+  expect(host.querySelectorAll(".qc-turn")).toHaveLength(3);
+  expect(host.querySelectorAll(".qc-comparison")).toHaveLength(1);
+  expect(host.querySelectorAll(".qc-products .commerce-product")).toHaveLength(4);
+  await tick(30000);
+  expect(host.querySelectorAll(".qc-turn")).toHaveLength(3);
 });
 it("leaves reduced-motion examples under visitor control", async () => {
   vi.useFakeTimers();

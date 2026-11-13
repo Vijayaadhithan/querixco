@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
@@ -25,6 +25,22 @@ const WAIT = 3200;
 const TYPE = 1600;
 const THINK = 700;
 const TURN_DURATION = WAIT + TYPE + THINK;
+const TICK = 50;
+const TURN_COUNT = 3;
+
+type PlaybackState = { revealed: number; elapsed: number };
+type PlaybackAction = { type: "tick" } | { type: "advance" } | { type: "reset"; animate: boolean };
+
+function playbackReducer(state: PlaybackState, action: PlaybackAction): PlaybackState {
+  if (action.type === "reset")
+    return { revealed: action.animate ? 0 : 1, elapsed: action.animate ? WAIT : 0 };
+  if (state.revealed >= TURN_COUNT) return state;
+  if (action.type === "advance") return { revealed: state.revealed + 1, elapsed: 0 };
+  const elapsed = state.elapsed + TICK;
+  return elapsed >= TURN_DURATION
+    ? { revealed: state.revealed + 1, elapsed: 0 }
+    : { ...state, elapsed };
+}
 
 export function CommerceShowcase() {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -32,9 +48,11 @@ export function CommerceShowcase() {
   const followTail = useRef(true);
   const { preview, canAdvance, reducedMotion } = usePreviewPlayback();
   const [scenario, setScenario] = useState<DiscoveryExampleID>("fashion");
-  const [revealed, setRevealed] = useState(1);
+  const [{ revealed, elapsed }, dispatchPlayback] = useReducer(playbackReducer, {
+    revealed: 1,
+    elapsed: 0,
+  });
   const [playing, setPlaying] = useState(true);
-  const [elapsed, setElapsed] = useState(0);
   const [away, setAway] = useState(false);
   const [selected, setSelected] = useState<Product | null>(null);
   const example = DISCOVERY_EXAMPLES[scenario];
@@ -49,15 +67,9 @@ export function CommerceShowcase() {
 
   useEffect(() => {
     if (!canAdvance || !playing || complete || selected) return;
-    const timer = window.setInterval(() => setElapsed((value) => value + 40), 40);
+    const timer = window.setInterval(() => dispatchPlayback({ type: "tick" }), TICK);
     return () => window.clearInterval(timer);
   }, [canAdvance, playing, complete, selected]);
-
-  useEffect(() => {
-    if (elapsed < TURN_DURATION) return;
-    setRevealed((value) => Math.min(value + 1, prompts.length));
-    setElapsed(0);
-  }, [elapsed, prompts.length]);
 
   useEffect(() => {
     if (followTail.current) thread.current?.scrollTo?.({ top: thread.current.scrollHeight });
@@ -70,15 +82,13 @@ export function CommerceShowcase() {
   function sendNext() {
     if (complete) return;
     setPlaying(false);
-    setRevealed((value) => Math.min(value + 1, prompts.length));
-    setElapsed(0);
+    dispatchPlayback({ type: "advance" });
   }
   function reset(nextScenario = scenario, autoplay = false) {
     const animate = autoplay && !reducedMotion;
     setScenario(nextScenario);
-    setRevealed(animate ? 0 : 1);
+    dispatchPlayback({ type: "reset", animate });
     setPlaying(animate);
-    setElapsed(animate ? WAIT : 0);
     followTail.current = true;
     setAway(false);
     if (!animate) thread.current?.scrollTo?.({ top: 0 });
