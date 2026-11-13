@@ -1,296 +1,303 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  ArrowRight,
+  ArrowDown,
+  ArrowUp,
+  ArrowUpRight,
   Check,
   ChevronRight,
-  FlaskConical,
   Pause,
   Play,
   RotateCcw,
-  Shirt,
-  ShoppingBag,
   X,
 } from "lucide-react";
 import { Brand } from "@/components/marketing/Brand";
-import { SAMPLE_PRODUCTS } from "@/features/commerce/sample";
+import { ProductCard } from "@/components/commerce/ProductCard";
+import {
+  DISCOVERY_EXAMPLES,
+  type DiscoveryExampleID,
+} from "@/features/commerce/discovery-examples";
 import { attributeText, productPrice, type Product } from "@/features/commerce/model";
 import { usePreviewPlayback } from "./use-preview-playback";
+import "@/components/commerce/commerce.css";
+import "./commerce-preview.css";
 
-const sampleProducts = (ids: string[]) => SAMPLE_PRODUCTS.filter((p) => ids.includes(p.product_id));
-const examples = {
-  fashion: {
-    label: "Fashion",
-    icon: Shirt,
-    query: "A cotton shirt for work under $40",
-    budget: 40,
-    refinedBudget: 30,
-    preference: "Cotton",
-    category: "Shirts",
-    initial: sampleProducts(["sample:f1", "sample:f2"]),
-    refined: sampleProducts(["sample:f2", "sample:f3"]),
-    answer: "Two cotton shirts, both within your budget.",
-    kept: "Cotton preference kept.",
-    fields: [
-      ["color", "Colour"],
-      ["material", "Material"],
-    ],
-    explanation: "Category, material and budget become clear product requirements.",
-  },
-  beauty: {
-    label: "Beauty",
-    icon: FlaskConical,
-    query: "A fragrance-free moisturizer under $30",
-    budget: 30,
-    refinedBudget: 20,
-    preference: "Fragrance-free",
-    category: "Moisturizer",
-    initial: sampleProducts(["sample:m1", "sample:m2"]),
-    refined: sampleProducts(["sample:m4", "sample:m5"]),
-    answer: "Two fragrance-free options, within your budget.",
-    kept: "Fragrance-free preference kept.",
-    fields: [
-      ["skin_type", "Skin type"],
-      ["volume", "Volume"],
-    ],
-    explanation: "Product type, preferences and budget become clear product requirements.",
-  },
-} as const;
+const WAIT = 3200;
+const TYPE = 1600;
+const THINK = 700;
+const TURN_DURATION = WAIT + TYPE + THINK;
 
 export function CommerceShowcase() {
   const dialog = useRef<HTMLDialogElement>(null);
-  const { preview, canAdvance } = usePreviewPlayback();
-  const [scenario, setScenario] = useState<keyof typeof examples>("fashion");
-  const [step, setStep] = useState(0);
+  const thread = useRef<HTMLDivElement>(null);
+  const followTail = useRef(true);
+  const { preview, canAdvance, reducedMotion } = usePreviewPlayback();
+  const [scenario, setScenario] = useState<DiscoveryExampleID>("fashion");
+  const [revealed, setRevealed] = useState(1);
   const [playing, setPlaying] = useState(true);
+  const [elapsed, setElapsed] = useState(0);
+  const [away, setAway] = useState(false);
   const [selected, setSelected] = useState<Product | null>(null);
-  const [replay, setReplay] = useState(0);
-  const example = examples[scenario];
-  const activePlayback = playing && step < 2;
-  const refined = step > 0;
-  const products = refined ? example.refined : example.initial;
+  const example = DISCOVERY_EXAMPLES[scenario];
+  const prompts = [example.query, `Keep it under $${example.refinedBudget}`, "Compare these two"];
+  const replies = [example.answer, example.refinement, example.comparison];
+  const complete = revealed === prompts.length;
+  const typing = !complete && elapsed >= WAIT && elapsed < WAIT + TYPE;
+  const thinking = !complete && elapsed >= WAIT + TYPE;
+  const draft = typing
+    ? prompts[revealed].slice(0, Math.ceil(((elapsed - WAIT) / TYPE) * prompts[revealed].length))
+    : "";
 
   useEffect(() => {
-    if (!canAdvance || !playing || step >= 2 || selected) return;
-    const timer = window.setTimeout(() => setStep((value) => Math.min(value + 1, 2)), 6500);
-    return () => window.clearTimeout(timer);
-  }, [canAdvance, playing, step, selected, replay]);
+    if (!canAdvance || !playing || complete || selected) return;
+    const timer = window.setInterval(() => setElapsed((value) => value + 40), 40);
+    return () => window.clearInterval(timer);
+  }, [canAdvance, playing, complete, selected]);
+
+  useEffect(() => {
+    if (elapsed < TURN_DURATION) return;
+    setRevealed((value) => Math.min(value + 1, prompts.length));
+    setElapsed(0);
+  }, [elapsed, prompts.length]);
+
+  useEffect(() => {
+    if (followTail.current) thread.current?.scrollTo?.({ top: thread.current.scrollHeight });
+  }, [revealed, thinking]);
 
   useEffect(() => {
     if (selected) dialog.current?.showModal();
   }, [selected]);
-  function advance(value: number) {
-    setStep(value);
+
+  function sendNext() {
+    if (complete) return;
+    setPlaying(false);
+    setRevealed((value) => Math.min(value + 1, prompts.length));
+    setElapsed(0);
+  }
+  function reset(nextScenario = scenario, autoplay = false) {
+    const animate = autoplay && !reducedMotion;
+    setScenario(nextScenario);
+    setRevealed(animate ? 0 : 1);
+    setPlaying(animate);
+    setElapsed(animate ? WAIT : 0);
+    followTail.current = true;
+    setAway(false);
+    if (!animate) thread.current?.scrollTo?.({ top: 0 });
+  }
+  function showDetails(product: Product) {
+    setSelected(product);
     setPlaying(false);
   }
 
   return (
-    <div ref={preview} className="ql-showcase" id="commerce-preview" tabIndex={-1}>
-      <div className="ql-preview-caption">
-        <span>
-          <i /> INTERACTIVE PREVIEW
-        </span>
-        <span>Sample catalogue</span>
+    <div ref={preview} className="commerce-app qc-preview" id="commerce-preview" tabIndex={-1}>
+      <div className="qc-caption">
+        <span>THE COMMERCE EXPERIENCE</span>
+        <span>Guided sample</span>
       </div>
-      <div className="ql-scenario-switch" role="group" aria-label="Shopping example">
-        <span>Try your industry</span>
-        {Object.entries(examples).map(([key, { label, icon: Icon }]) => (
-          <button
-            key={key}
-            aria-pressed={scenario === key}
-            onClick={() => {
-              setScenario(key as keyof typeof examples);
-              setStep(0);
-              setPlaying(false);
-              setReplay(replay + 1);
+      <div className="qc-window">
+        <header className="qc-header">
+          <div>
+            <Brand light markOnly />
+            <span>
+              <strong>Shopping with Querix</strong>
+              <small>Your catalog, in conversation</small>
+            </span>
+          </div>
+          <div className="qc-playback">
+            {!reducedMotion && (
+              <button
+                type="button"
+                aria-label={playing && !complete ? "Pause preview" : "Play preview"}
+                aria-pressed={playing && !complete}
+                onClick={() => {
+                  if (complete) reset(scenario, true);
+                  else setPlaying(!playing);
+                }}
+              >
+                {playing && !complete ? <Pause size={14} /> : <Play size={14} />}
+              </button>
+            )}
+            <button type="button" aria-label="Restart preview" onClick={() => reset()}>
+              <RotateCcw size={14} />
+            </button>
+          </div>
+        </header>
+        <div className="qc-examples" role="group" aria-label="Shopping example">
+          <span>Explore a conversation</span>
+          {Object.entries(DISCOVERY_EXAMPLES).map(([key, item]) => (
+            <button
+              key={key}
+              type="button"
+              aria-pressed={scenario === key}
+              onClick={() => reset(key as DiscoveryExampleID)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+        <div
+          ref={thread}
+          className="qc-thread"
+          role="log"
+          aria-label="Sample shopping conversation"
+          aria-live="off"
+          onScroll={() => {
+            const node = thread.current;
+            if (!node) return;
+            followTail.current = node.scrollHeight - node.scrollTop - node.clientHeight < 60;
+            setAway(!followTail.current);
+          }}
+          onLoadCapture={() => {
+            if (followTail.current)
+              thread.current?.scrollTo?.({ top: thread.current.scrollHeight });
+          }}
+        >
+          {prompts.slice(0, revealed).map((prompt, index) => (
+            <section className="qc-turn" data-turn={index} key={`${scenario}-${index}`}>
+              <div className="qc-user">
+                <span className="qx-sr-only">You: </span>
+                {prompt}
+              </div>
+              <div className="qc-reply">
+                <span className="qc-avatar">
+                  <Brand light markOnly />
+                </span>
+                <div>
+                  <p>{replies[index]}</p>
+                  {index < 2 ? (
+                    <>
+                      <div className="qc-preferences">
+                        <span>
+                          <Check size={10} />
+                          {example.preference}
+                        </span>
+                        <span>Under ${index === 0 ? example.budget : example.refinedBudget}</span>
+                      </div>
+                      <div className="qc-products">
+                        {(index === 0 ? example.initial : example.refined).map((product) => (
+                          <ProductCard
+                            key={product.product_id}
+                            product={product}
+                            sample
+                            onDetails={() => showDetails(product)}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <PreviewComparison
+                      products={example.refined}
+                      fields={example.fields}
+                      onSelect={showDetails}
+                    />
+                  )}
+                </div>
+              </div>
+            </section>
+          ))}
+          {thinking && (
+            <section className="qc-turn qc-incoming">
+              <div className="qc-user">{prompts[revealed]}</div>
+              <div className="qc-reply">
+                <span className="qc-avatar">
+                  <Brand light markOnly />
+                </span>
+                <span className="qc-typing" role="status" aria-label="Querix is preparing a reply">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+              </div>
+            </section>
+          )}
+        </div>
+        <div className="qc-composer-dock">
+          {away && (
+            <button
+              type="button"
+              className="qc-jump"
+              aria-label="Jump to latest example"
+              onClick={() => {
+                followTail.current = true;
+                setAway(false);
+                thread.current?.scrollTo?.({
+                  top: thread.current.scrollHeight,
+                  behavior: "smooth",
+                });
+              }}
+            >
+              <ArrowDown size={14} /> Latest message
+            </button>
+          )}
+          {!complete && (
+            <button type="button" className="qc-suggestion" onClick={sendNext}>
+              {prompts[revealed]}
+              <ChevronRight size={13} />
+            </button>
+          )}
+          <form
+            className="qc-composer"
+            onSubmit={(event) => {
+              event.preventDefault();
+              sendNext();
             }}
           >
-            <Icon size={14} />
-            {label}
-          </button>
-        ))}
-      </div>
-      <div className="ql-storefront">
-        <div className="ql-storefront-header">
-          <ShoppingBag size={17} />
-          <strong>The everyday store</strong>
-          <span>
-            Powered by <Brand light />
-          </span>
-        </div>
-        <div className="ql-conversation">
-          <div className="ql-shopper">
-            <span>{example.query}</span>
-            <span className="ql-avatar">You</span>
-          </div>
-          <div className="ql-assistant">
-            <Brand markOnly />
-            <p>{refined ? `Budget updated. ${example.kept}` : example.answer}</p>
-          </div>
-          <div className="ql-filter-chips">
-            <span>
-              <Check size={11} />
-              {example.preference}
-            </span>
-            <span>
-              <Check size={11} />
-              {example.category}
-            </span>
-            <span className={refined ? "is-changed" : ""}>
-              <Check size={11} />
-              Under ${refined ? example.refinedBudget : example.budget}
-            </span>
-          </div>
-          <div className="ql-product-area">
-            {step === 2 ? (
-              <PreviewComparison
-                products={products}
-                fields={example.fields}
-                onSelect={(p) => {
-                  setSelected(p);
-                  setPlaying(false);
-                }}
-              />
-            ) : (
-              <div className="ql-product-grid" key={`${scenario}-${refined}-${replay}`}>
-                {products.map((p) => (
-                  <button
-                    className="ql-product"
-                    key={p.product_id}
-                    onClick={() => {
-                      setSelected(p);
-                      setPlaying(false);
-                    }}
-                    aria-label={`View ${p.title}`}
-                  >
-                    <div className="ql-product-art">
-                      <img src={p.image_urls?.[0]} alt={p.title} width="280" height="280" />
-                      <span>{example.preference}</span>
-                    </div>
-                    <div className="ql-product-info">
-                      <span>{p.brand?.value}</span>
-                      <h3>{p.title}</h3>
-                      <div>
-                        <strong>{productPrice(p)}</strong>
-                        <span>
-                          Details <ChevronRight size={12} />
-                        </span>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="ql-stage-feedback">
-            <div className="ql-journey-feedback" key={`${scenario}-${step}`}>
-              <span>
-                <Check size={14} />
-                {step === 0
-                  ? "Understands the request"
-                  : step === 1
-                    ? "Keeps the context"
-                    : "Makes the details clear"}
-              </span>
-              <p>
-                {step === 0
-                  ? example.explanation
-                  : step === 1
-                    ? `“Keep it under $${example.refinedBudget} instead.” ${example.kept}`
-                    : `Compare supplied attributes side by side. ${example.kept}`}
-              </p>
-            </div>
-          </div>
-          <div className="ql-prompt">
-            <span>Try the next step</span>
-            <button onClick={() => advance(step === 0 ? 1 : step === 1 ? 2 : 0)}>
-              {step === 0
-                ? `Keep it under $${example.refinedBudget}`
-                : step === 1
-                  ? "Compare these two"
-                  : "Start again"}
-              <ArrowRight size={15} />
-            </button>
-          </div>
-        </div>
-        <div className="ql-showcase-bottom">
-          <div className="ql-steps" role="group" aria-label="Shopping journey">
-            {["Discover", "Refine", "Compare"].map((label, i) => (
-              <button key={label} aria-pressed={step === i} onClick={() => advance(i)}>
-                <span>{i + 1}</span>
-                {label}
+            <output className={typing ? "is-typing" : ""} aria-label="Next guided shopping message">
+              {complete
+                ? "Try another example, or explore your own catalog."
+                : thinking
+                  ? "Querix is replying…"
+                  : draft || "Choose a suggested follow-up…"}
+            </output>
+            {complete ? (
+              <button
+                type="button"
+                aria-label="Replay conversation"
+                onClick={() => reset(scenario, true)}
+              >
+                <RotateCcw size={15} />
               </button>
-            ))}
-          </div>
-          <div className="ql-player">
-            <button
-              aria-label={activePlayback ? "Pause preview" : "Play preview"}
-              aria-pressed={activePlayback}
-              onClick={() => {
-                if (step === 2) setStep(0);
-                setPlaying(!activePlayback);
-              }}
-            >
-              {activePlayback ? <Pause size={13} /> : <Play size={13} />}
-            </button>
-            <button
-              aria-label="Restart preview"
-              onClick={() => {
-                setStep(0);
-                setPlaying(false);
-                setReplay(replay + 1);
-              }}
-            >
-              <RotateCcw size={13} />
-            </button>
-          </div>
+            ) : (
+              <button type="submit" aria-label="Send next example">
+                <ArrowUp size={16} />
+              </button>
+            )}
+          </form>
+          <p className="qc-guidance">Guided example · Sample products and prices</p>
         </div>
-        {selected && (
-          <dialog
-            ref={dialog}
-            className="ql-product-detail"
-            aria-label="Sample product details"
-            onClose={() => setSelected(null)}
-          >
-            <button
-              className="ql-detail-close"
-              onClick={() => dialog.current?.close()}
-              aria-label="Close product details"
-              autoFocus
-            >
-              <X size={18} />
-            </button>
-            <img src={selected.image_urls?.[0]} alt={selected.title} width="280" height="280" />
-            <p className="qx-eyebrow">SAMPLE CATALOGUE</p>
-            <h3>{selected.title}</h3>
-            <strong>{productPrice(selected)}</strong>
-            <dl>
-              {Object.entries(selected.attributes).map(([key, value]) => (
-                <div key={key}>
-                  <dt>{key.replaceAll("_", " ")}</dt>
-                  <dd>{attributeText(value?.value)}</dd>
-                </div>
-              ))}
-            </dl>
-            <button className="qx-button" onClick={() => dialog.current?.close()}>
-              Back to discovery <ArrowRight size={15} />
-            </button>
-          </dialog>
-        )}
       </div>
-      <div className="ql-preview-note">
-        <span>Illustrative products and prices.</span>
+      <div className="qc-footer">
+        <span>Discover. Refine. Compare.</span>
         <a href="/commerce/login">
-          Open live demo <ArrowRight size={12} />
+          Try the live demo <ArrowUpRight size={12} />
         </a>
       </div>
       <span className="qx-sr-only" role="status">
-        {example.label} preview.{" "}
-        {step === 0
-          ? `Two products under $${example.budget}.`
-          : step === 1
-            ? `Budget updated. Two products under $${example.refinedBudget}. ${example.kept}`
-            : `Comparison of two products under $${example.refinedBudget} displayed.`}
+        {example.label} example. {revealed} of 3 replies shown.
+        {revealed > 1 ? ` ${example.preference} preference kept.` : ""}
       </span>
+      {selected && (
+        <dialog
+          ref={dialog}
+          className="qc-detail"
+          aria-label="Sample product details"
+          onClose={() => setSelected(null)}
+        >
+          <button
+            type="button"
+            className="qc-detail-close"
+            aria-label="Close product details"
+            onClick={() => dialog.current?.close()}
+            autoFocus
+          >
+            <X size={18} />
+          </button>
+          <ProductCard product={selected} sample details />
+          <button type="button" className="qc-detail-back" onClick={() => dialog.current?.close()}>
+            Back to the conversation
+          </button>
+        </dialog>
+      )}
     </div>
   );
 }
@@ -302,39 +309,46 @@ function PreviewComparison({
 }: {
   products: readonly Product[];
   fields: readonly (readonly [string, string])[];
-  onSelect: (p: Product) => void;
+  onSelect: (product: Product) => void;
 }) {
   return (
-    <div className="ql-comparison" role="table" aria-label="Product comparison">
-      <div role="row">
-        <span role="columnheader">Compare</span>
-        {products.map((p) => (
-          <strong key={p.product_id} role="columnheader">
-            <button aria-label={`View ${p.title}`} onClick={() => onSelect(p)}>
-              {p.title}
-              <ChevronRight size={12} />
-            </button>
-          </strong>
-        ))}
-      </div>
-      <div role="row">
-        <span role="rowheader">Price</span>
-        {products.map((p) => (
-          <span key={p.product_id} role="cell">
-            {productPrice(p)}
-          </span>
-        ))}
-      </div>
-      {fields.map(([field, label]) => (
-        <div role="row" key={field}>
-          <span role="rowheader">{label}</span>
-          {products.map((p) => (
-            <span key={p.product_id} role="cell">
-              {attributeText(p.attributes[field]?.value)}
-            </span>
+    <div className="qc-comparison-wrap">
+      <table className="qc-comparison">
+        <caption className="qx-sr-only">Product comparison</caption>
+        <thead>
+          <tr>
+            <th scope="col">Compare</th>
+            {products.map((product) => (
+              <th scope="col" key={product.product_id}>
+                <button
+                  type="button"
+                  onClick={() => onSelect(product)}
+                  aria-label={`View ${product.title}`}
+                >
+                  {product.title}
+                  <ChevronRight size={12} />
+                </button>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Price</th>
+            {products.map((product) => (
+              <td key={product.product_id}>{productPrice(product)}</td>
+            ))}
+          </tr>
+          {fields.map(([field, label]) => (
+            <tr key={field}>
+              <th scope="row">{label}</th>
+              {products.map((product) => (
+                <td key={product.product_id}>{attributeText(product.attributes[field]?.value)}</td>
+              ))}
+            </tr>
           ))}
-        </div>
-      ))}
+        </tbody>
+      </table>
     </div>
   );
 }

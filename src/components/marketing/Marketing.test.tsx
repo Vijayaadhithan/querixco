@@ -18,8 +18,8 @@ afterEach(async () => {
   vi.unstubAllGlobals();
 });
 function button(label: string) {
-  const found = [...element.querySelectorAll("button")].find((item) =>
-    item.textContent?.includes(label),
+  const found = [...element.querySelectorAll("button")].find(
+    (item) => item.textContent?.includes(label) || item.getAttribute("aria-label") === label,
   );
   if (!found) throw new Error(`Missing button: ${label}`);
   return found;
@@ -87,24 +87,27 @@ it("keeps the readable draft available when clipboard access fails", async () =>
     (element.querySelector(".qx-email-draft textarea") as HTMLTextAreaElement).value,
   ).toContain("Example Store");
 });
-it("supports refinement, comparison, restart, and search without an AI request", async () => {
+it("uses a conversational thread for commerce and catalog results for search", async () => {
   const fetchMock = vi.fn();
   vi.stubGlobal("fetch", fetchMock);
   await act(async () => root.render(<ProductExperience />));
   await act(async () => button("Keep it under $30").click());
-  expect(element.textContent).toContain("Budget updated");
-  expect(element.querySelector(".qx-demo-products")?.textContent).not.toContain("$38");
+  expect(element.querySelectorAll(".qc-turn")).toHaveLength(2);
+  expect(element.querySelector('[data-turn="1"]')?.textContent).toContain("$22.00");
   await act(async () => button("Compare these two").click());
-  expect(element.querySelector(".qx-mini-comparison")?.textContent).toContain("Structured collar");
-  await act(async () => button("Restart").click());
-  expect(element.querySelector(".qx-mini-comparison")).toBeNull();
-  expect(element.querySelector(".qx-demo-products")?.textContent).toContain("$38");
+  expect(element.querySelector(".qc-comparison")?.textContent).toContain("cotton");
+  await act(async () => button("Restart preview").click());
+  expect(element.querySelector(".qc-comparison")).toBeNull();
+  expect(element.querySelector('[data-turn="0"]')?.textContent).toContain("$36.00");
   await act(async () => button("Intelligent search").click());
+  expect(element.querySelector(".qc-thread")).toBeNull();
   expect(button("Intelligent search").getAttribute("aria-pressed")).toBe("true");
   await act(async () => button("Narrow the budget").click());
   expect(element.querySelector(".qx-filter-line")?.textContent).toContain("Under $30");
+  expect(element.querySelector(".qs-products")?.textContent).toContain("$22.00");
   expect(fetchMock).not.toHaveBeenCalled();
 });
+
 it("opens accessible mobile navigation with a clearly separate demo sign-in", async () => {
   await act(async () => root.render(<DemoRequest initialProduct="both" />));
   const menu = element.querySelector('button[aria-label="Open menu"]') as HTMLButtonElement;
@@ -117,19 +120,18 @@ it("opens accessible mobile navigation with a clearly separate demo sign-in", as
   expect(element.querySelector("#qx-mobile-nav")).toBeNull();
 });
 
-it("lets visitors pause, change search scenarios, and replay without losing the selected example", async () => {
+it("uses the canonical sample catalog when refining and resetting a selected search example", async () => {
   await act(async () => root.render(<ProductExperience initialMode="search" />));
-  await act(async () => button("Pause").click());
-  expect(element.querySelector(".qx-experience")?.getAttribute("data-paused")).toBe("true");
   await act(async () => button("Skincare").click());
   expect(element.querySelector(".qx-query")?.textContent).toContain("fragrance-free moisturizer");
+  expect(element.querySelector(".qs-products")?.textContent).toContain("Daily comfort cream");
   await act(async () => button("Narrow the budget to $20").click());
   expect(element.querySelector(".qx-filter-line")?.textContent).toContain("Under $20");
-  expect(element.querySelector(".qx-demo-products")?.textContent).toContain("$18");
-  await act(async () => button("Resume").click());
-  expect(element.querySelector(".qx-experience")?.getAttribute("data-paused")).toBe("false");
+  expect(element.querySelector(".qs-products")?.textContent).toContain("$16.00");
+  expect(element.querySelector(".qs-products")?.textContent).toContain("$9.00");
   await act(async () => button("Restart").click());
   expect(element.querySelector(".qx-filter-line")?.textContent).toContain("Under $30");
+  expect(element.querySelector(".qs-products")?.textContent).toContain("$24.00");
   expect(button("Skincare").getAttribute("aria-pressed")).toBe("true");
 });
 

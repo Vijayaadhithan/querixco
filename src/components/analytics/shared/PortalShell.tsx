@@ -46,6 +46,16 @@ export function PortalShell({ audience, company, username, current, children }: 
             </p>
             <span>{username}</span>
           </div>
+          <span className="analytics-workspace-label">
+            {internal ? "Internal workspace" : "Company workspace"}
+          </span>
+        </div>
+      </header>
+      <div className="analytics-layout">
+        <aside className="analytics-sidebar">
+          <p className="analytics-sidebar-label">
+            {internal ? "OPERATIONS" : "SEARCH INTELLIGENCE"}
+          </p>
           <nav className="qx-workspace-nav" aria-label="Analytics portal">
             {internal && (
               <a
@@ -76,10 +86,19 @@ export function PortalShell({ audience, company, username, current, children }: 
               <span>Log out</span>
             </button>
           </nav>
+          <div className="analytics-sidebar-note">
+            <BarChart3 size={20} aria-hidden="true" />
+            <strong>{internal ? "Request diagnostics" : "Company analytics"}</strong>
+            <p>
+              {internal
+                ? "Review request outcomes and investigate performance."
+                : "Explore searches, results, and catalog reports."}
+            </p>
+          </div>
+        </aside>
+        <div id="analytics-content" tabIndex={-1}>
+          {children}
         </div>
-      </header>
-      <div id="analytics-content" tabIndex={-1}>
-        {children}
       </div>
     </div>
   );

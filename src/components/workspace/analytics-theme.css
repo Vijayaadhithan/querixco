@@ -1,8 +1,8 @@
-/* Shared product palette, scoped to authenticated analytics and its access screens. */
+/* Analytics prioritizes readable data and a stable workspace navigation. */
 .qx-workspace.qx-analytics-theme {
-  --analytics-series-cyan: #18c7d9;
-  --analytics-series-soft: #a9c9ff;
-  --analytics-series-warning: #f4cd86;
+  --analytics-series-cyan: #84d8ba;
+  --analytics-series-soft: #a8bffa;
+  --analytics-series-warning: #f0c580;
   color-scheme: dark;
 }
 .qx-analytics-theme input,
@@ -11,73 +11,194 @@
   color-scheme: dark;
 }
 .qx-analytics-theme .qx-workspace-header {
-  background: #101e38ed;
+  background: #111f33ed;
 }
 .qx-analytics-theme .qx-workspace-header-inner {
-  min-height: 84px;
+  min-height: 78px;
+  max-width: none;
+  padding-inline: 28px;
+}
+.analytics-workspace-label {
+  margin-left: auto;
+  color: var(--color-workspace-muted);
+  font-size: 12px;
+  padding: 7px 11px;
+  border: 1px solid var(--color-workspace-line);
+  border-radius: 7px;
+  background: #111f33;
+}
+.analytics-layout {
+  display: grid;
+  grid-template-columns: 216px minmax(0, 1fr);
+}
+.analytics-layout #analytics-content {
+  min-width: 0;
+}
+.analytics-sidebar {
+  position: sticky;
+  top: 78px;
+  height: calc(100dvh - 78px);
+  display: flex;
+  flex-direction: column;
+  padding: 32px 16px 24px;
+  background: #111f33;
+  border-right: 1px solid var(--color-workspace-line);
+}
+.analytics-sidebar-label {
+  color: var(--color-workspace-muted);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  padding: 0 12px 18px;
+}
+.analytics-sidebar .qx-workspace-nav {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  flex: 1;
+}
+.analytics-sidebar .qx-workspace-nav a,
+.analytics-sidebar .qx-workspace-nav button {
+  justify-content: flex-start;
+  font-size: 13px;
+  min-height: 44px;
+  padding: 11px 12px;
+  border-radius: 8px;
+}
+.analytics-sidebar .qx-workspace-nav > button {
+  margin-top: auto;
+  color: var(--color-workspace-muted);
 }
 .qx-analytics-theme .qx-workspace-nav a[aria-current="page"] {
-  background: #245bdb2b;
-  border-color: #65a5ff4d;
-  color: #d2e4ff;
+  background: #1a2b45;
+  border-color: #2b3d56;
+  color: #8db5ff;
+}
+.analytics-sidebar-note {
+  border-top: 1px solid var(--color-workspace-line);
+  padding: 24px 12px 0;
+  margin-top: 24px;
+}
+.analytics-sidebar-note > svg {
+  color: var(--color-workspace-blue);
+  margin-bottom: 14px;
+}
+.analytics-sidebar-note strong {
+  display: block;
+  font-size: 12px;
+  line-height: 1.7;
+  font-weight: 600;
+}
+.analytics-sidebar-note p {
+  color: var(--color-workspace-muted);
+  font-size: 11px;
+  line-height: 1.8;
+  margin-top: 7px;
 }
 .qx-analytics-theme .qx-workspace-skip {
-  background: #e8f0ff;
-  color: #101e38;
+  background: #111f33;
+  color: var(--color-workspace-ink);
 }
 .qx-workspace.qx-analytics-theme .qx-action {
   background: #245bdb;
   color: white;
+  border-radius: 8px;
 }
 .qx-workspace.qx-analytics-theme .qx-action:hover {
-  background: #316aee;
+  background: #1949ba;
 }
 .qx-analytics-theme .qx-auth-story {
-  background: radial-gradient(ellipse at 0% 80%, #245bdb24, transparent 70%), #142641;
+  background: radial-gradient(ellipse at 0% 90%, #245bdb50, transparent 75%), #10264b;
+  color: white;
+  border: 0;
 }
-.qx-analytics-theme .qx-auth-caption {
-  color: #65a5ff;
+.qx-analytics-theme .qx-auth-story h2 {
+  color: white;
+  font-weight: 600;
+}
+.qx-analytics-theme .qx-auth-story h2 em {
+  color: #91baff;
+}
+.qx-analytics-theme .qx-auth-story p {
+  color: #c1d1ea;
+}
+.qx-analytics-theme .qx-auth-story .qx-auth-caption {
+  color: #9cbfff;
 }
 .qx-analytics-theme .qx-auth-form > section {
-  padding: 32px;
+  padding: 36px;
   max-width: 460px;
-  background: var(--color-workspace-surface);
+  background: #111f33;
   border: 1px solid var(--color-workspace-line);
-  border-radius: 12px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px -35px #173b7530;
+}
+.qx-analytics-theme .analytics-page-heading {
+  margin-bottom: 24px;
+}
+.qx-analytics-theme .analytics-page-heading h1 {
+  font-size: 32px;
+  font-weight: 600;
+}
+.qx-analytics-theme .analytics-eyebrow {
+  letter-spacing: 1.5px;
+  font-size: 10px;
 }
 .qx-analytics-theme .analytics-filterbar,
 .qx-analytics-theme .analytics-summary-card,
 .qx-analytics-theme .analytics-report-picker select {
-  background: var(--color-workspace-surface);
+  background: #111f33;
 }
 .qx-analytics-theme .analytics-filterbar {
-  border-radius: 10px;
-  padding: 18px;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 3px 10px #173b7503;
 }
 .qx-analytics-theme .analytics-summary-card {
-  border-radius: 10px;
-  border-top: 2px solid #65a5ff66;
-  box-shadow: 0 10px 28px -22px #0009;
+  border-radius: 14px;
+  border: 1px solid var(--color-workspace-line);
+  box-shadow: 0 5px 20px -12px #173b7518;
+  padding: 24px;
 }
 .qx-analytics-theme .analytics-summary-card > strong {
-  color: #e8f0ff;
+  color: var(--color-workspace-ink);
   font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 34px;
+  letter-spacing: -1.4px;
+}
+.qx-analytics-theme .analytics-summary-card > span:first-child {
+  color: var(--color-workspace-body);
+}
+.qx-analytics-theme .analytics-summary-card > a {
+  color: var(--color-workspace-blue);
 }
 .qx-analytics-theme .analytics-filter-chips button {
-  color: #b7d4ff;
+  color: #8db5ff;
 }
 .qx-analytics-theme .analytics-filter-chips .analytics-clear {
   color: var(--color-workspace-muted);
 }
 .qx-analytics-theme tbody tr:hover {
-  background: #1d355880;
+  background: #1a2b45;
 }
 .qx-analytics-theme .analytics-view-tabs {
-  gap: 5px;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.qx-analytics-theme .analytics-view-tabs button {
+  font-size: 13px;
+  padding: 12px 2px;
 }
 .qx-analytics-theme .analytics-view-tabs button[aria-pressed="true"] {
-  background: #65a5ff0d;
-  color: #b9d6ff;
+  background: transparent;
+  color: #8db5ff;
+  border-bottom-color: #245bdb;
+  font-weight: 600;
 }
 .qx-analytics-theme .analytics-filter-toggle:hover,
 .qx-analytics-theme .analytics-filter-actions button:hover,
@@ -88,9 +209,39 @@
   border-color: var(--color-workspace-blue-line);
   color: var(--color-workspace-blue);
 }
+.qx-analytics-theme .qx-surface {
+  border-radius: 14px;
+  box-shadow: 0 5px 20px -12px #173b7514;
+}
+.qx-analytics-theme .analytics-selection-notice {
+  border-radius: 10px;
+}
 .qx-analytics-theme .qx-state .qx-surface,
 .qx-analytics-theme.qx-state .qx-surface {
-  box-shadow: 0 24px 70px -35px #0009;
+  box-shadow: 0 24px 70px -35px #173b7526;
+}
+@media (max-width: 1100px) {
+  .analytics-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .analytics-sidebar {
+    position: static;
+    height: auto;
+    padding: 10px 24px;
+    border-right: 0;
+    border-bottom: 1px solid var(--color-workspace-line);
+  }
+  .analytics-sidebar-label,
+  .analytics-sidebar-note {
+    display: none;
+  }
+  .analytics-sidebar .qx-workspace-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .analytics-sidebar .qx-workspace-nav > button {
+    margin: 0 0 0 auto;
+  }
 }
 @media (max-width: 640px) {
   .qx-analytics-theme .qx-auth-form {
@@ -100,13 +251,43 @@
     padding: 25px 20px;
   }
   .qx-analytics-theme .qx-workspace-header-inner {
-    min-height: 70px;
+    min-height: 72px;
+    padding: 16px 20px;
+    flex-wrap: nowrap;
   }
   .qx-analytics-theme .qx-workspace-identity {
+    margin-left: auto;
     max-width: calc(100% - 150px);
   }
   .qx-analytics-theme .qx-workspace-header .qx-logo {
     width: 128px;
     height: 37px;
+  }
+  .analytics-workspace-label {
+    display: none;
+  }
+  .analytics-sidebar {
+    padding-inline: 12px;
+  }
+  .analytics-sidebar .qx-workspace-nav {
+    gap: 3px;
+  }
+  .analytics-sidebar .qx-workspace-nav a,
+  .analytics-sidebar .qx-workspace-nav button {
+    padding-inline: 9px;
+    font-size: 11px;
+    gap: 6px;
+  }
+  .qx-analytics-theme .analytics-summary-card {
+    padding: 18px;
+  }
+  .qx-analytics-theme .analytics-summary-card > strong {
+    font-size: 29px;
+  }
+  .qx-analytics-theme .analytics-view-tabs {
+    gap: 13px;
+  }
+  .qx-analytics-theme .analytics-view-tabs button {
+    font-size: 12px;
   }
 }

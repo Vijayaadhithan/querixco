@@ -1,19 +1,19 @@
 .commerce-app,
 .portal-dialog {
-  --c-ink: #e8f0ff;
-  --c-muted: #a9bdd8;
-  --c-line: #abc9ff26;
-  --c-accent: #245bdb;
-  --c-link: #65a5ff;
-  --c-paper: #101e38;
-  --c-surface: #142641;
-  --c-tint: #1d3558;
-  --c-danger: #ffa5b0;
-  --c-danger-tint: #ffa5b012;
-  --c-danger-line: #ffa5b040;
-  --c-warning: #f4cd86;
-  --c-warning-tint: #f4cd8612;
-  --c-warning-line: #f4cd8640;
+  --c-ink: #e8eef8;
+  --c-muted: #a8b6cd;
+  --c-line: #2b3d56;
+  --c-accent: #2f68e6;
+  --c-link: #8db5ff;
+  --c-paper: #0b1423;
+  --c-surface: #111f33;
+  --c-tint: #1a2b45;
+  --c-danger: #ffa0b0;
+  --c-danger-tint: #35232e;
+  --c-danger-line: #6e394b;
+  --c-warning: #f0c580;
+  --c-warning-tint: #352d20;
+  --c-warning-line: #685333;
   color-scheme: dark;
 }
 .commerce-app {
@@ -599,7 +599,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  mix-blend-mode: multiply;
+  mix-blend-mode: normal;
 }
 .commerce-product-number {
   position: absolute;
@@ -1025,7 +1025,7 @@
   width: 100%;
   height: 170px;
   object-fit: contain;
-  mix-blend-mode: multiply;
+  mix-blend-mode: normal;
 }
 .commerce-preview-products p {
   font-size: 6px;
@@ -1527,18 +1527,18 @@
   color: var(--c-link);
 }
 .commerce-app .commerce-status-dot {
-  background: #18c7d9;
+  background: #16866e;
 }
 .commerce-app .commerce-product-image {
-  background: #e8f0ff;
+  background: #1a2b45;
 }
 .commerce-app .commerce-product-number,
 .commerce-app .commerce-image-label {
-  color: #1d3558;
-  background: #ffffffeb;
+  color: #edf2f9;
+  background: #111f33eb;
 }
 .commerce-app .commerce-image-fallback {
-  color: #526a8c;
+  color: #a8b6cd;
 }
 
 @media (max-width: 640px) {
@@ -1558,5 +1558,96 @@
   .commerce-header-link {
     font-size: 11px;
     white-space: nowrap;
+  }
+}
+
+/* A calm storefront frame keeps conversation and product details in focus. */
+.commerce-app .commerce-header {
+  background: #111f33;
+}
+.commerce-app h1,
+.commerce-app h2,
+.commerce-app h3 {
+  font-weight: 600;
+}
+.commerce-app .commerce-product {
+  background: #111f33;
+  border-radius: 14px;
+  border-color: var(--c-line);
+  box-shadow: 0 7px 24px -18px #173b7526;
+}
+.commerce-app .commerce-product-image {
+  background: #1a2b45;
+}
+.commerce-app .commerce-image-label {
+  color: #8db5ff;
+}
+.commerce-app .commerce-card-action {
+  font-weight: 600;
+}
+.commerce-account-menu {
+  position: relative;
+  z-index: 60;
+  font-size: 12px;
+}
+.commerce-account-menu > summary {
+  cursor: pointer;
+  list-style: none;
+  border: 1px solid var(--c-line);
+  border-radius: 7px;
+  padding: 8px 12px;
+  color: var(--c-ink);
+}
+.commerce-account-menu > summary::-webkit-details-marker {
+  display: none;
+}
+.commerce-account-menu[open] > summary {
+  background: var(--c-tint);
+  border-color: #46658f;
+}
+.commerce-account-menu > div {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  width: 230px;
+  padding: 10px;
+  border: 1px solid var(--c-line);
+  border-radius: 12px;
+  background: var(--c-surface);
+  box-shadow: 0 16px 40px #02081280;
+}
+.commerce-account-menu .portal-account-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+}
+.commerce-account-menu .portal-account-bar > * {
+  padding: 10px;
+  margin: 0;
+  min-height: 38px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.commerce-account-menu .portal-account-bar > span {
+  order: -1;
+  border-bottom: 1px solid var(--c-line);
+  border-radius: 0;
+  margin-bottom: 6px;
+}
+.commerce-account-menu .portal-account-bar a:hover,
+.commerce-account-menu .portal-account-bar button:hover {
+  background: var(--c-tint);
+}
+@media (max-width: 640px) {
+  .commerce-account-menu > summary {
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+  .commerce-chat-page .commerce-header {
+    gap: 12px;
+    padding-inline: 16px;
   }
 }

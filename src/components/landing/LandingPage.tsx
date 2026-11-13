@@ -1,7 +1,7 @@
 import {
-  ArrowDown,
   ArrowRight,
   ArrowUpRight,
+  BarChart3,
   Check,
   Code2,
   Database,
@@ -30,29 +30,23 @@ export function LandingPage() {
         <section className="ql-hero qx-container" aria-labelledby="hero-title">
           <div className="ql-hero-copy">
             <p className="qx-eyebrow">
-              <span /> THE NEXT CHAPTER OF COMMERCE
+              <span /> SEARCH. CONVERSATION. INSIGHT.
             </p>
             <h1 id="hero-title">
+              <span className="ql-headline-line">Help shoppers</span>
+              <span className="ql-headline-line">find what</span>
               <span className="ql-headline-line">
-                From <span className="ql-no-break">e-commerce</span>
-              </span>
-              <span className="ql-headline-line">
-                to <em>interactive</em>
-              </span>
-              <span className="ql-headline-line">
-                <em>commerce.</em>
+                <em>they mean.</em>
               </span>
             </h1>
-            <p className="ql-hero-description">
-              A better shopping experience starts with a conversation.
-            </p>
+            <p className="ql-hero-description">A more natural way to shop your catalog.</p>
             <p className="ql-hero-body">
-              Understand what shoppers mean. Help them discover, refine and compare products — with
-              your catalogue at the centre.
+              Connect shoppers to relevant products through search and conversation. See what
+              customers search for, and where discovery falls short.
             </p>
             <div className="qx-actions">
               <a className="qx-button" href="/request-demo">
-                Book a demo <ArrowUpRight size={16} />
+                Request a demo <ArrowUpRight size={16} />
               </a>
               <a
                 className="qx-button qx-button-outline"
@@ -66,50 +60,72 @@ export function LandingPage() {
             <div className="ql-hero-proof">
               <span>
                 <Check size={13} />
-                Intent-aware discovery
+                Your storefront, enhanced
               </span>
               <span>
                 <Check size={13} />
-                Context that carries forward
+                Your catalog at the centre
               </span>
             </div>
           </div>
           <CommerceShowcase />
-          <a className="ql-scroll-cue" href="#intelligence">
-            <ArrowDown size={13} /> FROM SHOPPER INTENT TO BUSINESS INSIGHT
-          </a>
         </section>
-        <div className="ql-platform-strip">
-          <div className="qx-container">
-            <span>ONE CONNECTED EXPERIENCE</span>
-            <a href="/products/search">
-              <Search size={18} />
-              Intelligent search
-              <ArrowUpRight size={12} />
-            </a>
-            <i />
-            <a href="/use-cases/conversational-commerce">
-              <MessageCircle size={18} />
-              Interactive commerce
-              <ArrowUpRight size={12} />
-            </a>
-            <i />
-            <a href="#intelligence">
-              <Workflow size={18} />
-              Commerce intelligence
-              <ArrowDown size={12} />
-            </a>
+        <section className="ql-offering qx-container" aria-labelledby="offering-title">
+          <div className="ql-offering-heading">
+            <p className="qx-eyebrow">WHAT QUERIX BRINGS TO YOUR BUSINESS</p>
+            <h2 id="offering-title">Better discovery, from every angle.</h2>
           </div>
-        </div>
+          <div className="ql-offering-grid">
+            {[
+              {
+                icon: Search,
+                title: "Search that understands",
+                body: "Connect everyday language to relevant products, with the filters your customers need.",
+                href: "/products/search",
+                label: "Explore intelligent search",
+                number: "01",
+              },
+              {
+                icon: MessageCircle,
+                title: "Shopping that flows",
+                body: "Help shoppers discover, refine and compare without starting over at every question.",
+                href: "/use-cases/conversational-commerce",
+                label: "Explore interactive commerce",
+                number: "02",
+              },
+              {
+                icon: BarChart3,
+                title: "Demand you can understand",
+                body: "See what customers look for, where results fall short and what deserves a closer look.",
+                href: "#intelligence",
+                label: "Explore the analytics preview",
+                number: "03",
+              },
+            ].map(({ icon: Icon, title, body, href, label, number }) => (
+              <a key={number} className="ql-offering-card" href={href}>
+                <div>
+                  <Icon size={23} />
+                  <span>{number}</span>
+                </div>
+                <h3>{title}</h3>
+                <p>{body}</p>
+                <span className="ql-offering-link">
+                  {label}
+                  <ArrowUpRight size={16} />
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
         <Reveal>
           <section id="intelligence" className="ql-section qx-container">
             <div className="ql-section-heading">
               <div>
                 <p className="qx-eyebrow">01 / COMMERCE INTELLIGENCE</p>
                 <h2>
-                  Every interaction.
+                  Know what shoppers want.
                   <br />
-                  <em>A clearer picture.</em>
+                  <em>See what’s missing.</em>
                 </h2>
               </div>
               <p>
@@ -133,9 +149,9 @@ export function LandingPage() {
                 <div>
                   <p className="qx-eyebrow">02 / BUILT AROUND YOUR BUSINESS</p>
                   <h2>
-                    Different products.
+                    Built for your catalog.
                     <br />
-                    <em>The same intelligence.</em>
+                    <em>Shaped around your shoppers.</em>
                   </h2>
                 </div>
                 <p>
@@ -273,9 +289,9 @@ export function LandingPage() {
                 <div>
                   <p className="qx-eyebrow">04 / WHY QUERIXAI</p>
                   <h2>
-                    More possibility.
+                    Move forward with
                     <br />
-                    <em>Less complexity.</em>
+                    <em>a clear starting point.</em>
                   </h2>
                 </div>
                 <p>
@@ -292,7 +308,7 @@ export function LandingPage() {
                   },
                   {
                     icon: Workflow,
-                    title: "A considered cost",
+                    title: "Start with a focused scope",
                     text: "Scope the service around your catalogue, workloads and customer journeys. Start with a focused proof of concept.",
                   },
                   {
@@ -338,7 +354,7 @@ export function LandingPage() {
             </p>
             <div className="qx-actions">
               <a className="qx-button" href="/request-demo?intent=demo">
-                Book a demo <ArrowRight size={17} />
+                Request a demo <ArrowRight size={17} />
               </a>
               <a className="qx-button qx-button-outline" href="/request-demo?intent=integration">
                 Discuss integration <ArrowUpRight size={16} />

@@ -1,7 +1,7 @@
 .ql-home {
-  --ql-cyan: #18c7d9;
-  --ql-bright: #65a5ff;
-  --ql-soft: #a9bdd8;
+  --ql-cyan: #84d8ba;
+  --ql-bright: #8db5ff;
+  --ql-soft: #a8b6cd;
   background: radial-gradient(ellipse 55% 15% at 78% 6%, #245bdb16, transparent 90%);
 }
 .ql-home h1,
@@ -10,11 +10,11 @@
   text-wrap: balance;
 }
 .ql-home em {
-  color: #65a5ff;
+  color: #8db5ff;
   font-style: normal;
 }
 .ql-home .qx-eyebrow {
-  color: #65a5ff;
+  color: #8db5ff;
   font-size: 10px;
   letter-spacing: 1.7px;
 }
@@ -38,12 +38,12 @@
   max-width: 370px;
   font-size: 19px;
   line-height: 1.5;
-  color: #e8f0ff;
+  color: #e8eef8;
   letter-spacing: -0.3px;
 }
 .ql-home .ql-hero-body {
   margin-top: 16px;
-  color: #a9bdd8;
+  color: #a8b6cd;
   max-width: 365px;
   font-size: 14px;
   line-height: 1.85;
@@ -58,7 +58,7 @@
   flex-wrap: wrap;
   margin-top: 32px;
   font-size: 10px;
-  color: #9eb2cf;
+  color: #a8b6cd;
 }
 .ql-hero-proof > span {
   display: flex;
@@ -66,142 +66,14 @@
   gap: 6px;
 }
 .ql-hero-proof svg {
-  color: #18c7d9;
+  color: #84d8ba;
 }
-.ql-scroll-cue {
-  position: absolute;
-  bottom: 30px;
-  left: 0;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  font-size: 8px;
-  letter-spacing: 1.4px;
-  color: #839bbd;
-}
-.ql-scroll-cue svg {
-  color: #65a5ff;
-}
-.ql-showcase {
-  min-width: 0;
-  scroll-margin-top: 110px;
-  animation: ql-arrive 0.8s ease both;
-}
-.ql-showcase:focus {
-  outline: none;
-}
-.ql-showcase:focus-visible {
-  outline: 2px solid #65a5ff;
-  outline-offset: 12px;
-  border-radius: 12px;
-}
-.ql-preview-caption,
-.ql-preview-note {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 9px;
-  color: #9eb2cf;
-}
-.ql-preview-caption {
-  margin-bottom: 12px;
-}
-.ql-preview-caption > span:first-child {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  letter-spacing: 1.2px;
-  color: #c7d7ee;
-  font-size: 8px;
-}
-.ql-preview-caption i,
 .ql-dash-foot i {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #18c7d9;
+  background: #16866e;
   display: inline-block;
-}
-.ql-storefront {
-  position: relative;
-  background: #f5f8ff;
-  color: #152842;
-  border: 1px solid #6b96d34d;
-  border-radius: 13px;
-  overflow: hidden;
-  box-shadow:
-    0 28px 90px -35px #0009,
-    0 0 0 7px #65a5ff08;
-}
-.ql-storefront-header {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  background: #1a3151;
-  color: #e8f0ff;
-  padding: 15px 20px;
-}
-.ql-storefront-header > svg {
-  color: #65a5ff;
-}
-.ql-storefront-header > strong {
-  font-size: 11px;
-  font-weight: 500;
-}
-.ql-storefront-header > span {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  font-size: 7px;
-  color: #a9bdd8;
-  gap: 5px;
-}
-.ql-storefront-header .qx-logo {
-  width: 63px;
-  height: 18px;
-}
-.ql-conversation {
-  padding: 23px 22px 18px;
-}
-.ql-shopper {
-  display: flex;
-  justify-content: flex-end;
-  gap: 9px;
-  align-items: center;
-}
-.ql-shopper > span:first-child {
-  background: #e2edff;
-  padding: 12px 14px;
-  border-radius: 9px 9px 2px 9px;
-  font-size: 11px;
-  color: #214575;
-}
-.ql-avatar {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: #d5e3f8;
-  display: grid;
-  place-items: center;
-  font-size: 8px;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-.ql-assistant {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-top: 24px;
-}
-.ql-assistant .qx-mark {
-  width: 25px;
-  height: 25px;
-}
-.ql-assistant p {
-  font-size: 11px;
-  color: #3a4d65;
-  line-height: 1.6;
 }
 .ql-filter-chips {
   display: flex;
@@ -213,327 +85,31 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  background: #e9eff8;
-  color: #536b8c;
-  border: 1px solid #d8e3f2;
+  background: #1a2b45;
+  color: #a8b6cd;
+  border: 1px solid #2b3d56;
   border-radius: 4px;
   padding: 3px 6px;
   font-size: 8px;
 }
 .ql-filter-chips > .is-changed {
-  color: #1e5894;
-  background: #d7ebff;
-  border-color: #bad7f7;
-}
-.ql-product-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-.ql-product-grid.is-refined {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-.ql-product {
-  text-align: left;
-  padding: 0;
-  background: white;
-  border: 1px solid #dce4ee;
-  border-radius: 7px;
-  overflow: hidden;
-  min-width: 0;
-  color: #172b48;
-  animation: ql-arrive 0.45s ease both;
-  transition:
-    border-color 0.2s,
-    transform 0.2s;
-}
-.ql-product:hover {
-  transform: translateY(-3px);
-  border-color: #65a5ff;
-}
-.ql-product-art {
-  position: relative;
-}
-.ql-product-art > img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-}
-.ql-product-art > span {
-  position: absolute;
-  left: 7px;
-  bottom: 7px;
-  padding: 3px 5px;
-  background: #ffffffd9;
-  color: #526477;
-  font-size: 7px;
-  border-radius: 3px;
-}
-.ql-product-info {
-  padding: 10px 9px 12px;
-}
-.ql-product-info > span {
-  font-size: 6px;
-  letter-spacing: 0.7px;
-  color: #66778e;
-}
-.ql-product-info h3 {
-  font-family: Inter, sans-serif;
-  font-size: 10px;
-  line-height: 1.45;
-  font-weight: 500;
-  letter-spacing: -0.15px;
-  min-height: 29px;
-  margin-top: 4px;
-}
-.ql-product-info > div {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 5px;
-  margin-top: 8px;
-}
-.ql-product-info strong {
-  font-size: 12px;
-  font-weight: 600;
-}
-.ql-product-info > div > span {
-  display: flex;
-  align-items: center;
-  font-size: 8px;
-  color: #3b65a7;
+  color: #8db5ff;
+  background: #1a2b45;
+  border-color: #2b3d56;
 }
 .ql-followup-message {
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 9px;
-  color: #2c6481;
+  color: #8db5ff;
   margin-top: 14px;
   flex-wrap: wrap;
 }
 .ql-followup-message > span:last-child {
   margin-left: auto;
-  color: #687c92;
+  color: #a8b6cd;
   font-size: 8px;
-}
-.ql-comparison {
-  margin-top: 14px;
-  font-size: 9px;
-  border: 1px solid #dce5f2;
-  border-radius: 5px;
-  overflow: hidden;
-  animation: ql-arrive 0.3s ease both;
-}
-.ql-comparison > div {
-  display: grid;
-  grid-template-columns: 0.7fr 1fr 1fr;
-  border-bottom: 1px solid #e4eaf5;
-}
-.ql-comparison > div:last-child {
-  border-bottom: 0;
-}
-.ql-comparison > div:first-child {
-  background: #e8eff9;
-}
-.ql-comparison span,
-.ql-comparison strong {
-  padding: 8px;
-  font-size: 8px;
-  font-weight: 500;
-}
-.ql-comparison > div > :first-child {
-  color: #667b97;
-}
-.ql-prompt {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 19px;
-}
-.ql-prompt > span {
-  font-size: 8px;
-  color: #75859a;
-}
-.ql-prompt > button {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 10px 11px;
-  min-height: 40px;
-  background: #fff;
-  border: 1px solid #b7cff4;
-  border-radius: 5px;
-  color: #2456a6;
-  font-size: 10px;
-  margin-left: auto;
-}
-.ql-prompt > button:hover {
-  background: #e8f0ff;
-}
-.ql-showcase-bottom {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  align-items: center;
-  padding: 11px 20px;
-  border-top: 1px solid #e0e7f2;
-  background: #edf2fb;
-}
-.ql-steps {
-  display: flex;
-  gap: 13px;
-}
-.ql-steps button {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 0;
-  border: 0;
-  background: none;
-  color: #6d7d94;
-  font-size: 8px;
-  min-height: 28px;
-}
-.ql-steps button > span {
-  border: 1px solid #bacbe2;
-  width: 15px;
-  height: 15px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  font-size: 7px;
-}
-.ql-steps button[aria-pressed="true"] {
-  color: #245bdb;
-}
-.ql-steps button[aria-pressed="true"] > span {
-  background: #245bdb;
-  border-color: #245bdb;
-  color: white;
-}
-.ql-player {
-  display: flex;
-  gap: 3px;
-}
-.ql-player button {
-  display: grid;
-  place-items: center;
-  background: none;
-  color: #527097;
-  border: none;
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-}
-.ql-player button:hover {
-  background: #dce7f9;
-}
-.ql-preview-note {
-  margin-top: 12px;
-  font-size: 8px;
-}
-.ql-preview-note > a {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: #b4ccf0;
-}
-.ql-product-detail {
-  position: fixed;
-  inset: 0;
-  margin: auto;
-  width: min(430px, calc(100vw - 32px));
-  max-height: 90svh;
-  color: #152842;
-  border: 1px solid #bfd1e9;
-  border-radius: 12px;
-  background: #f5f8ff;
-  padding: 25px;
-  overflow-y: auto;
-}
-.ql-product-detail > img {
-  display: block;
-  width: 130px;
-  height: 130px;
-  border-radius: 8px;
-  margin: 0 auto 18px;
-}
-.ql-product-detail h3 {
-  font-size: 24px;
-  margin-block: 10px;
-}
-.ql-product-detail > strong {
-  color: #245bdb;
-  font-size: 20px;
-}
-.ql-product-detail dl {
-  margin-block: 15px;
-}
-.ql-product-detail dl > div {
-  display: flex;
-  justify-content: space-between;
-  padding: 7px 0;
-  font-size: 11px;
-  border-bottom: 1px solid #dce4ee;
-}
-.ql-product-detail dt {
-  text-transform: capitalize;
-  color: #6a7e96;
-}
-.ql-product-detail dd {
-  margin: 0;
-  color: #18314e;
-}
-.ql-detail-close {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 32px;
-  height: 32px;
-  border: 1px solid #d0ddec;
-  background: #fff;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-}
-.ql-platform-strip {
-  border-block: 1px solid #abc9ff1c;
-  background: #142540;
-}
-.ql-platform-strip > div {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  padding-block: 27px;
-}
-.ql-platform-strip > div > span {
-  color: #809abb;
-  font-size: 8px;
-  letter-spacing: 1.3px;
-  max-width: 100px;
-  line-height: 1.8;
-}
-.ql-platform-strip a {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  font-size: 12px;
-  color: #c9d8ee;
-}
-.ql-platform-strip a > svg:first-child {
-  color: #65a5ff;
-}
-.ql-platform-strip a > svg:last-child {
-  margin-left: 16px;
-  color: #6c88af;
-}
-.ql-platform-strip i {
-  width: 1px;
-  height: 20px;
-  background: #abc9ff26;
 }
 .ql-section {
   padding-block: 105px;
@@ -556,15 +132,15 @@
 .ql-section-heading > p {
   font-size: 14px;
   line-height: 1.85;
-  color: #a9bdd8;
+  color: #a8b6cd;
   max-width: 390px;
   padding-bottom: 2px;
 }
 .ql-dashboard {
-  border: 1px solid #a9c6ef2b;
+  border: 1px solid #2b3d56;
   border-radius: 12px;
-  background: #142641;
-  box-shadow: 0 28px 70px -35px #0007;
+  background: #111f33;
+  box-shadow: 0 28px 70px -35px #173b7520;
   overflow: hidden;
 }
 .ql-dash-top {
@@ -573,8 +149,8 @@
   align-items: center;
   gap: 20px;
   padding: 19px 25px;
-  border-bottom: 1px solid #a9c6ef1f;
-  background: #182d4b;
+  border-bottom: 1px solid #2b3d56;
+  background: #111f33;
 }
 .ql-dash-top > div:first-child {
   display: flex;
@@ -582,17 +158,17 @@
   gap: 9px;
 }
 .ql-dash-top svg {
-  color: #65a5ff;
+  color: #8db5ff;
 }
 .ql-dash-top strong {
   font-size: 12px;
   font-weight: 500;
 }
 .ql-sample-badge {
-  color: #98c4f6;
+  color: #8db5ff;
   font-size: 8px;
-  background: #65a5ff12;
-  border: 1px solid #65a5ff29;
+  background: #1a2b45;
+  border: 1px solid #2b3d56;
   border-radius: 4px;
   padding: 3px 7px;
   margin-left: 4px;
@@ -603,9 +179,9 @@
   gap: 8px;
 }
 .ql-dash-filters select {
-  background: #14243b;
-  color: #bfcee3;
-  border: 1px solid #abc9ff26;
+  background: #111f33;
+  color: #a8b6cd;
+  border: 1px solid #2b3d56;
   border-radius: 4px;
   padding: 7px 9px;
   font-size: 10px;
@@ -617,12 +193,12 @@
 .ql-dash-metrics {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border-bottom: 1px solid #abc9ff1c;
+  border-bottom: 1px solid #2b3d56;
   padding-bottom: 24px;
 }
 .ql-dash-metrics > div {
   padding-inline: 25px;
-  border-left: 1px solid #abc9ff1c;
+  border-left: 1px solid #2b3d56;
 }
 .ql-dash-metrics > div:first-child {
   padding-left: 0;
@@ -636,11 +212,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 5px;
-  color: #9eb4d3;
+  color: #a8b6cd;
   font-size: 10px;
 }
 .ql-dash-metrics svg {
-  color: #65a5ff;
+  color: #8db5ff;
 }
 .ql-dash-metrics strong {
   display: block;
@@ -652,7 +228,7 @@
   line-height: 1.3;
 }
 .ql-dash-metrics p {
-  color: #91a9c9;
+  color: #a8b6cd;
   font-size: 9px;
   margin-top: 5px;
 }
@@ -672,40 +248,40 @@
   font:
     500 12px Inter,
     sans-serif;
-  color: #d9e5f7;
+  color: #8db5ff;
 }
 .ql-chart-heading > span {
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 8px;
-  color: #94aaca;
+  color: #a8b6cd;
 }
 .ql-chart-heading i {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #65a5ff;
+  background: #245bdb;
 }
 .ql-chart-heading > svg {
-  color: #65a5ff;
+  color: #8db5ff;
 }
 .ql-trend {
   min-width: 0;
   padding-right: 28px;
-  border-right: 1px solid #abc9ff1c;
+  border-right: 1px solid #2b3d56;
 }
 .ql-trend-label {
   display: flex;
   align-items: center;
   gap: 9px;
   font-size: 9px;
-  color: #94aaca;
+  color: #a8b6cd;
   margin-top: 27px;
 }
 .ql-trend-label strong {
   font-weight: 500;
-  color: #c9defd;
+  color: #8db5ff;
   font-size: 10px;
 }
 .ql-trend-plot {
@@ -734,7 +310,7 @@
 .ql-axis {
   display: flex;
   justify-content: space-between;
-  color: #819bbb;
+  color: #a8b6cd;
   font-size: 8px;
   padding-inline: 2.8%;
 }
@@ -743,7 +319,7 @@
   width: 100%;
   border: none;
   background: none;
-  color: #a9bdd8;
+  color: #a8b6cd;
   padding: 11px 0 0;
   text-align: left;
 }
@@ -755,7 +331,7 @@
 }
 .ql-interest-row strong {
   font-weight: 400;
-  color: #8da9cc;
+  color: #a8b6cd;
 }
 .ql-interest-row > i {
   display: block;
@@ -773,24 +349,24 @@
   transition: width 0.3s;
 }
 .ql-interest-row[aria-pressed="true"] > span {
-  color: #e8f0ff;
+  color: #e8eef8;
 }
 .ql-interest-row[aria-pressed="true"] > i > i {
-  background: linear-gradient(90deg, #245bdb, #18c7d9);
+  background: linear-gradient(90deg, #245bdb, #16866e);
 }
 .ql-query-detail {
-  border-top: 1px solid #abc9ff1c;
+  border-top: 1px solid #2b3d56;
   margin-top: 17px;
   padding-top: 13px;
 }
 .ql-query-detail > span {
   font-size: 7px;
   letter-spacing: 1px;
-  color: #86a1c4;
+  color: #a8b6cd;
 }
 .ql-query-detail p {
   font-size: 11px;
-  color: #c7daf5;
+  color: #8db5ff;
   margin-top: 5px;
 }
 .ql-query-detail small {
@@ -798,14 +374,14 @@
   align-items: center;
   gap: 4px;
   font-size: 8px;
-  color: #83a4d2;
+  color: #a8b6cd;
   margin-top: 5px;
 }
 .ql-dash-secondary {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
   gap: 30px;
-  border-top: 1px solid #abc9ff1c;
+  border-top: 1px solid #2b3d56;
   padding-top: 22px;
   margin-top: 25px;
 }
@@ -818,7 +394,7 @@
 .ql-price-buckets > div > span {
   display: block;
   font-size: 9px;
-  color: #9eb4d3;
+  color: #a8b6cd;
 }
 .ql-price-buckets strong {
   display: block;
@@ -837,11 +413,11 @@
 .ql-price-buckets > div > i > i {
   display: block;
   height: 100%;
-  background: #65a5ff;
+  background: #245bdb;
   transition: width 0.3s;
 }
 .ql-unmet {
-  border-left: 1px solid #abc9ff1c;
+  border-left: 1px solid #2b3d56;
   padding-left: 30px;
 }
 .ql-unmet > button {
@@ -850,9 +426,9 @@
   gap: 8px;
   width: 100%;
   text-align: left;
-  color: #b1c7e4;
+  color: #a8b6cd;
   border: 1px solid transparent;
-  background: #1d35587a;
+  background: #1a2b45;
   border-radius: 4px;
   padding: 8px;
   margin-top: 10px;
@@ -862,26 +438,26 @@
   flex: 1;
 }
 .ql-unmet > button > strong {
-  color: #94accc;
+  color: #a8b6cd;
   font-weight: 500;
   font-size: 8px;
 }
 .ql-unmet > button > svg {
-  color: #65a5ff;
+  color: #8db5ff;
   flex-shrink: 0;
 }
 .ql-unmet > button[aria-pressed="true"],
 .ql-unmet > button:hover {
-  border-color: #65a5ff5c;
+  border-color: #2b3d565c;
 }
 .ql-dash-foot {
   display: flex;
   justify-content: space-between;
   gap: 15px;
   padding: 13px 25px;
-  border-top: 1px solid #abc9ff1c;
+  border-top: 1px solid #2b3d56;
   font-size: 8px;
-  color: #8ba5c8;
+  color: #a8b6cd;
 }
 .ql-dash-foot > span:first-child {
   display: flex;
@@ -896,17 +472,17 @@
   font-size: 10px;
 }
 .ql-section-foot p {
-  color: #91a9c9;
+  color: #a8b6cd;
 }
 .ql-section-foot a {
   display: flex;
   align-items: center;
   gap: 7px;
-  color: #b1cfff;
+  color: #8db5ff;
 }
 .ql-industry-section {
-  background: #142540;
-  border-block: 1px solid #abc9ff14;
+  background: #1a2b45;
+  border-block: 1px solid #2b3d56;
 }
 .ql-industry-tabs {
   display: flex;
@@ -919,29 +495,29 @@
   justify-content: center;
   gap: 9px;
   flex: 1;
-  color: #9cb4d5;
+  color: #a8b6cd;
   font-size: 11px;
   background: transparent;
-  border: 1px solid #abc9ff26;
+  border: 1px solid #2b3d56;
   border-radius: 5px;
   padding: 14px 12px;
 }
 .ql-industry-tabs > button[aria-pressed="true"] {
-  background: #245bdb24;
+  background: #1a2b45;
   color: #d8e7ff;
-  border-color: #65a5ff85;
+  border-color: #2b3d5685;
 }
 .ql-industry-tabs > button[aria-pressed="true"] svg {
-  color: #65a5ff;
+  color: #8db5ff;
 }
 .ql-industry-panel {
   display: grid;
   grid-template-columns: 1fr 1.15fr;
   gap: 80px;
-  border: 1px solid #abc9ff26;
+  border: 1px solid #2b3d56;
   border-radius: 10px;
   padding: 40px;
-  background: #101e38;
+  background: #111f33;
 }
 .ql-industry-copy {
   display: flex;
@@ -953,7 +529,7 @@
   font-family: monospace;
   font-size: 9px;
   letter-spacing: 1px;
-  color: #6e91c4;
+  color: #a8b6cd;
 }
 .ql-industry-copy h3 {
   font-size: 30px;
@@ -964,7 +540,7 @@
   font-weight: 500;
 }
 .ql-industry-copy > p {
-  color: #9eb4d3;
+  color: #a8b6cd;
   font-size: 12px;
   line-height: 1.9;
   margin-top: 19px;
@@ -972,25 +548,25 @@
 }
 .ql-industry-copy > a {
   margin-top: 20px;
-  color: #b7d2fb;
+  color: #8db5ff;
   font-size: 11px;
 }
 .ql-industry-disclosure {
-  color: #849dbf;
+  color: #a8b6cd;
   font-size: 8px;
   margin-top: 35px;
 }
 .ql-industry-demo {
-  background: #edf3ff;
+  background: #1a2b45;
   border-radius: 8px;
   padding: 22px;
-  color: #1d3558;
+  color: #edf3ff;
   min-width: 0;
 }
 .ql-industry-query > span {
   font-size: 7px;
   letter-spacing: 1px;
-  color: #6d819d;
+  color: #a8b6cd;
 }
 .ql-industry-query > p {
   font-size: 13px;
@@ -1006,10 +582,10 @@
 }
 .ql-industry-products > article {
   min-width: 0;
-  border: 1px solid #d6e2f2;
+  border: 1px solid #2b3d56;
   border-radius: 5px;
   overflow: hidden;
-  background: #fff;
+  background: #111f33;
 }
 .ql-industry-products > article > svg,
 .ql-industry-products > article > img {
@@ -1017,7 +593,7 @@
   width: 100%;
   height: 155px;
   object-fit: cover;
-  background: #dfe8f0;
+  background: #1a2b45;
 }
 .ql-industry-products > article > div {
   padding: 12px;
@@ -1029,7 +605,7 @@
 }
 .ql-industry-products p {
   font-size: 8px;
-  color: #75849b;
+  color: #a8b6cd;
   margin-top: 5px;
 }
 .ql-industry-products strong {
@@ -1044,10 +620,10 @@
   justify-content: space-between;
   gap: 8px;
   width: 100%;
-  border: 1px solid #b6ceef;
+  border: 1px solid #2b3d56;
   border-radius: 4px;
-  background: #f8faff;
-  color: #28549a;
+  background: #111f33;
+  color: #8db5ff;
   padding: 11px;
   font-size: 10px;
   margin-top: 15px;
@@ -1067,9 +643,9 @@
 }
 .ql-architecture {
   padding: 28px;
-  border: 1px solid #abc9ff26;
+  border: 1px solid #2b3d56;
   border-radius: 9px;
-  background: #142641;
+  background: #111f33;
 }
 .ql-architecture-top {
   display: flex;
@@ -1083,16 +659,16 @@
   flex-direction: column;
   align-items: center;
   padding: 18px 10px;
-  background: #1d35587a;
-  border: 1px solid #abc9ff20;
+  background: #1a2b45;
+  border: 1px solid #2b3d56;
   border-radius: 6px;
 }
 .ql-architecture-top > span > svg {
-  color: #65a5ff;
+  color: #8db5ff;
   margin-bottom: 11px;
 }
 .ql-architecture-top > svg {
-  color: #779bc9;
+  color: #a8b6cd;
   flex-shrink: 0;
 }
 .ql-architecture-top strong {
@@ -1100,7 +676,7 @@
   font-weight: 500;
 }
 .ql-architecture-top small {
-  color: #8ba5c8;
+  color: #a8b6cd;
   font-size: 8px;
   margin-top: 6px;
 }
@@ -1112,7 +688,7 @@
 .ql-connectors > span {
   width: 1px;
   height: 35px;
-  background: linear-gradient(#65a5ff33, #65a5ff);
+  background: linear-gradient(#65a5ff33, #245bdb);
   position: relative;
 }
 .ql-connectors > span::after {
@@ -1122,12 +698,12 @@
   left: -2px;
   width: 5px;
   height: 5px;
-  background: #65a5ff;
+  background: #245bdb;
   border-radius: 50%;
 }
 .ql-engine {
-  background: linear-gradient(135deg, #245bdb1f, #1d3558);
-  border: 1px solid #65a5ff63;
+  background: linear-gradient(135deg, #245bdb1f, #1a2b45);
+  border: 1px solid #2b3d5663;
   border-radius: 7px;
   padding: 20px 18px;
   text-align: center;
@@ -1136,7 +712,7 @@
   display: block;
   font-size: 7px;
   letter-spacing: 1.3px;
-  color: #81a9df;
+  color: #a8b6cd;
   margin: 4px 0 18px;
 }
 .ql-engine > div {
@@ -1149,22 +725,22 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #b5cff3;
+  color: #a8b6cd;
   font-size: 9px;
   padding: 7px 9px;
-  border: 1px solid #65a5ff29;
+  border: 1px solid #2b3d56;
   border-radius: 4px;
-  background: #101e3880;
+  background: #111f33;
 }
 .ql-engine > div svg {
-  color: #65a5ff;
+  color: #8db5ff;
 }
 .ql-integration-assurances {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 18px;
-  color: #8ba5c8;
+  color: #a8b6cd;
   font-size: 9px;
   margin-top: 24px;
 }
@@ -1176,8 +752,8 @@
 .ql-code {
   min-width: 0;
   padding: 25px;
-  background: #0c192e;
-  border: 1px solid #abc9ff26;
+  background: #111f33;
+  border: 1px solid #2b3d56;
   border-radius: 9px;
 }
 .ql-code > div:first-child {
@@ -1185,7 +761,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 15px;
-  border-bottom: 1px solid #abc9ff1c;
+  border-bottom: 1px solid #2b3d56;
   padding-bottom: 16px;
 }
 .ql-code > div:first-child > span,
@@ -1193,7 +769,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #91b7ed;
+  color: #a8b6cd;
   font-size: 9px;
 }
 .ql-code > div:first-child > span {
@@ -1202,7 +778,7 @@
 .ql-code > p {
   font-size: 14px;
   margin-top: 22px;
-  color: #c3d7f3;
+  color: #8db5ff;
 }
 .ql-code > pre {
   padding-block: 25px;
@@ -1211,16 +787,16 @@
   font:
     11px/1.9 ui-monospace,
     monospace;
-  color: #c7d7ee;
+  color: #8db5ff;
 }
 .ql-code-muted {
-  color: #8ba5c8;
+  color: #a8b6cd;
 }
 .ql-code-blue {
-  color: #65a5ff;
+  color: #8db5ff;
 }
 .ql-code-key {
-  color: #c1d3f3;
+  color: #8db5ff;
 }
 .ql-code-string {
   color: #59d2d8;
@@ -1229,17 +805,17 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  color: #91a9c9;
+  color: #a8b6cd;
   font-size: 9px;
   padding: 13px 0;
-  border-block: 1px solid #abc9ff1c;
+  border-block: 1px solid #2b3d56;
 }
 .ql-code .ql-code-note svg {
-  color: #18c7d9;
+  color: #84d8ba;
   flex-shrink: 0;
 }
 .ql-code > a {
-  color: #a6c7f7;
+  color: #8db5ff;
   font-size: 10px;
   margin-top: 13px;
 }
@@ -1254,11 +830,11 @@
   align-items: center;
   gap: 7px;
   font-size: 10px;
-  color: #a4bbdc;
+  color: #a8b6cd;
 }
 .ql-why {
-  background: #142540;
-  border-block: 1px solid #abc9ff14;
+  background: #1a2b45;
+  border-block: 1px solid #2b3d56;
 }
 .ql-benefits {
   display: grid;
@@ -1267,7 +843,7 @@
 }
 .ql-benefits article {
   padding-top: 22px;
-  border-top: 1px solid #abc9ff33;
+  border-top: 1px solid #2b3d56;
 }
 .ql-benefits article > div {
   display: flex;
@@ -1275,11 +851,11 @@
   justify-content: space-between;
 }
 .ql-benefits svg {
-  color: #65a5ff;
+  color: #8db5ff;
 }
 .ql-benefits article > div > span {
   font: 9px monospace;
-  color: #7797c2;
+  color: #a8b6cd;
 }
 .ql-benefits h3 {
   font-size: 18px;
@@ -1289,7 +865,7 @@
 }
 .ql-benefits p {
   font-size: 12px;
-  color: #9eb4d3;
+  color: #a8b6cd;
   line-height: 1.85;
   margin-top: 13px;
 }
@@ -1312,7 +888,7 @@
 .ql-conversion > p:not(.qx-eyebrow) {
   font-size: 13px;
   line-height: 1.9;
-  color: #9eb4d3;
+  color: #a8b6cd;
   margin-top: 25px;
 }
 .ql-conversion .qx-actions {
@@ -1322,40 +898,12 @@
 }
 .ql-conversion > a {
   margin-top: 20px;
-  color: #9bb8df;
+  color: #a8b6cd;
   font-size: 10px;
-}
-.ql-conversion-orbit {
-  position: absolute;
-  z-index: -1;
-  width: 550px;
-  height: 550px;
-  border: 1px solid #65a5ff0c;
-  box-shadow:
-    0 0 0 65px #65a5ff04,
-    0 0 0 130px #65a5ff03;
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle, #245bdb12, transparent 65%);
-}
-@keyframes ql-arrive {
-  from {
-    opacity: 0;
-    transform: translateY(9px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 @media (min-width: 1500px) {
   .ql-hero {
     min-height: 780px;
-  }
-  .ql-product-art > img {
-    height: 175px;
   }
 }
 @media (max-width: 1150px) {
@@ -1368,9 +916,6 @@
   .ql-hero-description {
     font-size: 17px;
   }
-  .ql-product-art > img {
-    height: 125px;
-  }
   .ql-hero .qx-actions {
     gap: 18px;
   }
@@ -1380,12 +925,6 @@
   .ql-industry-panel {
     gap: 40px;
     padding: 30px;
-  }
-  .ql-platform-strip a {
-    font-size: 10px;
-  }
-  .ql-platform-strip a > svg:last-child {
-    margin-left: 4px;
   }
   .ql-benefits {
     gap: 22px;
@@ -1414,62 +953,6 @@
   }
   .ql-hero .qx-actions {
     gap: 9px 15px;
-  }
-  .ql-storefront-header {
-    padding: 13px;
-  }
-  .ql-storefront-header > span {
-    font-size: 0;
-  }
-  .ql-conversation {
-    padding: 17px 13px;
-  }
-  .ql-shopper > span:first-child {
-    padding: 9px;
-    font-size: 10px;
-  }
-  .ql-assistant p {
-    font-size: 10px;
-  }
-  .ql-product-grid {
-    gap: 6px;
-  }
-  .ql-product-art > img {
-    height: 105px;
-  }
-  .ql-product-info {
-    padding: 8px 6px;
-  }
-  .ql-product-info > span {
-    font-size: 5px;
-  }
-  .ql-product-info h3 {
-    font-size: 9px;
-    min-height: 38px;
-  }
-  .ql-product-info strong {
-    font-size: 10px;
-  }
-  .ql-product-info > div > span {
-    font-size: 7px;
-  }
-  .ql-prompt > span {
-    display: none;
-  }
-  .ql-showcase-bottom {
-    padding: 10px 12px;
-  }
-  .ql-steps {
-    gap: 8px;
-  }
-  .ql-steps button {
-    font-size: 7px;
-  }
-  .ql-platform-strip > div > span {
-    display: none;
-  }
-  .ql-platform-strip > div {
-    gap: 14px;
   }
   .ql-section {
     padding-block: 78px;
@@ -1563,59 +1046,6 @@
   .ql-hero-proof {
     margin-top: 23px;
   }
-  .ql-showcase {
-    max-width: 580px;
-    width: 100%;
-    margin-inline: auto;
-  }
-  .ql-scroll-cue {
-    bottom: 23px;
-    font-size: 7px;
-  }
-  .ql-conversation {
-    padding: 22px;
-  }
-  .ql-storefront-header {
-    padding: 15px 20px;
-  }
-  .ql-storefront-header > span {
-    font-size: 7px;
-  }
-  .ql-shopper > span:first-child,
-  .ql-assistant p {
-    font-size: 11px;
-  }
-  .ql-product-grid {
-    gap: 10px;
-  }
-  .ql-product-art > img {
-    height: 145px;
-  }
-  .ql-product-info {
-    padding: 11px 9px;
-  }
-  .ql-product-info > span {
-    font-size: 6px;
-  }
-  .ql-product-info h3 {
-    font-size: 10px;
-    min-height: 29px;
-  }
-  .ql-product-info strong {
-    font-size: 12px;
-  }
-  .ql-prompt > span {
-    display: inline;
-  }
-  .ql-showcase-bottom {
-    padding: 10px 20px;
-  }
-  .ql-steps {
-    gap: 15px;
-  }
-  .ql-steps button {
-    font-size: 8px;
-  }
   .ql-section-heading {
     grid-template-columns: 1fr;
     gap: 20px;
@@ -1640,7 +1070,7 @@
     border-right: 0;
   }
   .ql-interest {
-    border-top: 1px solid #abc9ff1c;
+    border-top: 1px solid #2b3d56;
     padding-top: 23px;
   }
   .ql-dash-secondary {
@@ -1650,7 +1080,7 @@
   .ql-unmet {
     padding-left: 0;
     border-left: 0;
-    border-top: 1px solid #abc9ff1c;
+    border-top: 1px solid #2b3d56;
     padding-top: 22px;
   }
   .ql-dash-metrics strong {
@@ -1753,97 +1183,8 @@
     font-size: 9px;
     gap: 10px;
   }
-  .ql-platform-strip > div {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 19px;
-    padding-block: 24px;
-  }
-  .ql-platform-strip i {
-    display: none;
-  }
-  .ql-platform-strip a {
-    font-size: 11px;
-    width: 100%;
-  }
-  .ql-platform-strip a > svg:last-child {
-    margin-left: auto;
-  }
-  .ql-conversation {
-    padding: 18px 12px;
-  }
-  .ql-storefront-header {
-    padding: 13px;
-  }
-  .ql-storefront-header > strong {
-    font-size: 10px;
-  }
-  .ql-storefront-header > span {
-    font-size: 6px;
-  }
-  .ql-storefront-header .qx-logo {
-    width: 52px;
-    height: 15px;
-  }
-  .ql-shopper > span:first-child {
-    font-size: 9px;
-    padding: 10px;
-  }
-  .ql-assistant p {
-    font-size: 10px;
-  }
   .ql-filter-chips {
     margin-left: 0;
-  }
-  .ql-product-grid {
-    gap: 6px;
-  }
-  .ql-product-art > img {
-    height: 102px;
-  }
-  .ql-product-art > span {
-    font-size: 6px;
-    left: 5px;
-    bottom: 5px;
-  }
-  .ql-product-info {
-    padding: 8px 6px;
-  }
-  .ql-product-info > span {
-    font-size: 5px;
-  }
-  .ql-product-info h3 {
-    font-size: 8px;
-    min-height: 34px;
-  }
-  .ql-product-info > div > span {
-    font-size: 7px;
-  }
-  .ql-product-info strong {
-    font-size: 10px;
-  }
-  .ql-showcase-bottom {
-    padding-inline: 12px;
-  }
-  .ql-steps {
-    gap: 10px;
-  }
-  .ql-steps button {
-    font-size: 7px;
-  }
-  .ql-player button {
-    width: 25px;
-  }
-  .ql-prompt > span {
-    font-size: 7px;
-  }
-  .ql-prompt > button {
-    font-size: 9px;
-    padding: 9px;
-    gap: 10px;
-  }
-  .ql-preview-note {
-    font-size: 7px;
   }
   .ql-section {
     padding-block: 60px;
@@ -1965,20 +1306,12 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ql-player button:first-child {
-    display: none;
-  }
   .ql-home *,
   .ql-home *::before,
   .ql-home *::after {
     animation: none !important;
     transition: none !important;
   }
-}
-
-.ql-product-detail::backdrop {
-  background: #06101fcc;
-  backdrop-filter: blur(5px);
 }
 
 /* Second pass: a compact first viewport, readable previews, and a steady journey. */
@@ -2019,212 +1352,6 @@
   font-size: 11px;
   gap: 9px 16px;
 }
-.ql-scroll-cue {
-  bottom: 23px;
-  font-size: 9px;
-  letter-spacing: 1px;
-}
-.ql-scenario-switch {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-bottom: 11px;
-}
-.ql-scenario-switch > span {
-  color: #a9bdd8;
-  font-size: 10px;
-  margin-right: auto;
-}
-.ql-scenario-switch button {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 34px;
-  padding: 7px 11px;
-  border: 1px solid #abc9ff26;
-  border-radius: 5px;
-  color: #a9bdd8;
-  background: transparent;
-  font-size: 10px;
-}
-.ql-scenario-switch button[aria-pressed="true"] {
-  color: #d2e4ff;
-  border-color: #65a5ff66;
-  background: #245bdb24;
-}
-.ql-showcase .ql-preview-caption {
-  font-size: 10px;
-  margin-bottom: 9px;
-}
-.ql-showcase .ql-preview-caption > span:first-child {
-  font-size: 9px;
-}
-.ql-showcase .ql-storefront-header {
-  padding: 11px 17px;
-}
-.ql-showcase .ql-storefront-header > strong {
-  font-size: 12px;
-}
-.ql-showcase .ql-conversation {
-  padding: 16px 18px 14px;
-}
-.ql-showcase .ql-shopper > span:first-child {
-  padding: 10px 12px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-.ql-showcase .ql-avatar {
-  font-size: 9px;
-}
-.ql-showcase .ql-assistant {
-  margin-top: 14px;
-  min-height: 30px;
-}
-.ql-showcase .ql-assistant p {
-  font-size: 11px;
-}
-.ql-showcase .ql-filter-chips {
-  margin: 8px 0 12px 33px;
-}
-.ql-showcase .ql-filter-chips > span {
-  font-size: 9px;
-}
-.ql-product-area {
-  height: 192px;
-}
-.ql-showcase .ql-product-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  height: 100%;
-}
-.ql-showcase .ql-product {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-.ql-showcase .ql-product-art {
-  flex: 0 0 105px;
-  overflow: hidden;
-  width: 100%;
-}
-.ql-showcase .ql-product-art > img {
-  height: 105px;
-  width: 100%;
-  object-fit: cover;
-}
-.ql-showcase .ql-product-art > span {
-  font-size: 8px;
-  color: #3b5272;
-}
-.ql-showcase .ql-product-info {
-  padding: 10px 11px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-.ql-showcase .ql-product-info > span {
-  display: none;
-}
-.ql-showcase .ql-product-info h3 {
-  margin: 0;
-  min-height: 30px;
-  font-size: 12px;
-  line-height: 1.35;
-}
-.ql-showcase .ql-product-info > div {
-  margin-top: auto;
-  padding-top: 6px;
-}
-.ql-showcase .ql-product-info strong {
-  font-size: 13px;
-}
-.ql-showcase .ql-product-info > div > span {
-  font-size: 10px;
-}
-.ql-stage-feedback {
-  min-height: 65px;
-  padding-top: 14px;
-}
-.ql-journey-feedback {
-  animation: ql-arrive 0.3s ease both;
-}
-.ql-journey-feedback > span {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: #285882;
-  font-size: 11px;
-  font-weight: 500;
-}
-.ql-journey-feedback p {
-  color: #5f738e;
-  font-size: 10px;
-  line-height: 1.6;
-  margin-top: 4px;
-}
-.ql-showcase .ql-comparison {
-  height: 100%;
-  display: grid;
-  grid-template-rows: 1.4fr repeat(3, 1fr);
-  margin: 0;
-  background: #fff;
-}
-.ql-showcase .ql-comparison > div {
-  align-items: stretch;
-}
-.ql-showcase .ql-comparison > div > span,
-.ql-showcase .ql-comparison > div > strong {
-  display: flex;
-  align-items: center;
-  padding: 8px;
-  font-size: 11px;
-  line-height: 1.4;
-}
-.ql-showcase .ql-comparison button {
-  display: inline-flex;
-  text-align: left;
-  align-items: center;
-  gap: 3px;
-  background: none;
-  border: 0;
-  padding: 0;
-  color: #2456a6;
-  font-size: 11px;
-  line-height: 1.4;
-}
-.ql-comparison button > svg {
-  flex-shrink: 0;
-}
-.ql-showcase .ql-prompt {
-  margin-top: 10px;
-}
-.ql-showcase .ql-prompt > span {
-  font-size: 10px;
-}
-.ql-showcase .ql-prompt > button {
-  min-height: 38px;
-  font-size: 11px;
-}
-.ql-showcase .ql-showcase-bottom {
-  padding: 7px 17px;
-}
-.ql-showcase .ql-steps button {
-  font-size: 10px;
-  min-height: 30px;
-}
-.ql-showcase .ql-steps button > span {
-  font-size: 9px;
-  width: 17px;
-  height: 17px;
-}
-.ql-showcase .ql-player button {
-  width: 32px;
-  height: 32px;
-}
-.ql-showcase .ql-preview-note {
-  font-size: 9px;
-}
 .ql-company {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -2240,14 +1367,14 @@
   margin-top: 19px;
 }
 .ql-company-story > p:not(.qx-eyebrow) {
-  color: #a9bdd8;
+  color: #a8b6cd;
   font-size: 14px;
   line-height: 1.85;
   margin-top: 23px;
   max-width: 440px;
 }
 .ql-company-story > .qx-text-link {
-  color: #c0d8fc;
+  color: #8db5ff;
   margin-top: 17px;
 }
 .ql-company-email {
@@ -2255,7 +1382,7 @@
   align-items: center;
   gap: 7px;
   width: fit-content;
-  color: #9cb9df;
+  color: #a8b6cd;
   font-size: 12px;
   margin-top: 12px;
 }
@@ -2266,20 +1393,20 @@
   display: flex;
   align-items: flex-start;
   gap: 18px;
-  border-top: 1px solid #abc9ff26;
+  border-top: 1px solid #2b3d56;
   padding-block: 25px;
 }
 .ql-proof-links > a:last-child {
-  border-bottom: 1px solid #abc9ff26;
+  border-bottom: 1px solid #2b3d56;
 }
 .ql-proof-links > a > svg {
   flex-shrink: 0;
-  color: #65a5ff;
+  color: #8db5ff;
   margin-top: 2px;
 }
 .ql-proof-links strong {
   display: block;
-  color: #dbe8fc;
+  color: #e8eef8;
   font-size: 16px;
   font-weight: 500;
 }
@@ -2287,7 +1414,7 @@
   display: block;
   font-size: 12px;
   line-height: 1.8;
-  color: #a9bdd8;
+  color: #a8b6cd;
   margin-top: 8px;
 }
 .ql-proof-links small {
@@ -2295,16 +1422,16 @@
   align-items: center;
   gap: 7px;
   margin-top: 12px;
-  color: #9bbfee;
+  color: #8db5ff;
   font-size: 11px;
 }
 .ql-proof-links > a:hover small {
-  color: #e8f0ff;
+  color: #e8eef8;
 }
 .ql-evaluation {
   padding-block: 65px;
-  border-block: 1px solid #abc9ff1c;
-  background: #142540;
+  border-block: 1px solid #2b3d56;
+  background: #1a2b45;
 }
 .ql-evaluation > div {
   display: grid;
@@ -2324,7 +1451,7 @@
   gap: 25px;
 }
 .ql-evaluation li > span {
-  color: #65a5ff;
+  color: #8db5ff;
   font:
     11px ui-monospace,
     monospace;
@@ -2335,7 +1462,7 @@
   margin-top: 20px;
 }
 .ql-evaluation li p {
-  color: #a9bdd8;
+  color: #a8b6cd;
   font-size: 12px;
   line-height: 1.85;
   margin-top: 10px;
@@ -2345,11 +1472,11 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #9bb7db;
+  color: #a8b6cd;
   font-size: 10px;
 }
 .ql-evaluation-note svg {
-  color: #18c7d9;
+  color: #84d8ba;
   flex-shrink: 0;
 }
 .ql-faq {
@@ -2359,22 +1486,22 @@
   align-items: start;
 }
 .ql-faq > div:first-child > p:not(.qx-eyebrow) {
-  color: #a9bdd8;
+  color: #a8b6cd;
   font-size: 13px;
   line-height: 1.85;
   margin-top: 23px;
   max-width: 290px;
 }
 .ql-faq > div:first-child > a {
-  color: #b7d4ff;
+  color: #8db5ff;
   margin-top: 18px;
   font-size: 12px;
 }
 .ql-faq-list > details {
-  border-bottom: 1px solid #abc9ff26;
+  border-bottom: 1px solid #2b3d56;
 }
 .ql-faq-list > details:first-child {
-  border-top: 1px solid #abc9ff26;
+  border-top: 1px solid #2b3d56;
 }
 .ql-faq summary {
   display: flex;
@@ -2386,7 +1513,7 @@
   padding-block: 22px;
   font-size: 14px;
   line-height: 1.6;
-  color: #dbe8fc;
+  color: #e8eef8;
 }
 .ql-faq summary::-webkit-details-marker {
   display: none;
@@ -2401,13 +1528,13 @@
 }
 .ql-faq details > div {
   font-size: 13px;
-  color: #a9bdd8;
+  color: #a8b6cd;
   line-height: 1.9;
   padding-bottom: 24px;
   max-width: 570px;
 }
 .ql-faq details a {
-  color: #a8cbff;
+  color: #8db5ff;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -2494,9 +1621,6 @@
   .ql-hero .qx-actions {
     gap: 12px;
   }
-  .ql-showcase {
-    max-width: 640px;
-  }
   .ql-company {
     gap: 40px;
   }
@@ -2523,86 +1647,6 @@
   }
   .ql-hero-proof {
     font-size: 10px;
-  }
-  .ql-scroll-cue {
-    font-size: 8px;
-    letter-spacing: 0.4px;
-  }
-  .ql-showcase .ql-conversation {
-    padding: 15px 13px;
-  }
-  .ql-showcase .ql-storefront-header {
-    padding-inline: 13px;
-  }
-  .ql-showcase .ql-storefront-header > span {
-    font-size: 0;
-  }
-  .ql-showcase .ql-shopper > span:first-child {
-    font-size: 11px;
-  }
-  .ql-showcase .ql-filter-chips {
-    margin-left: 0;
-  }
-  .ql-showcase .ql-filter-chips > span {
-    font-size: 10px;
-  }
-  .ql-product-area {
-    height: 220px;
-  }
-  .ql-showcase .ql-product-art,
-  .ql-showcase .ql-product-art > img {
-    height: 122px;
-    flex-basis: 122px;
-  }
-  .ql-showcase .ql-product-info h3 {
-    min-height: 33px;
-    font-size: 12px;
-  }
-  .ql-showcase .ql-product-info strong {
-    font-size: 14px;
-  }
-  .ql-showcase .ql-product-info > div > span {
-    font-size: 10px;
-  }
-  .ql-showcase .ql-comparison > div > span,
-  .ql-showcase .ql-comparison > div > strong {
-    font-size: 11px;
-    padding: 7px;
-  }
-  .ql-showcase .ql-comparison button {
-    font-size: 11px;
-  }
-  .ql-stage-feedback {
-    min-height: 76px;
-  }
-  .ql-journey-feedback p {
-    font-size: 11px;
-  }
-  .ql-showcase .ql-prompt > span {
-    display: none;
-  }
-  .ql-showcase .ql-prompt > button {
-    width: 100%;
-    min-height: 42px;
-    font-size: 12px;
-  }
-  .ql-showcase .ql-steps {
-    gap: 12px;
-  }
-  .ql-showcase .ql-steps button {
-    font-size: 10px;
-    min-height: 40px;
-  }
-  .ql-showcase .ql-player button {
-    width: 40px;
-    height: 40px;
-  }
-  .ql-showcase .ql-preview-note {
-    font-size: 9px;
-  }
-  .ql-scenario-switch button {
-    min-height: 40px;
-    font-size: 11px;
   }
   .ql-company,
   .ql-faq {
@@ -2688,35 +1732,559 @@
   .ql-hero-proof {
     font-size: 9px;
   }
-  .ql-showcase .ql-preview-caption > span:first-child {
-    font-size: 8px;
-  }
-  .ql-showcase .ql-product-info {
-    padding: 9px 8px;
-  }
-  .ql-showcase .ql-product-info h3 {
-    font-size: 11px;
-  }
-  .ql-showcase .ql-steps {
-    gap: 8px;
-    flex: 1 0 100%;
-    justify-content: space-between;
-  }
-  .ql-showcase .ql-showcase-bottom {
-    flex-wrap: wrap;
-    gap: 0;
-  }
-  .ql-showcase .ql-player {
-    margin-left: auto;
-  }
-  .ql-showcase .ql-steps button {
-    font-size: 9px;
-  }
-  .ql-showcase .ql-preview-note {
-    font-size: 8px;
-  }
   .ql-home .ql-dash-filters select {
     font-size: 10px;
     padding-inline: 7px;
+  }
+}
+
+/* Product-led composition. Dark blue frames the experience; light sections explain it. */
+.ql-home {
+  background: #0b1423;
+}
+.ql-home h2 {
+  font-weight: 600;
+}
+.ql-home .qx-eyebrow {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+}
+.ql-home .ql-hero {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 48px;
+  min-height: 0;
+  margin-top: 24px;
+  padding: 52px 48px;
+  border: 1px solid #153363;
+  border-radius: 24px;
+  background: radial-gradient(ellipse at 10% 100%, #245bdb38, transparent 65%), #10264b;
+  color: #ffffff;
+  overflow: hidden;
+}
+.ql-home .ql-hero h1 {
+  font-size: clamp(44px, 4.7vw, 68px);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.065em;
+  margin-block: 24px;
+}
+.ql-hero h1 em {
+  color: #91baff;
+}
+.ql-home .ql-hero .qx-eyebrow {
+  color: #a5c6ff;
+  font-size: 10px;
+}
+.ql-hero .qx-eyebrow > span {
+  background: #1a2b45;
+}
+.ql-home .ql-hero-description {
+  color: #f0f5ff;
+  font-size: 18px;
+  max-width: 390px;
+  line-height: 1.6;
+}
+.ql-home .ql-hero-body {
+  color: #c1d1ea;
+  font-size: 14px;
+  line-height: 1.85;
+  max-width: 405px;
+}
+.ql-home .ql-hero .qx-actions {
+  gap: 12px;
+  margin-top: 28px;
+}
+.ql-hero .qx-button-outline {
+  background: #111f3308;
+  color: #f0f5ff;
+  border-color: #2b3d5661;
+}
+.ql-hero .qx-button-outline:hover {
+  background: #111f3314;
+  border-color: #2b3d56;
+}
+.ql-home .ql-hero-proof {
+  color: #b8cae7;
+  font-size: 11px;
+  gap: 16px;
+  margin-top: 27px;
+}
+.ql-hero-proof svg {
+  color: #8cdec5;
+}
+.ql-offering {
+  padding-block: 72px 76px;
+}
+.ql-offering-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  align-items: end;
+  margin-bottom: 28px;
+}
+.ql-offering-heading > .qx-eyebrow {
+  max-width: 205px;
+}
+.ql-offering-heading h2 {
+  font-size: clamp(26px, 2.7vw, 36px);
+  letter-spacing: -0.045em;
+}
+.ql-offering-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.ql-offering-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #2b3d56;
+  border-radius: 16px;
+  padding: 28px;
+  background: #111f33;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    transform 0.2s;
+}
+.ql-offering-card:hover {
+  border-color: #2b3d56;
+  box-shadow: 0 16px 40px -24px #173b7540;
+  transform: translateY(-3px);
+}
+.ql-offering-card > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+.ql-offering-card > div > svg {
+  color: #8db5ff;
+  box-sizing: content-box;
+  padding: 12px;
+  background: #1a2b45;
+  border-radius: 12px;
+}
+.ql-offering-card > div > span {
+  color: #a8b6cd;
+  font:
+    11px ui-monospace,
+    monospace;
+}
+.ql-offering-card h3 {
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.6px;
+}
+.ql-offering-card p {
+  font-size: 14px;
+  color: #a8b6cd;
+  line-height: 1.8;
+  margin-block: 14px 24px;
+}
+.ql-offering-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8db5ff;
+}
+.ql-home .ql-section {
+  padding-block: 88px;
+}
+.ql-home #intelligence {
+  padding-top: 24px;
+}
+.ql-home .ql-section-heading {
+  grid-template-columns: 1.2fr 1fr;
+  gap: 64px;
+  margin-bottom: 36px;
+}
+.ql-home .ql-section-heading h2 {
+  font-size: clamp(32px, 3.1vw, 44px);
+  font-weight: 600;
+}
+.ql-home .ql-section-heading > p {
+  font-size: 15px;
+  line-height: 1.85;
+}
+.ql-dashboard {
+  border-radius: 18px;
+  box-shadow: 0 18px 55px -30px #173b7530;
+}
+.ql-home .ql-dash-top {
+  padding: 21px 28px;
+}
+.ql-home .ql-dash-top strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+.ql-home .ql-sample-badge {
+  font-size: 10px;
+}
+.ql-home .ql-dash-filters select {
+  border-radius: 7px;
+  min-height: 38px;
+}
+.ql-home .ql-dash-body {
+  padding: 28px;
+}
+.ql-home .ql-dash-metrics strong {
+  font-size: 38px;
+  font-weight: 600;
+}
+.ql-home .ql-dash-metrics p {
+  font-size: 11px;
+}
+.ql-home .ql-chart-heading h3 {
+  font-size: 13px;
+  font-weight: 600;
+}
+.ql-home .ql-chart-heading > span {
+  font-size: 10px;
+}
+.ql-home .ql-dash-foot {
+  font-size: 10px;
+}
+.ql-home .ql-industry-section {
+  background: #1a2b45;
+  border-block: 1px solid #2b3d56;
+}
+.ql-home .ql-industry-panel {
+  border-radius: 16px;
+}
+.ql-home .ql-industry-tabs button {
+  font-size: 12px;
+  min-height: 44px;
+}
+.ql-home .ql-industry-tabs button[aria-selected="true"],
+.ql-home .ql-industry-tabs button[aria-pressed="true"] {
+  color: #8db5ff;
+}
+.ql-home .ql-industry-copy h3 {
+  font-size: 31px;
+  line-height: 1.2;
+}
+.ql-home .ql-industry-copy > p {
+  font-size: 14px;
+}
+.ql-home .ql-industry-disclosure {
+  font-size: 11px;
+}
+.ql-home .ql-section-foot {
+  font-size: 13px;
+}
+.ql-home .ql-architecture {
+  border-radius: 16px;
+  padding: 30px;
+}
+.ql-engine {
+  background: #1a2b45;
+  border-color: #2b3d56;
+}
+.ql-home .ql-code {
+  border-radius: 16px;
+  background: #10264b;
+  border-color: #213e6c;
+}
+.ql-home .ql-code > div:first-child {
+  border-color: #2b3d561a;
+}
+.ql-home .ql-code > div:first-child > span,
+.ql-home .ql-code > div:first-child > a {
+  color: #b7d0f5;
+  font-size: 11px;
+}
+.ql-home .ql-code > p {
+  color: white;
+  font-size: 17px;
+}
+.ql-home .ql-code > pre {
+  color: #e8f0ff;
+  font-size: 13px;
+}
+.ql-home .ql-code-muted {
+  color: #adc1df;
+}
+.ql-home .ql-code-blue {
+  color: #91baff;
+}
+.ql-home .ql-code-key {
+  color: #d5e3ff;
+}
+.ql-home .ql-code-string {
+  color: #8cdec5;
+}
+.ql-home .ql-code .ql-code-note {
+  color: #b7d0f5;
+}
+.ql-home .ql-code .ql-code-note > svg {
+  color: #8cdec5;
+}
+.ql-home .ql-code > a {
+  color: #bdd5ff;
+}
+.ql-home .ql-doc-links a {
+  font-size: 12px;
+}
+.ql-home .ql-why {
+  background: #1a2b45;
+  border-block: 1px solid #2b3d56;
+}
+.ql-home .ql-benefits {
+  gap: 20px;
+}
+.ql-home .ql-benefits > article {
+  padding: 24px;
+  border: 1px solid #2b3d56;
+  border-radius: 14px;
+  background: #111f33;
+}
+.ql-home .ql-benefits h3 {
+  font-size: 19px;
+}
+.ql-home .ql-benefits p {
+  font-size: 13px;
+  line-height: 1.85;
+}
+.ql-home .ql-company h2,
+.ql-home .ql-faq h2 {
+  font-size: clamp(32px, 3.1vw, 44px);
+}
+.ql-home .ql-company-story > p:not(.qx-eyebrow),
+.ql-home .ql-faq > div:first-child > p:not(.qx-eyebrow) {
+  font-size: 14px;
+}
+.ql-home .ql-proof-links > a {
+  padding: 24px;
+  border: 1px solid #2b3d56;
+  border-radius: 12px;
+  background: #111f33;
+  margin-bottom: 12px;
+}
+.ql-home .ql-proof-links > a:last-child {
+  margin-bottom: 0;
+}
+.ql-home .ql-faq summary {
+  font-size: 15px;
+  font-weight: 500;
+}
+.ql-home .ql-faq details > div {
+  font-size: 14px;
+}
+.ql-home .ql-evaluation {
+  background: #1a2b45;
+}
+.ql-home .ql-evaluation h3 {
+  font-weight: 600;
+}
+.ql-home .ql-evaluation li p {
+  font-size: 13px;
+}
+.ql-home .ql-conversion {
+  position: relative;
+  border-radius: 24px;
+  background: #10264b;
+  color: white;
+  margin-bottom: 72px;
+  padding: 64px 32px;
+  overflow: hidden;
+}
+.ql-home .ql-conversion .qx-eyebrow {
+  color: #a5c6ff;
+}
+.ql-home .ql-conversion h2 {
+  font-size: clamp(34px, 3.6vw, 50px);
+}
+.ql-home .ql-conversion h2 em {
+  color: #91baff;
+}
+.ql-home .ql-conversion > p:not(.qx-eyebrow) {
+  color: #c1d1ea;
+  font-size: 15px;
+}
+.ql-home .ql-conversion > a {
+  color: #bdd5ff;
+  font-size: 12px;
+}
+.ql-home .ql-conversion .qx-button-outline {
+  color: white;
+  border-color: #2b3d5661;
+  background: #111f3308;
+}
+.ql-home .ql-conversion .qx-button-outline:hover {
+  background: #111f3314;
+}
+@media (max-width: 1100px) {
+  .ql-home .ql-hero {
+    gap: 32px;
+    padding: 40px 32px;
+  }
+  .ql-home .ql-hero h1 {
+    font-size: 48px;
+  }
+  .ql-home .ql-hero .qx-actions > .qx-button {
+    font-size: 12px;
+    padding-inline: 14px;
+  }
+  .ql-offering-card {
+    padding: 24px;
+  }
+  .ql-offering-card h3 {
+    font-size: 20px;
+  }
+}
+@media (max-width: 900px) {
+  .ql-home .ql-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    padding: 44px;
+  }
+  .ql-home .ql-hero h1 {
+    font-size: 64px;
+  }
+  .ql-home .ql-hero-copy {
+    max-width: 580px;
+  }
+  .ql-home .ql-hero-body {
+    max-width: 520px;
+  }
+  .ql-home .ql-hero-description {
+    max-width: 520px;
+  }
+  .ql-offering-heading {
+    align-items: start;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .ql-offering-heading > .qx-eyebrow {
+    max-width: none;
+  }
+  .ql-offering-grid {
+    gap: 14px;
+  }
+  .ql-offering-card {
+    padding: 20px;
+  }
+  .ql-offering-card p {
+    font-size: 13px;
+  }
+  .ql-home .ql-section-heading {
+    gap: 32px;
+  }
+}
+@media (max-width: 640px) {
+  .ql-home .ql-hero {
+    margin-top: 16px;
+    border-radius: 18px;
+    padding: 30px 20px 24px;
+    gap: 32px;
+  }
+  .ql-home .ql-hero h1 {
+    font-size: clamp(40px, 10vw, 58px);
+    margin-block: 20px;
+  }
+  .ql-home .ql-hero-description {
+    font-size: 17px;
+  }
+  .ql-home .ql-hero-body {
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .ql-home .ql-hero .qx-eyebrow {
+    font-size: 9px;
+    letter-spacing: 1.1px;
+  }
+  .ql-home .ql-hero .qx-actions {
+    gap: 10px;
+  }
+  .ql-home .ql-hero .qx-actions > .qx-button {
+    font-size: 11px;
+    padding-inline: 12px;
+    min-height: 46px;
+  }
+  .ql-home .ql-hero-proof {
+    gap: 10px;
+    font-size: 10px;
+  }
+  .ql-offering {
+    padding-block: 48px;
+  }
+  .ql-offering-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+  .ql-offering-card {
+    padding: 24px;
+  }
+  .ql-offering-card > div {
+    margin-bottom: 20px;
+  }
+  .ql-offering-card h3 {
+    font-size: 23px;
+  }
+  .ql-offering-card p {
+    font-size: 14px;
+  }
+  .ql-offering-heading h2 {
+    font-size: 29px;
+  }
+  .ql-home .ql-section {
+    padding-block: 56px;
+  }
+  .ql-home .ql-section-heading {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .ql-home .ql-section-heading h2 {
+    font-size: 32px;
+  }
+  .ql-home .ql-section-heading > p {
+    font-size: 14px;
+  }
+  .ql-home .ql-dash-top {
+    padding: 18px 16px;
+  }
+  .ql-home .ql-dash-body {
+    padding: 20px 16px;
+  }
+  .ql-home .ql-dash-metrics strong {
+    font-size: 27px;
+  }
+  .ql-home .ql-dash-metrics p {
+    font-size: 10px;
+  }
+  .ql-home .ql-industry-copy h3 {
+    font-size: 28px;
+  }
+  .ql-home .ql-benefits {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ql-home .ql-conversion {
+    padding: 44px 20px;
+    border-radius: 18px;
+    margin-bottom: 40px;
+  }
+  .ql-home .ql-conversion .qx-actions {
+    gap: 12px;
+  }
+  .ql-home .ql-conversion > a {
+    max-width: 280px;
+    line-height: 1.8;
+  }
+}
+@media (max-width: 640px) {
+  .ql-home .ql-hero-description,
+  .ql-home .ql-hero-proof {
+    display: none;
+  }
+  .ql-home .ql-hero .qx-actions {
+    margin-top: 22px;
+  }
+  .ql-home .ql-hero {
+    padding-top: 26px;
+    gap: 26px;
   }
 }

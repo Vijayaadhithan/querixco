@@ -143,26 +143,24 @@ export function DevelopersPage() {
             <ShieldCheck className="h-3.5 w-3.5" /> Search & interactive commerce
           </div>
           <h1 className="mt-5 max-w-4xl font-display text-4xl font-semibold leading-tight text-workspace-ink sm:text-5xl">
-            Connect your catalog to{" "}
-            <span className="docs-title-accent">search and conversation.</span>
+            Build a better way <span className="docs-title-accent">to discover.</span>
           </h1>
           <p className="mt-5 max-w-3xl text-base leading-7 text-workspace-muted sm:text-lg">
-            Choose the integration that fits your customer journey: a tenant-scoped Search API or a
-            persistent shopping conversation. Each service has its own access contract and
-            deployment boundaries.
+            Start with the Search API or explore a conversational shopping integration. Find the
+            request contracts, working examples and catalog guidance your team needs.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
               href="/developers/integration"
               className="inline-flex h-11 items-center gap-2 rounded-md qx-action bg-workspace-ink px-4 text-sm font-medium text-workspace-ink transition hover:bg-workspace-blue"
             >
-              Read the API guide <ArrowRight className="h-4 w-4" />
+              Start integrating <ArrowRight className="h-4 w-4" />
             </a>
             <a
-              href="/request-demo"
+              href="/developers/commerce"
               className="inline-flex h-11 items-center rounded-md border border-workspace-line bg-workspace-surface px-4 text-sm font-medium text-workspace-ink transition hover:border-workspace-line hover:bg-workspace-wash"
             >
-              Discuss an integration
+              Explore commerce
             </a>
           </div>
         </div>

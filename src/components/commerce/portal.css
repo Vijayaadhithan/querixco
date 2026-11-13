@@ -595,8 +595,8 @@
   border-radius: 12px;
 }
 .portal-login {
-  border-top: 2px solid #65a5ff66;
-  box-shadow: 0 24px 70px -35px #0009;
+  border-top: 2px solid #2b3d56;
+  box-shadow: 0 24px 70px -35px #173b7526;
 }
 .portal-page .portal-eyebrow,
 .portal-page .portal-trust,
@@ -612,10 +612,10 @@
 .portal-page select:focus,
 .portal-dialog input:focus {
   border-color: var(--c-link);
-  box-shadow: 0 0 0 3px #65a5ff12;
+  box-shadow: 0 0 0 3px #edf3ff;
 }
 .portal-account-bar {
-  color: #bdcee7;
+  color: #a8b6cd;
 }
 .portal-account-bar a:hover,
 .portal-account-bar button:hover {
@@ -623,12 +623,12 @@
 }
 .portal-category {
   padding: 28px;
-  border-top: 2px solid #65a5ff4d;
-  box-shadow: 0 12px 30px -25px #0009;
+  border-top: 2px solid #2b3d56;
+  box-shadow: 0 12px 30px -25px #173b7526;
 }
 .portal-category:hover {
-  background: #1d355880;
-  border-color: #65a5ff80;
+  background: #1a2b45;
+  border-color: #2b3d56;
 }
 .portal-category-top {
   display: flex;
@@ -640,22 +640,22 @@
   font-family: monospace;
   font-size: 9px;
   letter-spacing: 1px;
-  color: #8faed7;
+  color: #a8b6cd;
 }
 .portal-category h2 {
   color: var(--c-ink);
 }
 .portal-category .portal-icon {
-  background: #65a5ff12;
-  border: 1px solid #65a5ff26;
+  background: #1a2b45;
+  border: 1px solid #2b3d56;
   border-radius: 9px;
 }
 .portal-badge.is-active {
-  background: #18c7d912;
-  color: #68dfd1;
+  background: #1a2b45;
+  color: #84d8ba;
 }
 .portal-users tbody tr:hover {
-  background: #1d35585c;
+  background: #1a2b45;
 }
 .portal-dialog {
   width: min(470px, calc(100vw - 32px));
@@ -683,5 +683,64 @@
   }
   .portal-category {
     padding: 24px;
+  }
+}
+
+.portal-page .portal-intro h1 {
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  font-size: clamp(40px, 4.3vw, 62px);
+}
+.portal-page .portal-intro > p {
+  font-size: 16px;
+  line-height: 1.85;
+}
+.portal-page .portal-card {
+  padding: 36px;
+  border: 1px solid var(--c-line);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px -35px #173b7530;
+}
+.portal-page .portal-login {
+  border-top: 3px solid #245bdb;
+}
+.portal-page .portal-card input,
+.portal-dialog input {
+  background: #111f33;
+  border-radius: 8px;
+  min-height: 46px;
+}
+.portal-page .portal-primary,
+.portal-dialog .portal-primary {
+  border-radius: 8px;
+  min-height: 46px;
+}
+.portal-page .portal-category {
+  background: #111f33;
+  border-radius: 16px;
+  border-top: 1px solid var(--c-line);
+}
+.portal-page .portal-category:hover {
+  background: #111f33;
+  box-shadow: 0 16px 36px -24px #173b7540;
+}
+.portal-page .portal-stats > div {
+  background: #111f33;
+  border-radius: 14px;
+  border: 1px solid var(--c-line);
+}
+.portal-page .portal-users {
+  background: #111f33;
+  border-radius: 14px;
+}
+@media (max-width: 640px) {
+  .portal-page .portal-card {
+    padding: 26px 22px;
+  }
+  .portal-page .portal-intro h1 {
+    font-size: 40px;
+  }
+  .portal-page .portal-intro > p {
+    font-size: 14px;
   }
 }

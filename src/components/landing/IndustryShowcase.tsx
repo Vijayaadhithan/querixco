@@ -1,5 +1,7 @@
 import { useId, useState } from "react";
 import { ArrowRight, Check, Cpu, FlaskConical, House, Shirt, Wrench } from "lucide-react";
+import { DISCOVERY_EXAMPLES } from "@/features/commerce/discovery-examples";
+import { attributeText, productPrice } from "@/features/commerce/model";
 
 const industries = [
   {
@@ -150,6 +152,17 @@ export function IndustryShowcase() {
   const [refined, setRefined] = useState(false);
   const id = useId();
   const item = industries[index];
+  const catalogExample =
+    item.art === "fashion"
+      ? DISCOVERY_EXAMPLES.fashion
+      : item.art === "beauty"
+        ? DISCOVERY_EXAMPLES.beauty
+        : null;
+  const catalogProducts = catalogExample
+    ? refined
+      ? catalogExample.refined
+      : catalogExample.initial
+    : null;
   return (
     <div className="ql-industries">
       <div className="ql-industry-tabs" role="group" aria-label="Industry demonstrations">
@@ -196,11 +209,33 @@ export function IndustryShowcase() {
           <div className="ql-industry-products">
             {(refined ? item.refinedProducts : item.products).map((product, i) => (
               <article key={product}>
-                <IndustryArt kind={item.art} second={i === 1} />
+                {catalogProducts ? (
+                  <img
+                    src={catalogProducts[i].image_urls?.[0]}
+                    alt={catalogProducts[i].title}
+                    width="280"
+                    height="280"
+                    loading="lazy"
+                  />
+                ) : (
+                  <IndustryArt kind={item.art} second={i === 1} />
+                )}
                 <div>
-                  <h4>{product}</h4>
-                  <p>{item.details[i]}</p>
-                  <strong>{(refined ? item.refinedPrices : item.prices)[i]}</strong>
+                  <h4>{catalogProducts?.[i].title ?? product}</h4>
+                  <p>
+                    {catalogProducts
+                      ? attributeText(
+                          catalogProducts[i].attributes[
+                            catalogExample === DISCOVERY_EXAMPLES.fashion ? "material" : "volume"
+                          ]?.value,
+                        )
+                      : item.details[i]}
+                  </p>
+                  <strong>
+                    {catalogProducts
+                      ? productPrice(catalogProducts[i])
+                      : (refined ? item.refinedPrices : item.prices)[i]}
+                  </strong>
                 </div>
               </article>
             ))}

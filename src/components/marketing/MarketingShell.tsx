@@ -114,7 +114,7 @@ export function MarketingShell({ children, active }: { children: ReactNode; acti
             ))}
           </nav>
           <a href="/request-demo" className="qx-button qx-button-small qx-nav-cta">
-            Book a demo <ArrowUpRight size={15} />
+            Request a demo <ArrowUpRight size={15} />
           </a>
           <button
             ref={menuButton}
@@ -155,7 +155,7 @@ export function MarketingShell({ children, active }: { children: ReactNode; acti
               Common questions <ArrowUpRight size={15} />
             </a>
             <a href="/request-demo">
-              Book a demo <ArrowUpRight size={15} />
+              Request a demo <ArrowUpRight size={15} />
             </a>
             <a href="/commerce/login">
               Demo sign-in <ArrowUpRight size={15} />
@@ -229,7 +229,7 @@ export function DemoCta({ product = "both" }: { product?: "search" | "commerce" 
           <p>Bring the searches and shopping journeys that matter to you.</p>
         </div>
         <a className="qx-button qx-button-white" href={`/request-demo?product=${product}`}>
-          Book a demo <ArrowRight size={18} />
+          Request a demo <ArrowRight size={18} />
         </a>
       </div>
     </section>

@@ -614,80 +614,82 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
   }
   return (
     <div className="commerce-app commerce-demo commerce-chat-page">
-      <CommerceHeader demo />
-      {portalUser && (
-        <div className="portal-chat-account">
-          <PortalAccountBar user={portalUser} />
-        </div>
-      )}
-      <nav className="chat-sections" aria-label="Shopping sections">
-        {Object.entries(STOREFRONTS)
-          .filter(([id]) => !portalUser || portalUser.storefronts.includes(id as StorefrontID))
-          .map(([id, item]) => (
-            <a key={id} href={`/${id}`} aria-current={storefront === id ? "page" : undefined}>
-              {item.label}
-            </a>
-          ))}
-        {!storefront && <span>Legacy demo</span>}
-      </nav>
-      <div className="chat-toolbar">
-        <div>
-          <strong>{section?.label ?? "Shopping companion"}</strong>
-          <span className="chat-connection">
-            <i />
-            {mode === "sample"
-              ? "Sample walkthrough"
-              : state.sessionId
-                ? "Live catalog"
-                : initialized
-                  ? "Not connected"
-                  : "Connecting…"}
-          </span>
-        </div>
-        <div className="chat-toolbar-actions">
-          {!storefront && (
-            <button
-              disabled={busy}
-              onClick={() => void changeMode(mode === "live" ? "sample" : "live")}
-              title={mode === "live" ? "Switch to sample walkthrough" : "Connect to live catalog"}
-            >
-              {mode === "live" ? "Try sample" : "Use live catalog"}
-              {!available && mode === "sample" ? " · offline" : ""}
-            </button>
-          )}
-          <button
-            aria-expanded={showContext}
-            aria-label="Conversation preferences"
-            onClick={() => setShowContext(!showContext)}
-          >
-            <SlidersHorizontal size={17} />
-            <span>Preferences</span>
-          </button>
-          {portalUser && (
-            <>
+      <CommerceHeader
+        demo
+        account={portalUser ? <PortalAccountBar user={portalUser} /> : undefined}
+      />
+      <div className="chat-workspace-controls">
+        <nav className="chat-sections" aria-label="Shopping sections">
+          {Object.entries(STOREFRONTS)
+            .filter(([id]) => !portalUser || portalUser.storefronts.includes(id as StorefrontID))
+            .map(([id, item]) => (
+              <a key={id} href={`/${id}`} aria-current={storefront === id ? "page" : undefined}>
+                {item.label}
+              </a>
+            ))}
+          {!storefront && <span>Legacy demo</span>}
+        </nav>
+        <div className="chat-toolbar">
+          <div>
+            <strong>{section?.label ?? "Shopping companion"}</strong>
+            <span className="chat-connection" role="status">
+              <i />
+              {mode === "sample"
+                ? "Sample walkthrough"
+                : state.sessionId
+                  ? "Live catalog"
+                  : initialized
+                    ? "Not connected"
+                    : "Connecting…"}
+            </span>
+          </div>
+          <div className="chat-toolbar-actions">
+            {!storefront && (
               <button
                 disabled={busy}
-                aria-expanded={showHistory}
-                onClick={() => (showHistory ? setShowHistory(false) : void historyPage())}
+                onClick={() => void changeMode(mode === "live" ? "sample" : "live")}
+                title={mode === "live" ? "Switch to sample walkthrough" : "Connect to live catalog"}
               >
-                History
+                {mode === "live" ? "Try sample" : "Use live catalog"}
+                {!available && mode === "sample" ? " · offline" : ""}
               </button>
-              <button
-                disabled={busy || !state.messages.length}
-                onClick={() => setConfirmDelete(true)}
-              >
-                <Trash2 size={16} />
-                <span>Delete chat</span>
-              </button>
-            </>
-          )}
-          <button
-            disabled={busy}
-            onClick={() => (portalUser ? void reset(false) : setConfirmDelete(true))}
-          >
-            <Plus size={18} />
-            <span>New chat</span>
-          </button>
+            )}
+            <button
+              aria-expanded={showContext}
+              aria-label="Conversation preferences"
+              onClick={() => setShowContext(!showContext)}
+            >
+              <SlidersHorizontal size={17} />
+              <span>Preferences</span>
+            </button>
+            {portalUser && (
+              <>
+                <button
+                  disabled={busy}
+                  aria-expanded={showHistory}
+                  onClick={() => (showHistory ? setShowHistory(false) : void historyPage())}
+                >
+                  History
+                </button>
+                <button
+                  aria-label="Delete chat"
+                  disabled={busy || !state.messages.length}
+                  onClick={() => setConfirmDelete(true)}
+                >
+                  <Trash2 size={16} />
+                  <span>Delete chat</span>
+                </button>
+              </>
+            )}
+            <button
+              aria-label="New chat"
+              disabled={busy}
+              onClick={() => (portalUser ? void reset(false) : setConfirmDelete(true))}
+            >
+              <Plus size={18} />
+              <span>New chat</span>
+            </button>
+          </div>
         </div>
       </div>
       {showHistory && (

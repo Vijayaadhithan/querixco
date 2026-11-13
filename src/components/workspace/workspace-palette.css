@@ -1,23 +1,23 @@
-/* One navy/blue palette for product workspaces and developer documentation. */
+/* Shared blue identity for documentation and authenticated workspaces. */
 .qx-workspace:is(.qx-analytics-theme, .qx-docs) {
-  --color-workspace-paper: #101e38;
-  --color-workspace-surface: #142641;
-  --color-workspace-wash: #1d3558;
-  --color-workspace-ink: #e8f0ff;
-  --color-workspace-body: #bdcee7;
-  --color-workspace-muted: #a9bdd8;
-  --color-workspace-line: #abc9ff26;
-  --color-workspace-blue: #65a5ff;
-  --color-workspace-tint: #65a5ff12;
-  --color-workspace-blue-line: #65a5ff4d;
-  --color-workspace-success: #68dfd1;
-  --color-workspace-success-tint: #18c7d912;
-  --color-workspace-success-line: #18c7d945;
-  --color-workspace-warning: #f4cd86;
-  --color-workspace-warning-tint: #f4cd8612;
-  --color-workspace-warning-line: #f4cd8640;
-  --color-workspace-danger: #ffa5b0;
-  --color-workspace-danger-tint: #ffa5b012;
-  --color-workspace-danger-line: #ffa5b040;
+  --color-workspace-paper: #0b1423;
+  --color-workspace-surface: #111f33;
+  --color-workspace-wash: #1a2b45;
+  --color-workspace-ink: #e8eef8;
+  --color-workspace-body: #c3cfe1;
+  --color-workspace-muted: #a8b6cd;
+  --color-workspace-line: #2b3d56;
+  --color-workspace-blue: #8db5ff;
+  --color-workspace-tint: #1a2e4b;
+  --color-workspace-blue-line: #355077;
+  --color-workspace-success: #84d8ba;
+  --color-workspace-success-tint: #14332e;
+  --color-workspace-success-line: #2e6252;
+  --color-workspace-warning: #f0c580;
+  --color-workspace-warning-tint: #352d20;
+  --color-workspace-warning-line: #685333;
+  --color-workspace-danger: #ffa0b0;
+  --color-workspace-danger-tint: #35232e;
+  --color-workspace-danger-line: #6e394b;
   color-scheme: dark;
 }

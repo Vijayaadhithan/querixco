@@ -4,7 +4,7 @@ import { MarketingShell } from "./MarketingShell";
 
 type Intent = "demo" | "integration" | "poc";
 const intentLabels: Record<Intent, string> = {
-  demo: "Book a demo",
+  demo: "Request a demo",
   integration: "Discuss integration",
   poc: "Request a proof of concept",
 };
@@ -62,11 +62,9 @@ export function DemoRequest({
         <div className="qx-request-copy">
           <p className="qx-eyebrow">LET’S TALK ABOUT YOUR CATALOG</p>
           <h1>
-            Start with your
+            Let’s explore what
             <br />
-            customers’ next
-            <br />
-            “I need.”
+            Querix can do for you.
           </h1>
           <p>
             Tell us what you’re building. We’ll use your catalog, customer needs, and integration
@@ -158,7 +156,7 @@ export function DemoRequest({
               <label>
                 How can we help?
                 <select name="intent" defaultValue={initialIntent}>
-                  <option value="demo">Book a demo</option>
+                  <option value="demo">Request a demo</option>
                   <option value="integration">Discuss integration</option>
                   <option value="poc">Request a proof of concept</option>
                 </select>

@@ -13,12 +13,11 @@ html[data-qx-intro] .qx-intro {
   display: grid;
 }
 html[data-qx-intro="active"] .qx-intro-content {
-  visibility: hidden;
-  opacity: 0;
+  visibility: visible;
+  opacity: 1;
 }
 .qx-intro-content {
   opacity: 1;
-  transition: opacity 450ms ease;
 }
 .qx-intro-content:focus,
 .qx-intro:focus {

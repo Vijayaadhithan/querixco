@@ -6,7 +6,7 @@
   color: var(--color-workspace-ink);
   background: var(--color-workspace-paper);
   font-family: "Inter", sans-serif;
-  color-scheme: light;
+  color-scheme: dark;
 }
 .qx-workspace h1,
 .qx-workspace h2,
@@ -22,7 +22,7 @@
 .qx-workspace input,
 .qx-workspace select,
 .qx-workspace textarea {
-  color-scheme: light;
+  color-scheme: dark;
 }
 .qx-workspace button:not(:disabled),
 .qx-workspace summary,
@@ -46,7 +46,7 @@
   top: 0;
   z-index: 40;
   border-bottom: 1px solid var(--color-workspace-line);
-  background: #fafaf7f5;
+  background: #0b1423f5;
   backdrop-filter: blur(14px);
 }
 .qx-workspace-header-inner {
@@ -122,12 +122,12 @@
   left: 16px;
   z-index: 100;
   padding: 12px 18px;
-  background: white;
+  background: #111f33;
 }
 .qx-workspace-skip:focus {
   top: 12px;
 }
-.qx-analytics > #analytics-content > main {
+.qx-analytics #analytics-content > main {
   max-width: 1440px;
   padding-top: 40px;
   padding-bottom: 70px;
@@ -156,20 +156,18 @@
   transition: background 0.15s;
 }
 .qx-analytics tbody tr:hover {
-  background: #f5f7fb;
+  background: #0b1423;
 }
 .qx-analytics .qx-metric-bar {
   transform-origin: left;
-  animation: qx-bar-enter 0.65s ease-out both;
   background: var(--color-workspace-blue);
 }
 .qx-analytics .qx-chart-line {
-  stroke-dasharray: 1;
+  stroke-dasharray: none;
   stroke-dashoffset: 0;
-  animation: qx-chart-enter 1s ease-out both;
 }
 .qx-analytics .qx-summary-card {
-  border-top: 2px solid #c8d7f5;
+  border-top: 2px solid #2b3d56;
 }
 .qx-auth {
   min-height: 100vh;
@@ -177,7 +175,7 @@
   grid-template-columns: 1fr 1fr;
 }
 .qx-auth-story {
-  background: #e9effb;
+  background: #1a2b45;
   padding: 45px max(36px, 8vw);
   display: flex;
   flex-direction: column;
@@ -273,7 +271,7 @@
 .qx-docs .code-copy-button {
   color: var(--color-workspace-muted);
   border-color: var(--color-workspace-line);
-  background: white;
+  background: #111f33;
 }
 .qx-docs .code-copy-button:hover {
   color: var(--color-workspace-blue);
@@ -282,7 +280,7 @@
 }
 .qx-docs .api-status-badge {
   border-color: var(--color-workspace-line);
-  background: white;
+  background: #111f33;
 }
 .qx-docs .api-status-badge .text-white {
   color: var(--color-workspace-ink);
@@ -496,7 +494,7 @@
 }
 .analytics-filterbar {
   border: 1px solid var(--color-workspace-line);
-  background: white;
+  background: #111f33;
   border-radius: 7px;
   padding: 16px;
 }
@@ -610,7 +608,7 @@
   max-width: 100%;
   overflow-wrap: anywhere;
   background: var(--color-workspace-tint);
-  color: #254a98;
+  color: #8db5ff;
   padding: 5px 8px;
   font-size: 12px;
   border-radius: 4px;
@@ -631,7 +629,7 @@
   padding: 22px;
   border: 1px solid var(--color-workspace-line);
   border-radius: 6px;
-  background: white;
+  background: #111f33;
 }
 .analytics-summary-card > div {
   display: flex;
@@ -696,7 +694,7 @@
 }
 .analytics-report-picker select {
   border: 1px solid var(--color-workspace-line);
-  background: white;
+  background: #111f33;
   padding: 10px;
   border-radius: 4px;
   max-width: 80%;

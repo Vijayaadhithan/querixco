@@ -100,8 +100,8 @@ export function LoginPage() {
         <section className="portal-intro">
           <span className="portal-eyebrow">QUERIX / PRIVATE PREVIEW</span>
           <h1>
-            A little access.
-            <br />A world to explore.
+            Your catalog.
+            <br />A better conversation.
           </h1>
           <p>
             Your space to try conversational shopping. Sign in with the account provided by your

@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { Brand } from "@/components/marketing/Brand";
-export function CommerceHeader({ demo = false }: { demo?: boolean }) {
+import type { ReactNode } from "react";
+export function CommerceHeader({ demo = false, account }: { demo?: boolean; account?: ReactNode }) {
   return (
     <header className="commerce-header">
       <a href="/" aria-label="Querix home">
@@ -24,6 +25,20 @@ export function CommerceHeader({ demo = false }: { demo?: boolean }) {
           </>
         )}
       </a>
+      {account && (
+        <details
+          className="commerce-account-menu"
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              event.currentTarget.open = false;
+              event.currentTarget.querySelector("summary")?.focus();
+            }
+          }}
+        >
+          <summary>Account</summary>
+          <div>{account}</div>
+        </details>
+      )}
     </header>
   );
 }

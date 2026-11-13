@@ -6,25 +6,25 @@
 
 @theme {
   /* Keep workspace utilities themeable at the component boundary. */
-  --color-workspace-paper: #fafaf7;
-  --color-workspace-surface: #ffffff;
-  --color-workspace-wash: #f0f2f4;
-  --color-workspace-ink: #14243b;
-  --color-workspace-body: #475569;
-  --color-workspace-muted: #5f6875;
-  --color-workspace-line: #dce1e5;
-  --color-workspace-blue: #275fe8;
-  --color-workspace-tint: #e9effb;
-  --color-workspace-blue-line: #c6d5f3;
-  --color-workspace-success: #236447;
-  --color-workspace-success-tint: #edf6f0;
-  --color-workspace-success-line: #cde1d5;
-  --color-workspace-warning: #845000;
-  --color-workspace-warning-tint: #fff6e8;
-  --color-workspace-warning-line: #edd9b6;
-  --color-workspace-danger: #a12c38;
-  --color-workspace-danger-tint: #fff0f1;
-  --color-workspace-danger-line: #efc8ce;
+  --color-workspace-paper: #0b1423;
+  --color-workspace-surface: #111f33;
+  --color-workspace-wash: #1a2b45;
+  --color-workspace-ink: #e8eef8;
+  --color-workspace-body: #c3cfe1;
+  --color-workspace-muted: #a8b6cd;
+  --color-workspace-line: #2b3d56;
+  --color-workspace-blue: #8db5ff;
+  --color-workspace-tint: #1a2e4b;
+  --color-workspace-blue-line: #355077;
+  --color-workspace-success: #84d8ba;
+  --color-workspace-success-tint: #14332e;
+  --color-workspace-success-line: #2e6252;
+  --color-workspace-warning: #f0c580;
+  --color-workspace-warning-tint: #352d20;
+  --color-workspace-warning-line: #685333;
+  --color-workspace-danger: #ffa0b0;
+  --color-workspace-danger-tint: #35232e;
+  --color-workspace-danger-line: #6e394b;
 }
 
 @theme inline {
@@ -64,32 +64,32 @@
   --radius: 0.875rem;
 
   /* Querix brand palette */
-  --background: oklch(0.18 0.04 250); /* #0A1B2E deep navy */
-  --foreground: oklch(0.95 0.01 250); /* #E6E8EF */
-  --surface: oklch(0.22 0.035 255); /* #111827 */
-  --surface-elevated: oklch(0.26 0.04 258);
+  --background: #0b1423;
+  --foreground: #e8eef8;
+  --surface: #111f33;
+  --surface-elevated: #1a2b45;
 
-  --card: oklch(0.22 0.035 255);
-  --card-foreground: oklch(0.95 0.01 250);
-  --popover: oklch(0.22 0.035 255);
-  --popover-foreground: oklch(0.95 0.01 250);
+  --card: #111f33;
+  --card-foreground: #e8eef8;
+  --popover: #111f33;
+  --popover-foreground: #e8eef8;
 
   --brand-blue: oklch(0.68 0.18 250); /* #1E90FF */
   --brand-purple: oklch(0.62 0.22 290); /* #7B5CFF */
 
-  --primary: oklch(0.68 0.18 250);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.28 0.04 258);
-  --secondary-foreground: oklch(0.95 0.01 250);
-  --muted: oklch(0.26 0.03 258);
-  --muted-foreground: oklch(0.72 0.02 255);
-  --accent: oklch(0.62 0.22 290);
-  --accent-foreground: oklch(0.99 0 0);
-  --destructive: oklch(0.62 0.24 27);
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(1 0 0 / 8%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.68 0.18 250);
+  --primary: #2f68e6;
+  --primary-foreground: #ffffff;
+  --secondary: #1a2b45;
+  --secondary-foreground: #e8eef8;
+  --muted: #1a2b45;
+  --muted-foreground: #a8b6cd;
+  --accent: #1a2e4b;
+  --accent-foreground: #8db5ff;
+  --destructive: #b63e57;
+  --destructive-foreground: #ffffff;
+  --border: #2b3d56;
+  --input: #355077;
+  --ring: #8db5ff;
 
   --gradient-brand: linear-gradient(135deg, oklch(0.68 0.18 250) 0%, oklch(0.62 0.22 290) 100%);
   --gradient-radial-glow: radial-gradient(
@@ -502,8 +502,8 @@
   }
 
   .reveal-on-scroll[data-reveal="pending"] {
-    opacity: 0;
-    transform: translateY(16px);
+    opacity: 1;
+    transform: none;
   }
 
   .reveal-on-scroll.is-visible {
@@ -521,8 +521,8 @@
   }
 
   [data-reveal="pending"] .reveal-stagger > * {
-    opacity: 0;
-    transform: translateY(10px);
+    opacity: 1;
+    transform: none;
   }
 
   .is-visible .reveal-stagger > * {
@@ -551,7 +551,7 @@
   }
 
   .docs-page-enter {
-    animation: docs-page-enter 0.65s var(--motion-smooth) both;
+    animation: none;
   }
 
   .api-status-badge {

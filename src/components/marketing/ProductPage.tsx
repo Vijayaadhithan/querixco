@@ -62,17 +62,15 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
           <h1>
             {commerce ? (
               <>
-                Every next question.
+                A conversation that
                 <br />
-                <em>A better discovery.</em>
+                <em>moves shopping forward.</em>
               </>
             ) : (
               <>
                 Their words.
                 <br />
-                Your catalog.
-                <br />
-                <em>A better match.</em>
+                <em>The right discovery.</em>
               </>
             )}
           </h1>
@@ -83,7 +81,7 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
           </p>
           <div className="qx-actions">
             <a className="qx-button" href={`/request-demo?product=${product}`}>
-              Book a demo <ArrowUpRight size={16} />
+              Request a demo <ArrowUpRight size={16} />
             </a>
           </div>
           <a

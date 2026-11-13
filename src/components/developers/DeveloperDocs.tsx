@@ -96,18 +96,18 @@ const guideSections: Record<Guide, string[]> = {
 };
 
 const documentationNav = [
-  {
-    label: "Interactive commerce",
-    to: "/developers/commerce",
-    key: "commerce",
-    group: "Core concepts",
-  },
   { label: "Overview", to: "/developers", key: "overview", group: "Get started" },
   {
     label: "Quickstart & API",
     to: "/developers/integration",
     key: "integration",
     group: "Get started",
+  },
+  {
+    label: "Interactive commerce",
+    to: "/developers/commerce",
+    key: "commerce",
+    group: "Core concepts",
   },
   {
     label: "Search API behavior",
@@ -205,7 +205,7 @@ export function DeveloperShell({
               className="inline-flex h-9 items-center gap-2 rounded-lg qx-action bg-workspace-ink px-2.5 text-xs font-medium text-workspace-ink transition hover:bg-workspace-blue sm:px-3.5 sm:text-sm"
             >
               <span className="sm:hidden">Demo</span>
-              <span className="hidden sm:inline">Book a demo</span>
+              <span className="hidden sm:inline">Request a demo</span>
               <ArrowRight className="hidden h-3.5 w-3.5 sm:block" />
             </a>
             <button
