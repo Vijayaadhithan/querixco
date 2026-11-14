@@ -4,18 +4,30 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { CommerceDemo } from "./CommerceDemo";
 import * as client from "@/features/commerce/client";
 import { SAMPLE_PRODUCTS } from "@/features/commerce/sample";
+import { PortalContext } from "@/features/commerce/portal-context";
+import type { Conversation } from "@/features/commerce/model";
 vi.mock("@/features/commerce/client", async (original) => ({
   ...(await original<typeof client>()),
   liveStatus: vi.fn(),
   connectLive: vi.fn(),
   loadCatalog: vi.fn(),
   sendLive: vi.fn(),
+  listLive: vi.fn(),
+  openLive: vi.fn(),
+  newLive: vi.fn(),
+  deleteLive: vi.fn(),
 }));
 let root: Root;
 let element: HTMLDivElement;
 beforeEach(() => {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   HTMLElement.prototype.scrollTo = vi.fn();
+  HTMLDialogElement.prototype.showModal = vi.fn(function (this: HTMLDialogElement) {
+    this.open = true;
+  });
+  HTMLDialogElement.prototype.close = vi.fn(function (this: HTMLDialogElement) {
+    this.open = false;
+  });
   sessionStorage.clear();
   element = document.createElement("div");
   document.body.append(element);
@@ -32,11 +44,16 @@ beforeEach(() => {
     categories: [],
     price_context: "historical USD",
   });
+  vi.mocked(client.listLive).mockResolvedValue({ conversations: [] });
+  vi.mocked(client.openLive).mockResolvedValue({});
+  vi.mocked(client.newLive).mockResolvedValue({});
+  vi.mocked(client.deleteLive).mockResolvedValue({});
 });
 afterEach(async () => {
   await act(async () => root.unmount());
   element.remove();
-  vi.clearAllMocks();
+  vi.resetAllMocks();
+  vi.unstubAllGlobals();
 });
 it("keeps products in each chat turn and scopes actions to the latest response", async () => {
   const commerce = {
@@ -158,4 +175,273 @@ it("does not restore a pending message from another section", async () => {
   await act(async () => root.render(<CommerceDemo storefront="footwear" />));
   expect(element.querySelector(".chat-turn.user")).toBeNull();
   expect(element.textContent).not.toContain("Recover response");
+});
+
+const testUser = {
+  id: "user-1",
+  name: "Test shopper",
+  role: "user" as const,
+  enabled: 1,
+  must_change_password: 0,
+  storefronts: ["clothing", "footwear"] as const,
+  created_at: 0,
+  last_login: null,
+};
+const savedChat = (id: string, title = `Chat ${id}`) => ({
+  id,
+  title,
+  updated_at: new Date().toISOString(),
+  storefront_id: "clothing" as const,
+});
+const restoredChat = (id: string, content = `Message in ${id}`): Conversation => ({
+  sessionId: id,
+  preferences: { tasks: [] },
+  messages: [
+    { id: `${id}-1`, role: "user", content },
+    { id: `${id}-2`, role: "assistant", content: "Here are some ideas." },
+  ],
+});
+async function renderPortal() {
+  await act(async () =>
+    root.render(
+      <PortalContext.Provider value={{ ...testUser, storefronts: [...testUser.storefronts] }}>
+        <CommerceDemo storefront="clothing" />
+      </PortalContext.Provider>,
+    ),
+  );
+}
+function button(label: string) {
+  const match = [...element.querySelectorAll<HTMLButtonElement>("button")].find(
+    (item) => item.getAttribute("aria-label") === label || item.textContent?.trim() === label,
+  );
+  if (!match) throw new Error(`Button not found: ${label}`);
+  return match;
+}
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  let reject!: (error: Error) => void;
+  const promise = new Promise<T>((yes, no) => {
+    resolve = yes;
+    reject = no;
+  });
+  return { promise, resolve, reject };
+}
+
+it("loads account history automatically, groups dates and marks the restored chat", async () => {
+  vi.mocked(client.connectLive).mockResolvedValue(restoredChat("active"));
+  vi.mocked(client.listLive).mockResolvedValue({
+    conversations: [
+      savedChat("active", "Cotton shirts"),
+      { ...savedChat("older"), updated_at: "2020-01-01T12:00:00Z" },
+    ],
+  });
+  await renderPortal();
+  expect(client.listLive).toHaveBeenCalledWith("clothing", 0);
+  expect(button("Open chat: Cotton shirts").getAttribute("aria-current")).toBe("true");
+  expect(element.querySelector('[aria-label="Today"]')).not.toBeNull();
+  expect(element.querySelector('[aria-label="Older"]')).not.toBeNull();
+  expect(element.querySelector('a[href="/beauty"]')).toBeNull();
+  expect(element.querySelector('a[href="/footwear"]')).not.toBeNull();
+  await act(async () => button("Hide history").click());
+  expect(element.querySelector(".chat-history-sidebar")).toBeNull();
+  await act(async () => button("Show history").click());
+  expect(button("Open chat: Cotton shirts")).toBeTruthy();
+});
+
+it("shows history loading and errors locally, then retries without replacing the chat", async () => {
+  const page = deferred<Awaited<ReturnType<typeof client.listLive>>>();
+  vi.mocked(client.listLive).mockReturnValueOnce(page.promise);
+  vi.mocked(client.connectLive).mockResolvedValue(restoredChat("active"));
+  await renderPortal();
+  expect(element.querySelector(".chat-history-status")?.textContent).toContain("Loading");
+  expect(element.textContent).not.toContain("A place for your finds");
+  await act(async () => page.reject(new Error("History unavailable")));
+  expect(element.querySelector(".chat-history-error")?.textContent).toContain(
+    "History unavailable",
+  );
+  expect(element.querySelector(".chat-composer .commerce-error")).toBeNull();
+  expect(element.querySelector(".chat-user-bubble")?.textContent).toBe("Message in active");
+  vi.mocked(client.listLive).mockResolvedValue({ conversations: [savedChat("active")] });
+  await act(async () => button("Try again").click());
+  expect(element.querySelector(".chat-history-error")).toBeNull();
+  expect(button("Open chat: Chat active")).toBeTruthy();
+});
+
+it("prevents overlapping pagination, deduplicates rows and advances by server row count", async () => {
+  const first = Array.from({ length: 50 }, (_, i) => savedChat(String(i)));
+  const second = [first[49], ...Array.from({ length: 49 }, (_, i) => savedChat(String(i + 50)))];
+  const page = deferred<Awaited<ReturnType<typeof client.listLive>>>();
+  vi.mocked(client.listLive)
+    .mockResolvedValueOnce({ conversations: first })
+    .mockReturnValueOnce(page.promise);
+  await renderPortal();
+  const more = button("Load older conversations");
+  await act(async () => {
+    more.click();
+    more.click();
+  });
+  expect(client.listLive).toHaveBeenCalledTimes(2);
+  expect(client.listLive).toHaveBeenLastCalledWith("clothing", 50);
+  await act(async () => page.resolve({ conversations: second }));
+  expect(element.querySelectorAll(".chat-history-item")).toHaveLength(99);
+  vi.mocked(client.listLive).mockResolvedValueOnce({ conversations: [] });
+  await act(async () => button("Load older conversations").click());
+  expect(client.listLive).toHaveBeenLastCalledWith("clothing", 100);
+  expect(element.querySelector(".chat-history-more")).toBeNull();
+});
+
+it("switches chats once, clears temporary UI and scrolls even for equal message counts", async () => {
+  vi.mocked(client.connectLive).mockResolvedValue(restoredChat("active"));
+  vi.mocked(client.listLive).mockResolvedValue({
+    conversations: [savedChat("active"), savedChat("other")],
+  });
+  const opening = deferred<unknown>();
+  vi.mocked(client.openLive).mockReturnValueOnce(opening.promise);
+  await renderPortal();
+  await act(async () => {
+    button("Conversation preferences").click();
+    element.querySelector(".chat-thread")!.dispatchEvent(new Event("scroll", { bubbles: true }));
+  });
+  const scroll = vi.mocked(HTMLElement.prototype.scrollTo).mock.calls.length;
+  await act(async () => {
+    button("Open chat: Chat other").click();
+    button("Open chat: Chat active").click();
+  });
+  expect(client.openLive).toHaveBeenCalledTimes(1);
+  expect(element.querySelector(".chat-opening")?.textContent).toContain("Opening conversation");
+  vi.mocked(client.connectLive).mockResolvedValueOnce(restoredChat("other"));
+  await act(async () => opening.resolve({}));
+  expect(element.querySelector(".chat-user-bubble")?.textContent).toBe("Message in other");
+  expect(button("Open chat: Chat other").getAttribute("aria-current")).toBe("true");
+  expect(element.querySelector(".chat-context")).toBeNull();
+  expect(vi.mocked(HTMLElement.prototype.scrollTo).mock.calls.length).toBeGreaterThan(scroll);
+  expect(element.querySelector(".chat-history-sidebar")).not.toBeNull();
+});
+
+it("ignores history responses from before a chat transition", async () => {
+  const stale = deferred<Awaited<ReturnType<typeof client.listLive>>>();
+  vi.mocked(client.listLive)
+    .mockReturnValueOnce(stale.promise)
+    .mockResolvedValue({ conversations: [savedChat("fresh")] });
+  await renderPortal();
+  vi.mocked(client.connectLive).mockResolvedValueOnce(restoredChat("new"));
+  await act(async () => button("New chat").click());
+  await act(async () => stale.resolve({ conversations: [savedChat("stale")] }));
+  expect(element.textContent).not.toContain("Chat stale");
+  expect(button("Open chat: Chat fresh")).toBeTruthy();
+  expect(client.newLive).toHaveBeenCalledWith("clothing");
+  expect(client.deleteLive).not.toHaveBeenCalled();
+});
+
+it("refreshes history after sending, starting a chat and confirmed deletion", async () => {
+  await renderPortal();
+  vi.mocked(client.sendLive).mockResolvedValue({
+    message_id: 2,
+    reply: "What size?",
+    commerce: { action: "clarify", products: [], preferences: { tasks: [] } },
+  });
+  vi.mocked(client.listLive).mockResolvedValue({
+    conversations: [savedChat("test-session", "Cotton shirt")],
+  });
+  const starter = [...element.querySelectorAll<HTMLButtonElement>(".chat-starters button")][0];
+  await act(async () => starter.click());
+  expect(button("Open chat: Cotton shirt").getAttribute("aria-current")).toBe("true");
+  vi.mocked(client.connectLive).mockResolvedValue(restoredChat("new"));
+  await act(async () => button("New chat").click());
+  expect(client.newLive).toHaveBeenCalledTimes(1);
+  await act(async () => button("Delete chat").click());
+  expect(client.deleteLive).not.toHaveBeenCalled();
+  expect(element.querySelector("dialog")?.open).toBe(true);
+  await act(async () => button("Keep conversation").click());
+  expect(client.deleteLive).not.toHaveBeenCalled();
+  await act(async () => button("Delete chat").click());
+  vi.mocked(client.listLive).mockResolvedValue({ conversations: [] });
+  vi.mocked(client.connectLive).mockResolvedValue({
+    sessionId: "empty",
+    messages: [],
+    preferences: { tasks: [] },
+  });
+  await act(async () => element.querySelector<HTMLButtonElement>("dialog .portal-danger")!.click());
+  expect(client.deleteLive).toHaveBeenCalledWith("clothing");
+  expect(element.querySelector(".chat-history-item")).toBeNull();
+  expect(element.querySelector(".chat-history-empty")).not.toBeNull();
+  expect(client.listLive).toHaveBeenCalledTimes(4);
+});
+
+it("prevents sending to an unseen conversation when restoration fails after opening", async () => {
+  vi.mocked(client.connectLive)
+    .mockResolvedValueOnce(restoredChat("active"))
+    .mockRejectedValueOnce(new Error("Restore interrupted"));
+  vi.mocked(client.listLive).mockResolvedValue({ conversations: [savedChat("other")] });
+  await renderPortal();
+  await act(async () => button("Open chat: Chat other").click());
+  expect(element.querySelector("textarea")?.disabled).toBe(true);
+  expect(element.querySelector(".chat-user-bubble")).toBeNull();
+  expect(element.textContent).toContain("Restore interrupted");
+  vi.mocked(client.connectLive).mockResolvedValueOnce(restoredChat("other"));
+  await act(async () => button("Reconnect & restore").click());
+  expect(element.querySelector("textarea")?.disabled).toBe(false);
+  expect(element.querySelector(".chat-user-bubble")?.textContent).toBe("Message in other");
+});
+
+it("opens mobile history as a modal drawer and closes it after selecting a chat", async () => {
+  vi.stubGlobal(
+    "matchMedia",
+    vi.fn((query: string) => ({
+      matches: query.includes("max-width"),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    })),
+  );
+  vi.mocked(client.listLive).mockResolvedValue({ conversations: [savedChat("other")] });
+  await renderPortal();
+  expect(element.querySelector(".chat-history-sidebar")).toBeNull();
+  await act(async () => button("Show history").click());
+  expect(element.querySelector<HTMLDialogElement>(".chat-history-drawer")?.open).toBe(true);
+  await act(async () =>
+    element.querySelector("dialog")!.dispatchEvent(new Event("cancel", { cancelable: true })),
+  );
+  expect(element.querySelector(".chat-history-drawer")).toBeNull();
+  expect(document.activeElement).toBe(button("Show history"));
+  await act(async () => button("Show history").click());
+  vi.mocked(client.connectLive).mockResolvedValueOnce(restoredChat("other"));
+  await act(async () => button("Open chat: Chat other").click());
+  expect(element.querySelector(".chat-history-drawer")).toBeNull();
+  expect(element.querySelector(".chat-user-bubble")?.textContent).toBe("Message in other");
+});
+
+it("retries the failed history page and retries refresh from the first page", async () => {
+  const first = Array.from({ length: 50 }, (_, i) => savedChat(String(i)));
+  vi.mocked(client.listLive)
+    .mockResolvedValueOnce({ conversations: first })
+    .mockRejectedValueOnce(new Error("Page unavailable"));
+  await renderPortal();
+  await act(async () => button("Load older conversations").click());
+  expect(element.querySelectorAll(".chat-history-item")).toHaveLength(50);
+  vi.mocked(client.listLive).mockResolvedValueOnce({
+    conversations: Array.from({ length: 50 }, (_, i) => savedChat(String(i + 50))),
+  });
+  await act(async () => button("Try again").click());
+  expect(client.listLive).toHaveBeenLastCalledWith("clothing", 50);
+  expect(element.querySelectorAll(".chat-history-item")).toHaveLength(100);
+  vi.mocked(client.listLive).mockRejectedValueOnce(new Error("Refresh unavailable"));
+  await act(async () => button("Refresh history").click());
+  vi.mocked(client.listLive).mockResolvedValueOnce({ conversations: [savedChat("fresh")] });
+  await act(async () => button("Try again").click());
+  expect(client.listLive).toHaveBeenLastCalledWith("clothing", 0);
+  expect(element.querySelectorAll(".chat-history-item")).toHaveLength(1);
+});
+
+it("keeps a conversation from an older page visible and selected after opening it", async () => {
+  const conversations = Array.from({ length: 52 }, (_, i) => savedChat(String(i)));
+  vi.mocked(client.listLive).mockImplementation(async (_storefront, offset = 0) => ({
+    conversations: conversations.slice(offset, offset + 50),
+  }));
+  await renderPortal();
+  await act(async () => button("Load older conversations").click());
+  vi.mocked(client.connectLive).mockResolvedValueOnce(restoredChat("51"));
+  await act(async () => button("Open chat: Chat 51").click());
+  expect(element.querySelectorAll(".chat-history-item")).toHaveLength(52);
+  expect(button("Open chat: Chat 51").getAttribute("aria-current")).toBe("true");
+  expect(client.listLive).toHaveBeenLastCalledWith("clothing", 50);
 });

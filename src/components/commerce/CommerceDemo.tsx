@@ -4,7 +4,9 @@ import {
   ArrowRight,
   ArrowUp,
   ArrowDown,
+  ChevronDown,
   LoaderCircle,
+  PanelLeft,
   Plus,
   RotateCcw,
   SlidersHorizontal,
@@ -16,10 +18,8 @@ import {
   connectLive,
   loadCatalog,
   deleteLive,
-  listLive,
   newLive,
   openLive,
-  type SavedConversation,
   liveStatus,
   sendLive,
   CommerceError,
@@ -40,6 +40,9 @@ import { PortalAccountBar } from "./Portal";
 import { CommerceHeader } from "./CommerceChrome";
 import { Brand } from "@/components/marketing/Brand";
 import { ProductCard } from "./ProductCard";
+import { ConversationHistory } from "./ConversationHistory";
+import { useConversationHistory } from "./use-conversation-history";
+import { PortalDialog } from "./PortalDialog";
 import "./commerce.css";
 import "./chat.css";
 import { STOREFRONTS, isStorefront, type StorefrontID } from "@/features/commerce/storefronts";
@@ -273,9 +276,10 @@ function AssistantResponse({
 }
 export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {}) {
   const portalUser = usePortalUser();
-  const [showHistory, setShowHistory] = useState(false);
-  const [saved, setSaved] = useState<SavedConversation[]>([]);
-  const [moreHistory, setMoreHistory] = useState(false);
+  const [showHistory, setShowHistory] = useState(
+    () => window.matchMedia?.("(min-width: 900px)").matches ?? true,
+  );
+  const [openingId, setOpeningId] = useState<string | null>(null);
   const section = storefront ? STOREFRONTS[storefront] : undefined;
   const pendingKey = PENDING_KEY + (storefront ? `-${storefront}` : "");
   const starters = section
@@ -307,6 +311,29 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
   const input = useRef<HTMLTextAreaElement>(null);
   const lastResponse = [...state.messages].reverse().find((message) => message.commerce);
   const tasks = state.preferences.tasks;
+  const history = useConversationHistory(
+    storefront,
+    Boolean(portalUser && initialized && !busy && mode === "live"),
+    `${state.sessionId}:${state.messages.length}:${state.messages.at(-1)?.id}`,
+  );
+  const historyToggle = useRef<HTMLButtonElement>(null);
+  function closeHistory() {
+    setShowHistory(false);
+    historyToggle.current?.focus();
+  }
+  function resetChatView() {
+    followTail.current = true;
+    setAwayFromBottom(false);
+    setDraft("");
+    setStreamText("");
+    setStreamCommerce(null);
+    setProgress("");
+    setElapsed(0);
+    setRetryAt(0);
+    setConfirmDelete(false);
+    setShowContext(false);
+    if (window.matchMedia?.("(max-width: 899px)").matches) closeHistory();
+  }
 
   useEffect(() => {
     let disposed = false;
@@ -375,7 +402,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
   }, [storefront, pendingKey]);
   useEffect(() => {
     if (followTail.current) thread.current?.scrollTo({ top: thread.current.scrollHeight });
-  }, [state.messages.length, busy, streamText, streamCommerce]);
+  }, [state.sessionId, state.messages.length, busy, streamText, streamCommerce]);
   useEffect(() => {
     if (input.current) {
       input.current.style.height = "auto";
@@ -568,14 +595,17 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
         if (remove) await deleteLive(storefront);
         else await newLive(storefront);
         savePending(null);
+        resetChatView();
+        // The server's active chat has changed. Do not leave the old chat sendable
+        // if restoring the new one fails.
+        setState(EMPTY_CONVERSATION);
         const restored = await connectLive(storefront);
         setState(restored);
       } else {
         localStorage.removeItem(SAVE_KEY);
       }
       if (mode === "sample") setState(EMPTY_CONVERSATION);
-      setDraft("");
-      setConfirmDelete(false);
+      resetChatView();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not reset the conversation.");
     } finally {
@@ -583,33 +613,29 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
       setBusy(false);
     }
   }
-  async function historyPage(append = false) {
-    if (!storefront) return;
-    try {
-      const result = await listLive(storefront, append ? saved.length : 0);
-      setSaved(append ? [...saved, ...result.conversations] : result.conversations);
-      setMoreHistory(result.conversations.length === 50);
-      setShowHistory(true);
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not load history");
-    }
-  }
   async function resume(id: string) {
     if (!storefront || lock.current) return;
+    if (id === state.sessionId) {
+      if (window.matchMedia?.("(max-width: 899px)").matches) closeHistory();
+      return;
+    }
     lock.current = true;
+    setOpeningId(id);
     setBusy(true);
+    setElapsed(0);
     setError("");
     try {
       await openLive(id, storefront);
       savePending(null);
+      resetChatView();
+      setState(EMPTY_CONVERSATION);
       setState(await connectLive(storefront));
-      setDraft("");
-      setShowHistory(false);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not open conversation");
     } finally {
       lock.current = false;
       setBusy(false);
+      setOpeningId(null);
     }
   }
   return (
@@ -618,362 +644,405 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
         demo
         account={portalUser ? <PortalAccountBar user={portalUser} /> : undefined}
       />
-      <div className="chat-workspace-controls">
-        <nav className="chat-sections" aria-label="Shopping sections">
-          {Object.entries(STOREFRONTS)
-            .filter(([id]) => !portalUser || portalUser.storefronts.includes(id as StorefrontID))
-            .map(([id, item]) => (
-              <a key={id} href={`/${id}`} aria-current={storefront === id ? "page" : undefined}>
-                {item.label}
-              </a>
-            ))}
-          {!storefront && <span>Legacy demo</span>}
-        </nav>
-        <div className="chat-toolbar">
-          <div>
-            <strong>{section?.label ?? "Shopping companion"}</strong>
-            <span className="chat-connection" role="status">
-              <i />
-              {mode === "sample"
-                ? "Sample walkthrough"
-                : state.sessionId
-                  ? "Live catalog"
-                  : initialized
-                    ? "Not connected"
-                    : "Connecting…"}
-            </span>
-          </div>
-          <div className="chat-toolbar-actions">
-            {!storefront && (
-              <button
-                disabled={busy}
-                onClick={() => void changeMode(mode === "live" ? "sample" : "live")}
-                title={mode === "live" ? "Switch to sample walkthrough" : "Connect to live catalog"}
-              >
-                {mode === "live" ? "Try sample" : "Use live catalog"}
-                {!available && mode === "sample" ? " · offline" : ""}
-              </button>
-            )}
-            <button
-              aria-expanded={showContext}
-              aria-label="Conversation preferences"
-              onClick={() => setShowContext(!showContext)}
-            >
-              <SlidersHorizontal size={17} />
-              <span>Preferences</span>
-            </button>
-            {portalUser && (
-              <>
+      <div className="chat-workspace">
+        {portalUser && storefront && showHistory && (
+          <ConversationHistory
+            items={history.items}
+            loading={history.loading || !initialized}
+            error={history.error}
+            hasMore={history.hasMore}
+            activeId={state.sessionId}
+            openingId={openingId}
+            disabled={busy}
+            category={section?.label ?? "Shopping"}
+            onNew={() => void reset(false)}
+            onOpen={(id) => void resume(id)}
+            onClose={closeHistory}
+            onRefresh={() => void history.refresh()}
+            onRetry={() => void history.retry()}
+            onLoadMore={() => void history.loadMore()}
+          />
+        )}
+        <div className="chat-main-column">
+          <div className="chat-toolbar">
+            <div className="chat-toolbar-heading">
+              {portalUser && storefront && (
+                <button
+                  ref={historyToggle}
+                  className="chat-icon-button"
+                  aria-label={showHistory ? "Hide history" : "Show history"}
+                  aria-expanded={showHistory}
+                  aria-controls="conversation-history"
+                  onClick={() => setShowHistory(!showHistory)}
+                >
+                  <PanelLeft size={19} />
+                </button>
+              )}
+              <details className="chat-category-picker">
+                <summary>
+                  <span>{section?.label ?? "Shopping companion"}</span>
+                  <ChevronDown size={15} />
+                </summary>
+                <nav className="chat-sections" aria-label="Shopping sections">
+                  {Object.entries(STOREFRONTS)
+                    .filter(
+                      ([id]) => !portalUser || portalUser.storefronts.includes(id as StorefrontID),
+                    )
+                    .map(([id, item]) => (
+                      <a
+                        key={id}
+                        href={`/${id}`}
+                        aria-current={storefront === id ? "page" : undefined}
+                      >
+                        {item.label}
+                      </a>
+                    ))}
+                </nav>
+              </details>
+              <span className="chat-connection" role="status">
+                <i />
+                {mode === "sample"
+                  ? "Sample"
+                  : state.sessionId
+                    ? "Live catalog"
+                    : initialized
+                      ? "Not connected"
+                      : "Connecting…"}
+              </span>
+            </div>
+            <div className="chat-toolbar-actions">
+              {!storefront && (
                 <button
                   disabled={busy}
-                  aria-expanded={showHistory}
-                  onClick={() => (showHistory ? setShowHistory(false) : void historyPage())}
+                  onClick={() => void changeMode(mode === "live" ? "sample" : "live")}
+                  title={
+                    mode === "live" ? "Switch to sample walkthrough" : "Connect to live catalog"
+                  }
                 >
-                  History
+                  {mode === "live" ? "Try sample" : "Use live catalog"}
+                  {!available && mode === "sample" ? " · offline" : ""}
                 </button>
+              )}
+              <button
+                aria-expanded={showContext}
+                aria-label="Conversation preferences"
+                onClick={() => setShowContext(!showContext)}
+              >
+                <SlidersHorizontal size={17} />
+                <span>Preferences</span>
+              </button>
+              {portalUser && (
                 <button
                   aria-label="Delete chat"
                   disabled={busy || !state.messages.length}
                   onClick={() => setConfirmDelete(true)}
                 >
-                  <Trash2 size={16} />
-                  <span>Delete chat</span>
+                  <Trash2 size={17} />
                 </button>
-              </>
-            )}
-            <button
-              aria-label="New chat"
-              disabled={busy}
-              onClick={() => (portalUser ? void reset(false) : setConfirmDelete(true))}
-            >
-              <Plus size={18} />
-              <span>New chat</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      {showHistory && (
-        <aside className="chat-history-panel" aria-label="Your saved conversations">
-          <h2>Your conversations · {section?.label}</h2>
-          {saved.length ? (
-            <ul>
-              {saved.map((item) => (
-                <li key={item.id}>
-                  <button disabled={busy} onClick={() => void resume(item.id)}>
-                    {item.title}
-                    <small>{new Date(item.updated_at).toLocaleString()}</small>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No saved conversations in this category.</p>
-          )}
-          {moreHistory && (
-            <button onClick={() => void historyPage(true)}>Load older conversations</button>
-          )}
-        </aside>
-      )}
-      {showContext && (
-        <aside className="chat-context" aria-label="Saved shopping preferences">
-          <div>
-            <strong>Your shopping context</strong>
-            <button aria-label="Close preferences" onClick={() => setShowContext(false)}>
-              <X size={17} />
-            </button>
-          </div>
-          <p>
-            {catalog && mode === "live"
-              ? `${catalog.product_count.toLocaleString()} products · ${catalog.categories.length} categories`
-              : "An illustrative shopping walkthrough"}
-          </p>
-          {tasks.length ? (
-            tasks.map((task) => (
-              <section key={task.id}>
-                <strong>
-                  Task {task.id} · {task.query || "Discovering your needs"}
-                </strong>
-                <p>{task.need}</p>
-                {task.filters.max_price != null && (
-                  <p>Maximum ${Number(task.filters.max_price).toFixed(2)}</p>
-                )}
-                {Object.entries(task.filters.attributes ?? {}).map(([name, value]) => (
-                  <p key={name}>
-                    {name.replaceAll("_", " ")}: {String(value)}
-                  </p>
-                ))}
-              </section>
-            ))
-          ) : (
-            <p>Your preferences will appear as we chat.</p>
-          )}
-        </aside>
-      )}
-      {confirmDelete && (
-        <div className="chat-reset" role="alert">
-          <p>Delete this conversation and start fresh?</p>
-          <button disabled={busy} onClick={() => void reset()}>
-            <Trash2 size={14} /> Delete & start fresh
-          </button>
-          <button onClick={() => setConfirmDelete(false)}>Keep conversation</button>
-        </div>
-      )}
-      <main
-        className="chat-thread"
-        ref={thread}
-        onScroll={() => {
-          const element = thread.current;
-          if (!element) return;
-          followTail.current =
-            element.scrollHeight - element.scrollTop - element.clientHeight < 100;
-          setAwayFromBottom(!followTail.current);
-        }}
-        onLoadCapture={() => {
-          if (followTail.current) thread.current?.scrollTo({ top: thread.current.scrollHeight });
-        }}
-      >
-        <div className="chat-feed" role="log" aria-label="Shopping conversation" aria-live="polite">
-          {state.messages.length === 0 && !pending && (
-            <div className="chat-welcome">
-              <span className="chat-welcome-mark">
-                <Brand light markOnly />
-              </span>
-              <h1>{section?.welcome ?? "What are you looking for?"}</h1>
-              <p>Tell me what matters to you. We’ll find a few good options together.</p>
-              <div className="chat-starters">
-                {starters.map((starter) => (
-                  <button
-                    key={starter.kind}
-                    disabled={busy}
-                    onClick={() => void send(starter.text)}
-                  >
-                    <small>{starter.kind}</small>
-                    <strong>{starter.label}</strong>
-                    <span>
-                      {starter.text}
-                      <ArrowRight size={14} />
-                    </span>
-                  </button>
-                ))}
-              </div>
-              {catalog && mode === "live" && (
-                <small>
-                  Explore {catalog.product_count.toLocaleString()} products in your catalog
-                </small>
               )}
+              <button
+                aria-label="New chat"
+                disabled={busy}
+                onClick={() => (portalUser ? void reset(false) : setConfirmDelete(true))}
+              >
+                <Plus size={18} />
+                <span>New chat</span>
+              </button>
             </div>
+          </div>
+          {showContext && (
+            <aside className="chat-context" aria-label="Saved shopping preferences">
+              <div>
+                <strong>Your shopping context</strong>
+                <button aria-label="Close preferences" onClick={() => setShowContext(false)}>
+                  <X size={17} />
+                </button>
+              </div>
+              <p>
+                {catalog && mode === "live"
+                  ? `${catalog.product_count.toLocaleString()} products · ${catalog.categories.length} categories`
+                  : "An illustrative shopping walkthrough"}
+              </p>
+              {tasks.length ? (
+                tasks.map((task) => (
+                  <section key={task.id}>
+                    <strong>
+                      Task {task.id} · {task.query || "Discovering your needs"}
+                    </strong>
+                    <p>{task.need}</p>
+                    {task.filters.max_price != null && (
+                      <p>Maximum ${Number(task.filters.max_price).toFixed(2)}</p>
+                    )}
+                    {Object.entries(task.filters.attributes ?? {}).map(([name, value]) => (
+                      <p key={name}>
+                        {name.replaceAll("_", " ")}: {String(value)}
+                      </p>
+                    ))}
+                  </section>
+                ))
+              ) : (
+                <p>Your preferences will appear as we chat.</p>
+              )}
+            </aside>
           )}
-          {state.messages.map((message) => (
-            <article key={message.id} className={`chat-turn ${message.role}`}>
-              <div className="chat-speaker">
-                {message.role === "user" ? (
-                  "You"
-                ) : (
-                  <>
+          {confirmDelete && (
+            <PortalDialog busy={busy} onClose={() => setConfirmDelete(false)}>
+              <h2 id="portal-dialog-title">Delete this conversation?</h2>
+              <p>This chat will be permanently deleted. You can then start a new conversation.</p>
+              <div className="chat-delete-dialog-actions">
+                <button disabled={busy} onClick={() => setConfirmDelete(false)}>
+                  Keep conversation
+                </button>
+                <button className="portal-danger" disabled={busy} onClick={() => void reset()}>
+                  <Trash2 size={15} /> Delete chat
+                </button>
+              </div>
+            </PortalDialog>
+          )}
+          <main
+            className="chat-thread"
+            ref={thread}
+            onScroll={() => {
+              const element = thread.current;
+              if (!element) return;
+              followTail.current =
+                element.scrollHeight - element.scrollTop - element.clientHeight < 100;
+              setAwayFromBottom(!followTail.current);
+            }}
+            onLoadCapture={() => {
+              if (followTail.current)
+                thread.current?.scrollTo({ top: thread.current.scrollHeight });
+            }}
+          >
+            {openingId && (
+              <div className="chat-opening" role="status">
+                <LoaderCircle size={18} className="commerce-spin" /> Opening conversation…
+              </div>
+            )}
+            <div
+              className="chat-feed"
+              hidden={Boolean(openingId)}
+              role="log"
+              aria-label="Shopping conversation"
+              aria-live="polite"
+            >
+              {state.messages.length === 0 && !pending && (
+                <div className="chat-welcome">
+                  <span className="chat-welcome-mark">
+                    <Brand light markOnly />
+                  </span>
+                  <h1>{section?.welcome ?? "What are you looking for?"}</h1>
+                  <p>Tell me what matters to you. We’ll find a few good options together.</p>
+                  <div className="chat-starters">
+                    {starters.map((starter) => (
+                      <button
+                        key={starter.text}
+                        disabled={busy}
+                        onClick={() => void send(starter.text)}
+                      >
+                        <small>{starter.kind}</small>
+                        <strong>{starter.label}</strong>
+                        <span>
+                          {starter.text}
+                          <ArrowRight size={14} />
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                  {catalog && mode === "live" && (
+                    <small>
+                      Explore {catalog.product_count.toLocaleString()} products in your catalog
+                    </small>
+                  )}
+                </div>
+              )}
+              {state.messages.map((message) => (
+                <article key={message.id} className={`chat-turn ${message.role}`}>
+                  <div className="chat-speaker">
+                    {message.role === "user" ? (
+                      "You"
+                    ) : (
+                      <>
+                        <span className="chat-avatar">
+                          <Brand light markOnly />
+                        </span>{" "}
+                        Querix
+                      </>
+                    )}
+                  </div>
+                  {message.role === "user" ? (
+                    <p className="chat-user-bubble">{message.content}</p>
+                  ) : (
+                    <AssistantResponse
+                      commerce={message.commerce}
+                      content={message.content}
+                      sample={mode === "sample"}
+                      actionable={message === lastResponse}
+                      disabled={busy || Boolean(pending)}
+                      onSend={(text) => void send(text)}
+                    />
+                  )}
+                </article>
+              ))}
+              {pending && (
+                <article className="chat-turn user">
+                  <div className="chat-speaker">You</div>
+                  <p className="chat-user-bubble">{pending.message}</p>
+                </article>
+              )}
+              {busy && !openingId && (
+                <article className="chat-turn assistant chat-incoming">
+                  <div className="chat-speaker">
                     <span className="chat-avatar">
                       <Brand light markOnly />
                     </span>{" "}
                     Querix
-                  </>
-                )}
-              </div>
-              {message.role === "user" ? (
-                <p className="chat-user-bubble">{message.content}</p>
-              ) : (
-                <AssistantResponse
-                  commerce={message.commerce}
-                  content={message.content}
-                  sample={mode === "sample"}
-                  actionable={message === lastResponse}
-                  disabled={busy || Boolean(pending)}
-                  onSend={(text) => void send(text)}
-                />
-              )}
-            </article>
-          ))}
-          {pending && (
-            <article className="chat-turn user">
-              <div className="chat-speaker">You</div>
-              <p className="chat-user-bubble">{pending.message}</p>
-            </article>
-          )}
-          {busy && (
-            <article className="chat-turn assistant chat-incoming">
-              <div className="chat-speaker">
-                <span className="chat-avatar">
-                  <Brand light markOnly />
-                </span>{" "}
-                Querix
-              </div>
-              {streamText ? (
-                <AssistantResponse
-                  content={streamText}
-                  commerce={streamCommerce}
-                  sample={false}
-                  actionable={false}
-                  disabled
-                  onSend={() => undefined}
-                />
-              ) : (
-                <div className="chat-progress" role="status">
-                  <LoaderCircle size={15} className="commerce-spin" />
-                  {progress || "Connecting to your conversation…"}
-                  {elapsed > 0 && <span>{elapsed}s</span>}
-                </div>
-              )}
-            </article>
-          )}
-        </div>
-      </main>
-      <div className="chat-composer-dock">
-        {awayFromBottom && (
-          <button
-            className="chat-jump"
-            aria-label="Jump to latest message"
-            onClick={() => {
-              followTail.current = true;
-              thread.current?.scrollTo({ top: thread.current.scrollHeight, behavior: "smooth" });
-            }}
-          >
-            <ArrowDown size={18} />
-          </button>
-        )}
-        <div className="commerce-composer chat-composer">
-          {error && (
-            <div className="commerce-error" role="alert">
-              {error}
-              {mode === "live" && !busy && (
-                <button
-                  onClick={() => {
-                    void (async () => {
-                      if (lock.current) return;
-                      lock.current = true;
-                      setBusy(true);
-                      setError("");
-                      try {
-                        const restored = await connectLive(storefront);
-                        setState(restored);
-                        setPending(restorePending(restored.sessionId, pendingKey));
-                        setAvailable(true);
-                        setCatalog(await loadCatalog(storefront));
-                      } catch (cause) {
-                        setError(cause instanceof Error ? cause.message : "Connection unavailable");
-                      } finally {
-                        lock.current = false;
-                        setBusy(false);
-                      }
-                    })();
-                  }}
-                >
-                  <RotateCcw size={13} /> Reconnect & restore
-                </button>
-              )}
-              {pending && (
-                <button disabled={busy} onClick={() => void send(pending.message, pending)}>
-                  <RotateCcw size={13} /> Retry same message
-                </button>
+                  </div>
+                  {streamText ? (
+                    <AssistantResponse
+                      content={streamText}
+                      commerce={streamCommerce}
+                      sample={false}
+                      actionable={false}
+                      disabled
+                      onSend={() => undefined}
+                    />
+                  ) : (
+                    <div className="chat-progress" role="status">
+                      <LoaderCircle size={15} className="commerce-spin" />
+                      {progress || "Connecting to your conversation…"}
+                      {elapsed > 0 && <span>{elapsed}s</span>}
+                    </div>
+                  )}
+                </article>
               )}
             </div>
-          )}
-          {pending && !busy && !error && (
-            <div className="commerce-error">
-              An earlier message may have completed: “{pending.message}”
-              <button onClick={() => void send(pending.message, pending)}>
-                <RotateCcw size={13} /> Recover response
-              </button>
-            </div>
-          )}
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              void send(draft);
-            }}
-          >
-            <label htmlFor="commerce-message" className="commerce-sr-only">
-              Your shopping message
-            </label>
-            <textarea
-              ref={input}
-              id="commerce-message"
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              placeholder="Ask for a product, or tell me what to change…"
-              rows={1}
-              maxLength={4000}
-              disabled={busy || Boolean(pending)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
-                  event.preventDefault();
-                  void send(draft);
-                }
-              }}
-            />
-            {busy && pending ? (
+          </main>
+          <div className="chat-composer-dock">
+            {awayFromBottom && (
               <button
-                type="button"
-                aria-label="Stop waiting for response"
-                title="Stop waiting; the response can be recovered"
-                onClick={() => controller.current?.abort()}
+                className="chat-jump"
+                aria-label="Jump to latest message"
+                onClick={() => {
+                  followTail.current = true;
+                  thread.current?.scrollTo({
+                    top: thread.current.scrollHeight,
+                    behavior: "smooth",
+                  });
+                }}
               >
-                <Square size={16} />
-              </button>
-            ) : (
-              <button
-                type="submit"
-                aria-label="Send message"
-                disabled={busy || !draft.trim() || Boolean(pending)}
-              >
-                <ArrowUp size={18} />
+                <ArrowDown size={18} />
               </button>
             )}
-          </form>
-          <p>
-            {mode === "sample"
-              ? "Sample chat saved in this browser for 24 hours."
-              : "Historical prices. Listing details can be incomplete."}{" "}
-            <span>↵ Send</span>
-          </p>
-          {storageNote && <p role="status">{storageNote}</p>}
+            <div className="commerce-composer chat-composer">
+              {error && (
+                <div className="commerce-error" role="alert">
+                  {error}
+                  {mode === "live" && !busy && (
+                    <button
+                      onClick={() => {
+                        void (async () => {
+                          if (lock.current) return;
+                          lock.current = true;
+                          setBusy(true);
+                          setError("");
+                          try {
+                            const restored = await connectLive(storefront);
+                            setState(restored);
+                            setPending(restorePending(restored.sessionId, pendingKey));
+                            setAvailable(true);
+                            setCatalog(await loadCatalog(storefront));
+                          } catch (cause) {
+                            setError(
+                              cause instanceof Error ? cause.message : "Connection unavailable",
+                            );
+                          } finally {
+                            lock.current = false;
+                            setBusy(false);
+                          }
+                        })();
+                      }}
+                    >
+                      <RotateCcw size={13} /> Reconnect & restore
+                    </button>
+                  )}
+                  {pending && (
+                    <button disabled={busy} onClick={() => void send(pending.message, pending)}>
+                      <RotateCcw size={13} /> Retry same message
+                    </button>
+                  )}
+                </div>
+              )}
+              {pending && !busy && !error && (
+                <div className="commerce-error">
+                  An earlier message may have completed: “{pending.message}”
+                  <button onClick={() => void send(pending.message, pending)}>
+                    <RotateCcw size={13} /> Recover response
+                  </button>
+                </div>
+              )}
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  void send(draft);
+                }}
+              >
+                <label htmlFor="commerce-message" className="commerce-sr-only">
+                  Your shopping message
+                </label>
+                <textarea
+                  ref={input}
+                  id="commerce-message"
+                  value={draft}
+                  onChange={(event) => setDraft(event.target.value)}
+                  placeholder="Ask for a product, or tell me what to change…"
+                  rows={1}
+                  maxLength={4000}
+                  disabled={busy || Boolean(pending) || (mode === "live" && !state.sessionId)}
+                  onKeyDown={(event) => {
+                    if (
+                      event.key === "Enter" &&
+                      !event.shiftKey &&
+                      !event.nativeEvent.isComposing
+                    ) {
+                      event.preventDefault();
+                      void send(draft);
+                    }
+                  }}
+                />
+                {busy && pending ? (
+                  <button
+                    type="button"
+                    aria-label="Stop waiting for response"
+                    title="Stop waiting; the response can be recovered"
+                    onClick={() => controller.current?.abort()}
+                  >
+                    <Square size={16} />
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    aria-label="Send message"
+                    disabled={
+                      busy ||
+                      !draft.trim() ||
+                      Boolean(pending) ||
+                      (mode === "live" && !state.sessionId)
+                    }
+                  >
+                    <ArrowUp size={18} />
+                  </button>
+                )}
+              </form>
+              <p>
+                {mode === "sample"
+                  ? "Sample chat saved in this browser for 24 hours."
+                  : "Historical prices. Listing details can be incomplete."}{" "}
+                <span>↵ Send</span>
+              </p>
+              {storageNote && <p role="status">{storageNote}</p>}
+            </div>
+          </div>
         </div>
       </div>
     </div>
