@@ -61,7 +61,7 @@ export const loadCatalog = async (storefront?: StorefrontID) => {
 };
 export async function connectLive(storefront?: StorefrontID): Promise<Conversation> {
   await liveStatus(storefront);
-  const session = await request<{ session_id: string }>(
+  const session = await request<{ session_id: string; conversation_id: string | null }>(
     "session",
     {
       method: "POST",
@@ -71,7 +71,7 @@ export async function connectLive(storefront?: StorefrontID): Promise<Conversati
   const messages: Message[] = [];
   let after = 0;
   // Page until exhausted; the API returns history in ascending ID order.
-  while (true) {
+  while (session.conversation_id) {
     const page = await request<{ messages: Message[]; next_after: number }>(
       `history?after=${after}`,
       {},
@@ -83,12 +83,19 @@ export async function connectLive(storefront?: StorefrontID): Promise<Conversati
   }
   return {
     sessionId: session.session_id,
+    conversationId: session.conversation_id ?? undefined,
     messages,
     preferences:
       [...messages].reverse().find((message) => message.commerce)?.commerce?.preferences ??
       EMPTY_CONVERSATION.preferences,
   };
 }
+export const startLive = (message: string, storefront?: StorefrontID, signal?: AbortSignal) =>
+  request<{ session_id: string; conversation_id: string }>(
+    "session/start",
+    { method: "POST", body: JSON.stringify({ message }), signal },
+    storefront,
+  );
 export type LiveReply = { reply: string; message_id: number; commerce: Commerce };
 export type ChatEvent =
   | { type: "status"; text: string }
@@ -173,6 +180,7 @@ export type SavedConversation = {
   title: string;
   updated_at: string;
   storefront_id: StorefrontID;
+  is_empty?: boolean;
 };
 export const listLive = (storefront: StorefrontID, offset = 0) =>
   request<{ conversations: SavedConversation[] }>(`conversations?offset=${offset}`, {}, storefront);
@@ -180,3 +188,9 @@ export const newLive = (storefront?: StorefrontID) =>
   request("session/new", { method: "POST" }, storefront);
 export const openLive = (id: string, storefront: StorefrontID) =>
   request(`session/open?id=${encodeURIComponent(id)}`, { method: "POST" }, storefront);
+export const deleteSavedLive = (id: string, storefront: StorefrontID) =>
+  request<{ deleted: boolean; active: boolean }>(
+    `conversation?id=${encodeURIComponent(id)}`,
+    { method: "DELETE" },
+    storefront,
+  );

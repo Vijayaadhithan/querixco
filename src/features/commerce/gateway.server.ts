@@ -1,4 +1,4 @@
-/** Server-only proxy. The browser can address only the conversation in its signed cookie. */
+/** Server-only proxy. Saved-chat actions verify ownership and category before mutations. */
 export type CommerceEnv = {
   COMMERCE_API_URL?: string;
   COMMERCE_API_TOKEN?: string;
@@ -232,8 +232,66 @@ export async function handleCommerceRequest(request: Request, env: CommerceEnv):
     if (path === "/api/commerce/conversations" && request.method === "GET") {
       const offset = url.searchParams.get("offset") ?? "0";
       if (!/^\d{1,8}$/.test(offset)) return json({ error: "Invalid history offset" }, 400);
-      return await safeResponse(
-        await upstream(env, `/conversations?storefront_id=${storefront}&limit=50&offset=${offset}`),
+      const response = await upstream(
+        env,
+        `/conversations?storefront_id=${storefront}&limit=50&offset=${offset}`,
+      );
+      if (!response.ok) return await safeResponse(response);
+      const data = (await response.json()) as {
+        conversations: { id: string; title: string; storefront_id: string; is_empty?: boolean }[];
+      };
+      // Verify legacy default-title records; never infer emptiness from a title alone.
+      // Bounded batches keep this read-only check within the upstream connection limit.
+      for (let start = 0; start < data.conversations.length; start += 4) {
+        await Promise.all(
+          data.conversations.slice(start, start + 4).map(async (item) => {
+            delete item.is_empty;
+            if (item.storefront_id !== storefront || !/^[a-f0-9-]{36}$/i.test(item.id)) return;
+            if (item.title && item.title !== "Querix shopping demo") return;
+            try {
+              const probe = await upstream(
+                env,
+                `/conversations/${item.id}/messages?limit=1&after=0`,
+              );
+              if (!probe.ok) return;
+              const page = (await probe.json()) as { messages?: unknown[] };
+              if (Array.isArray(page.messages)) item.is_empty = page.messages.length === 0;
+            } catch {
+              // An unverified chat stays in the main list and remains available.
+            }
+          }),
+        );
+      }
+      return json(data);
+    }
+    if (path === "/api/commerce/conversation" && request.method === "DELETE") {
+      const cid = url.searchParams.get("id") ?? "";
+      if (!/^[a-f0-9-]{36}$/i.test(cid)) return json({ error: "Invalid conversation" }, 400);
+      const recordResponse = await upstream(env, `/conversations/${cid}`);
+      if (!recordResponse.ok && recordResponse.status !== 404)
+        return await safeResponse(recordResponse);
+      if (recordResponse.ok) {
+        const record = (await recordResponse.json()) as { storefront_id: string };
+        if (record.storefront_id !== storefront)
+          return json({ error: "Conversation belongs to a different category" }, 403);
+        const deleted = await upstream(env, `/conversations/${cid}`, { method: "DELETE" });
+        if (!deleted.ok && deleted.status !== 404) return await safeResponse(deleted);
+      }
+      const active = session.cid === cid;
+      return json(
+        { deleted: true, active },
+        200,
+        active ? { "set-cookie": cookie(request, "", 0) } : undefined,
+      );
+    }
+    if (path === "/api/commerce/session" && request.method === "POST") {
+      // Connecting, refreshing and opening a category must never persist a blank chat.
+      return json(
+        { ready: true, session_id: session.sid, conversation_id: session.cid ?? null },
+        200,
+        {
+          "set-cookie": cookie(request, await seal(session, env.COMMERCE_SESSION_SECRET!)),
+        },
       );
     }
     if (path === "/api/commerce/session/new" && request.method === "POST") {
@@ -266,7 +324,9 @@ export async function handleCommerceRequest(request: Request, env: CommerceEnv):
         "set-cookie": cookie(request, await seal(session, env.COMMERCE_SESSION_SECRET!)),
       });
     }
-    if (path === "/api/commerce/session" && request.method === "POST") {
+    if (path === "/api/commerce/session/start" && request.method === "POST") {
+      if (!(await messageBody(request)))
+        return json({ error: "Please enter a message of at most 4,000 UTF-8 bytes." }, 422);
       if (!session.cid) {
         const response = await upstream(env, "/conversations", {
           method: "POST",
@@ -289,7 +349,7 @@ export async function handleCommerceRequest(request: Request, env: CommerceEnv):
           );
         session.cid = record.id;
       }
-      return json({ ready: true, session_id: session.sid }, 200, {
+      return json({ ready: true, session_id: session.sid, conversation_id: session.cid }, 200, {
         "set-cookie": cookie(request, await seal(session, env.COMMERCE_SESSION_SECRET!)),
       });
     }

@@ -12,6 +12,8 @@ vi.mock("@/features/commerce/client", async (original) => ({
   connectLive: vi.fn(),
   loadCatalog: vi.fn(),
   sendLive: vi.fn(),
+  startLive: vi.fn(),
+  deleteSavedLive: vi.fn(),
   listLive: vi.fn(),
   openLive: vi.fn(),
   newLive: vi.fn(),
@@ -44,6 +46,11 @@ beforeEach(() => {
     categories: [],
     price_context: "historical USD",
   });
+  vi.mocked(client.startLive).mockResolvedValue({
+    session_id: "test-session",
+    conversation_id: "test-session",
+  });
+  vi.mocked(client.deleteSavedLive).mockResolvedValue({ deleted: true, active: false });
   vi.mocked(client.listLive).mockResolvedValue({ conversations: [] });
   vi.mocked(client.openLive).mockResolvedValue({});
   vi.mocked(client.newLive).mockResolvedValue({});
@@ -194,7 +201,8 @@ const savedChat = (id: string, title = `Chat ${id}`) => ({
   storefront_id: "clothing" as const,
 });
 const restoredChat = (id: string, content = `Message in ${id}`): Conversation => ({
-  sessionId: id,
+  sessionId: `browser-${id}`,
+  conversationId: id,
   preferences: { tasks: [] },
   messages: [
     { id: `${id}-1`, role: "user", content },
@@ -212,7 +220,9 @@ async function renderPortal() {
 }
 function button(label: string) {
   const match = [...element.querySelectorAll<HTMLButtonElement>("button")].find(
-    (item) => item.getAttribute("aria-label") === label || item.textContent?.trim() === label,
+    (item) =>
+      item.getAttribute("aria-label") === label ||
+      (item.textContent?.trim() === label && !item.closest(".chat-history-menu")),
   );
   if (!match) throw new Error(`Button not found: ${label}`);
   return match;
@@ -319,6 +329,7 @@ it("switches chats once, clears temporary UI and scrolls even for equal message 
 });
 
 it("ignores history responses from before a chat transition", async () => {
+  vi.mocked(client.connectLive).mockResolvedValueOnce(restoredChat("active"));
   const stale = deferred<Awaited<ReturnType<typeof client.listLive>>>();
   vi.mocked(client.listLive)
     .mockReturnValueOnce(stale.promise)
@@ -444,4 +455,107 @@ it("keeps a conversation from an older page visible and selected after opening i
   expect(element.querySelectorAll(".chat-history-item")).toHaveLength(52);
   expect(button("Open chat: Chat 51").getAttribute("aria-current")).toBe("true");
   expect(client.listLive).toHaveBeenLastCalledWith("clothing", 50);
+});
+
+it("keeps repeated New chat clicks local while the current chat is empty", async () => {
+  await renderPortal();
+  for (let i = 0; i < 4; i++) await act(async () => button("New chat").click());
+  expect(client.newLive).not.toHaveBeenCalled();
+  expect(client.startLive).not.toHaveBeenCalled();
+  expect(client.connectLive).toHaveBeenCalledTimes(1);
+  expect(element.querySelector(".chat-welcome")).not.toBeNull();
+});
+
+it("recognizes the current saved chat even though its browser session ID differs", async () => {
+  vi.mocked(client.connectLive).mockResolvedValue(restoredChat("active"));
+  vi.mocked(client.listLive).mockResolvedValue({ conversations: [savedChat("active")] });
+  await renderPortal();
+  await act(async () => button("Open chat: Chat active").click());
+  expect(client.openLive).not.toHaveBeenCalled();
+  expect(client.connectLive).toHaveBeenCalledTimes(1);
+  expect(button("Open chat: Chat active").getAttribute("aria-current")).toBe("true");
+});
+
+it("separates verified empty chats and confirms row deletion without switching the current chat", async () => {
+  const blank = { ...savedChat("blank", "Querix shopping demo"), is_empty: true };
+  vi.mocked(client.connectLive).mockResolvedValue(restoredChat("active"));
+  vi.mocked(client.listLive).mockResolvedValue({
+    conversations: [savedChat("active", "Querix shopping demo"), blank],
+  });
+  await renderPortal();
+  const emptySection = element.querySelector<HTMLDetailsElement>(".chat-empty-conversations")!;
+  expect(emptySection.open).toBe(false);
+  expect(emptySection.textContent).toContain("Empty chats (1)");
+  expect(element.querySelectorAll(".chat-history-group .chat-history-item")).toHaveLength(1);
+  expect(element.querySelector(".chat-history-group .chat-history-label")?.textContent).toContain(
+    "Untitled chat",
+  );
+  const removeBlank = emptySection.querySelector<HTMLButtonElement>(".chat-history-menu button")!;
+  await act(async () => removeBlank.click());
+  expect(client.deleteSavedLive).not.toHaveBeenCalled();
+  await act(async () => button("Keep conversation").click());
+  expect(client.deleteSavedLive).not.toHaveBeenCalled();
+  await act(async () => removeBlank.click());
+  vi.mocked(client.listLive).mockResolvedValue({ conversations: [savedChat("active")] });
+  await act(async () => element.querySelector<HTMLButtonElement>("dialog .portal-danger")!.click());
+  expect(client.deleteSavedLive).toHaveBeenCalledWith("blank", "clothing");
+  expect(client.openLive).not.toHaveBeenCalled();
+  expect(client.newLive).not.toHaveBeenCalled();
+  expect(client.connectLive).toHaveBeenCalledTimes(1);
+  expect(element.querySelector(".chat-user-bubble")?.textContent).toBe("Message in active");
+  expect(element.querySelector(".chat-empty-conversations")).toBeNull();
+});
+
+it("deletes the active saved chat into an unsaved draft without creating a replacement", async () => {
+  vi.mocked(client.connectLive).mockResolvedValue(restoredChat("active"));
+  vi.mocked(client.listLive).mockResolvedValue({ conversations: [savedChat("active")] });
+  await renderPortal();
+  await act(async () => button("Delete chat: Chat active").click());
+  vi.mocked(client.deleteSavedLive).mockResolvedValueOnce({ deleted: true, active: true });
+  vi.mocked(client.connectLive).mockResolvedValueOnce({
+    sessionId: "new-draft",
+    messages: [],
+    preferences: { tasks: [] },
+  });
+  vi.mocked(client.listLive).mockResolvedValue({ conversations: [] });
+  await act(async () => element.querySelector<HTMLButtonElement>("dialog .portal-danger")!.click());
+  expect(element.querySelector(".chat-welcome")).not.toBeNull();
+  await act(async () => button("New chat").click());
+  expect(client.startLive).not.toHaveBeenCalled();
+  expect(client.newLive).not.toHaveBeenCalled();
+  expect(client.deleteLive).not.toHaveBeenCalled();
+});
+
+it("keeps chats and their messages when row deletion fails", async () => {
+  vi.mocked(client.connectLive).mockResolvedValue(restoredChat("active"));
+  vi.mocked(client.listLive).mockResolvedValue({
+    conversations: [savedChat("active"), savedChat("older")],
+  });
+  vi.mocked(client.deleteSavedLive).mockRejectedValueOnce(new Error("Delete unavailable"));
+  await renderPortal();
+  await act(async () => button("Delete chat: Chat older").click());
+  await act(async () => element.querySelector<HTMLButtonElement>("dialog .portal-danger")!.click());
+  expect(element.querySelector("dialog")).toBeNull();
+  expect(element.querySelector(".commerce-error")?.textContent).toContain("Delete unavailable");
+  expect(button("Open chat: Chat older")).toBeTruthy();
+  expect(element.querySelector(".chat-user-bubble")?.textContent).toBe("Message in active");
+});
+
+it("reuses the first saved conversation and message key after a failed first turn", async () => {
+  vi.mocked(client.sendLive)
+    .mockRejectedValueOnce(new Error("Temporary interruption"))
+    .mockResolvedValueOnce({
+      message_id: 2,
+      reply: "Which size?",
+      commerce: { action: "clarify", products: [], preferences: { tasks: [] } },
+    });
+  await renderPortal();
+  await act(async () => element.querySelector<HTMLButtonElement>(".chat-starters button")!.click());
+  expect(client.startLive).toHaveBeenCalledTimes(1);
+  const operation = vi.mocked(client.sendLive).mock.calls[0];
+  await act(async () => button("Retry same message").click());
+  expect(client.startLive).toHaveBeenCalledTimes(1);
+  expect(vi.mocked(client.sendLive).mock.calls[1].slice(0, 2)).toEqual(operation.slice(0, 2));
+  expect(element.querySelectorAll(".chat-turn.user")).toHaveLength(1);
+  expect(element.querySelectorAll(".chat-turn.assistant")).toHaveLength(1);
 });

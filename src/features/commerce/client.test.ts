@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { sendLive } from "./client";
+import { connectLive, startLive, sendLive } from "./client";
 const encode = new TextEncoder();
 function stream(source: string, size = 7) {
   const bytes = encode.encode(source);
@@ -70,5 +70,57 @@ describe("live chat stream", () => {
     const result = { reply: "saved", message_id: 2 };
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json(result)));
     expect(await sendLive("shampoo", "same-key", vi.fn())).toEqual(result);
+  });
+});
+
+describe("draft and saved conversation identity", () => {
+  it("connects an empty browser session without creating or requesting message history", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(Response.json({ available: true }))
+      .mockResolvedValueOnce(Response.json({ session_id: "browser-1", conversation_id: null }));
+    vi.stubGlobal("fetch", fetchMock);
+    expect(await connectLive("clothing")).toEqual({
+      sessionId: "browser-1",
+      conversationId: undefined,
+      messages: [],
+      preferences: { tasks: [] },
+    });
+    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
+      "/api/commerce/status?storefront=clothing",
+      "/api/commerce/session?storefront=clothing",
+    ]);
+  });
+  it("restores messages with a distinct browser ID and saved conversation ID", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(Response.json({ available: true }))
+      .mockResolvedValueOnce(Response.json({ session_id: "browser-1", conversation_id: "saved-1" }))
+      .mockResolvedValueOnce(
+        Response.json({ messages: [{ id: 1, role: "user", content: "shirt" }], next_after: 1 }),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    expect(await connectLive("clothing")).toMatchObject({
+      sessionId: "browser-1",
+      conversationId: "saved-1",
+      messages: [{ content: "shirt" }],
+    });
+    expect(fetchMock.mock.calls[2][0]).toBe("/api/commerce/history?after=0&storefront=clothing");
+  });
+  it("starts persistence using the first message and keeps cancellation available", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(Response.json({ session_id: "browser-1", conversation_id: "saved-1" }));
+    vi.stubGlobal("fetch", fetchMock);
+    const signal = new AbortController().signal;
+    await startLive("cotton shirt", "clothing", signal);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/commerce/session/start?storefront=clothing",
+      expect.objectContaining({
+        method: "POST",
+        signal,
+        body: JSON.stringify({ message: "cotton shirt" }),
+      }),
+    );
   });
 });

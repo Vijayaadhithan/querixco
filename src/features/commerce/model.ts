@@ -51,6 +51,7 @@ export type Conversation = {
   messages: Message[];
   preferences: Preferences;
   sessionId?: string;
+  conversationId?: string;
 };
 export type CatalogSummary = {
   storefronts?: { id: string; label: string; families: string[]; product_count: number }[];

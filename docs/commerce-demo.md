@@ -82,10 +82,20 @@ HTTPS commerce origin instead of localhost.
 
 The `src/server.ts` entry handles `/api/commerce/*` before delegating to TanStack
 Start. The browser never receives the service token or signing secret. Gateway
-routes accept only the signed cookie's conversation; browser-supplied IDs cannot
-select another conversation. The HttpOnly, SameSite=Strict cookie expires after
+message routes use the signed cookie's conversation. Explicit saved-chat open and
+delete actions verify the signed-in user's ownership and category access before
+selecting or deleting a supplied conversation ID. The HttpOnly, SameSite=Strict cookie expires after
 24 hours and is Secure on HTTPS. Mutations require a matching Origin header.
 Session creation and message submission preserve durable backend retry keys.
+Connecting and refreshing restore a browser session without creating a saved chat.
+`session/start` persists a conversation only when the user submits the first valid
+message; creation keeps the same durable retry key if its response is lost. The
+browser tracks `session_id` for recovery and `conversation_id` for saved-chat
+selection separately. Repeated New chat clicks on an empty draft are local.
+Legacy default-title entries are checked for messages before the UI groups them
+under collapsed Empty chats. A failed check leaves the entry in the main list.
+Each saved row has a confirmed delete action; deleting an older chat preserves the
+current conversation, and deleting the active chat returns to an unsaved draft.
 Pending live requests survive tab refresh through sessionStorage. Live mode reconnects automatically after refresh. Pending operations are bound
 to the session that created them, so an expired session does not replay a stale
 message into a new conversation.
@@ -128,7 +138,6 @@ Proxy requests have a 480-second ceiling to accommodate local model inference; a
 available for recovery. Keep the backend's supported single-worker deployment.
 The authenticated catalog summary endpoint is read-only. Catalog contents, model
 configuration, and production deployment remain unchanged.
-
 
 ## Isolated shopping sections
 

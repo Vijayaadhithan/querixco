@@ -1,5 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { LoaderCircle, MessageSquare, PanelLeftClose, Plus, RotateCcw } from "lucide-react";
+import {
+  LoaderCircle,
+  MessageSquare,
+  PanelLeftClose,
+  Plus,
+  RotateCcw,
+  Ellipsis,
+  Trash2,
+} from "lucide-react";
 import type { SavedConversation } from "@/features/commerce/client";
 
 function groupDate(value: string) {
@@ -30,6 +38,7 @@ export function ConversationHistory({
   category,
   onNew,
   onOpen,
+  onDelete,
   onClose,
   onRefresh,
   onRetry,
@@ -45,6 +54,7 @@ export function ConversationHistory({
   category: string;
   onNew: () => void;
   onOpen: (id: string) => void;
+  onDelete: (item: SavedConversation) => void;
   onClose: () => void;
   onRefresh: () => void;
   onRetry: () => void;
@@ -68,10 +78,62 @@ export function ConversationHistory({
   }, [mobile]);
 
   const groups = new Map<string, SavedConversation[]>();
-  for (const item of items) {
+  const emptyChats = items.filter((item) => item.is_empty);
+  const conversations = items.filter((item) => !item.is_empty);
+  for (const item of conversations) {
     const label = groupDate(item.updated_at);
     groups.set(label, [...(groups.get(label) ?? []), item]);
   }
+  const renderRow = (item: SavedConversation) => (
+    <li className="chat-history-row" key={item.id}>
+      <button
+        className="chat-history-item"
+        aria-current={activeId === item.id ? "true" : undefined}
+        aria-label={`Open chat: ${item.title || "Untitled conversation"}`}
+        title={item.title || "Untitled conversation"}
+        disabled={disabled}
+        onClick={() => onOpen(item.id)}
+      >
+        {openingId === item.id ? (
+          <LoaderCircle size={15} className="commerce-spin" />
+        ) : (
+          <MessageSquare size={15} />
+        )}
+        <span className="chat-history-label">
+          <span>
+            {item.is_empty
+              ? "Empty chat"
+              : item.title === "Querix shopping demo"
+                ? "Untitled chat"
+                : item.title || "Untitled chat"}
+          </span>
+          <time dateTime={item.updated_at}>
+            {new Date(item.updated_at).toLocaleString(undefined, {
+              month: "short",
+              day: "numeric",
+              hour: "numeric",
+              minute: "2-digit",
+            })}
+          </time>
+        </span>
+      </button>
+      <details className="chat-history-menu">
+        <summary aria-label={`Chat options: ${item.title || "Untitled chat"}`}>
+          <Ellipsis size={17} />
+        </summary>
+        <button
+          disabled={disabled}
+          aria-label={`Delete chat: ${item.title || "Untitled chat"}`}
+          onClick={(event) => {
+            event.currentTarget.closest("details")!.open = false;
+            onDelete(item);
+          }}
+        >
+          <Trash2 size={14} /> Delete chat
+        </button>
+      </details>
+    </li>
+  );
   const content = (
     <>
       <div className="chat-history-heading">
@@ -92,7 +154,7 @@ export function ConversationHistory({
             <LoaderCircle size={16} className="commerce-spin" /> Loading conversations…
           </p>
         )}
-        {items.length === 0 && !loading && !error && (
+        {conversations.length === 0 && !loading && !error && (
           <div className="chat-history-empty">
             <MessageSquare size={24} />
             <strong>A place for your finds</strong>
@@ -102,29 +164,16 @@ export function ConversationHistory({
         {[...groups].map(([label, conversations]) => (
           <section className="chat-history-group" key={label} aria-label={label}>
             <h3>{label}</h3>
-            <ul>
-              {conversations.map((item) => (
-                <li key={item.id}>
-                  <button
-                    className="chat-history-item"
-                    aria-current={activeId === item.id ? "true" : undefined}
-                    aria-label={`Open chat: ${item.title || "Untitled conversation"}`}
-                    title={item.title || "Untitled conversation"}
-                    disabled={disabled}
-                    onClick={() => onOpen(item.id)}
-                  >
-                    {openingId === item.id ? (
-                      <LoaderCircle size={15} className="commerce-spin" />
-                    ) : (
-                      <MessageSquare size={15} />
-                    )}
-                    <span>{item.title || "Untitled conversation"}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <ul>{conversations.map(renderRow)}</ul>
           </section>
         ))}
+        {emptyChats.length > 0 && (
+          <details className="chat-empty-conversations">
+            <summary>Empty chats ({emptyChats.length})</summary>
+            <p>No saved messages. You can delete these chats from their menu.</p>
+            <ul>{emptyChats.map(renderRow)}</ul>
+          </details>
+        )}
         {error && (
           <div className="chat-history-error" role="alert">
             <p>{error}</p>

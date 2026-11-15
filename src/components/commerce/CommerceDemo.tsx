@@ -18,6 +18,9 @@ import {
   connectLive,
   loadCatalog,
   deleteLive,
+  deleteSavedLive,
+  startLive,
+  type SavedConversation,
   newLive,
   openLive,
   liveStatus,
@@ -306,6 +309,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
   const thread = useRef<HTMLDivElement>(null);
   const followTail = useRef(true);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<SavedConversation | null>(null);
   const lock = useRef(true);
 
   const input = useRef<HTMLTextAreaElement>(null);
@@ -314,7 +318,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
   const history = useConversationHistory(
     storefront,
     Boolean(portalUser && initialized && !busy && mode === "live"),
-    `${state.sessionId}:${state.messages.length}:${state.messages.at(-1)?.id}`,
+    `${state.sessionId}:${state.conversationId}:${state.messages.length}:${state.messages.at(-1)?.id}`,
   );
   const historyToggle = useRef<HTMLButtonElement>(null);
   function closeHistory() {
@@ -510,6 +514,14 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
         } else {
           savePending(operation);
           controller.current = new AbortController();
+          if (!state.conversationId) {
+            const started = await startLive(
+              operation.message,
+              storefront,
+              controller.current.signal,
+            );
+            setState((current) => ({ ...current, conversationId: started.conversation_id }));
+          }
           const result = await sendLive(
             operation.message,
             operation.key,
@@ -526,6 +538,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
               ? current
               : {
                   sessionId: current.sessionId,
+                  conversationId: current.conversationId,
                   preferences: result.commerce.preferences,
                   messages: [
                     ...current.messages,
@@ -586,6 +599,10 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
   );
   async function reset(remove = true) {
     if (lock.current) return;
+    if (!remove && mode === "live" && state.sessionId && !state.messages.length && !pending) {
+      resetChatView();
+      return;
+    }
     lock.current = true;
     setBusy(true);
     setElapsed(0);
@@ -615,7 +632,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
   }
   async function resume(id: string) {
     if (!storefront || lock.current) return;
-    if (id === state.sessionId) {
+    if (id === state.conversationId) {
       if (window.matchMedia?.("(max-width: 899px)").matches) closeHistory();
       return;
     }
@@ -638,6 +655,29 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
       setOpeningId(null);
     }
   }
+  async function removeSaved() {
+    if (!storefront || !deleteTarget || lock.current) return;
+    lock.current = true;
+    setBusy(true);
+    setError("");
+    try {
+      const result = await deleteSavedLive(deleteTarget.id, storefront);
+      setDeleteTarget(null);
+      if (result.active || deleteTarget.id === state.conversationId) {
+        savePending(null);
+        resetChatView();
+        setState(EMPTY_CONVERSATION);
+        setState(await connectLive(storefront));
+      }
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not delete this chat.");
+      // Keep errors visible outside the confirmation dialog; the row remains retryable.
+      setDeleteTarget(null);
+    } finally {
+      lock.current = false;
+      setBusy(false);
+    }
+  }
   return (
     <div className="commerce-app commerce-demo commerce-chat-page">
       <CommerceHeader
@@ -651,12 +691,16 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
             loading={history.loading || !initialized}
             error={history.error}
             hasMore={history.hasMore}
-            activeId={state.sessionId}
+            activeId={state.conversationId}
             openingId={openingId}
             disabled={busy}
             category={section?.label ?? "Shopping"}
             onNew={() => void reset(false)}
             onOpen={(id) => void resume(id)}
+            onDelete={(item) => {
+              setDeleteTarget(item);
+              if (window.matchMedia?.("(max-width: 899px)").matches) closeHistory();
+            }}
             onClose={closeHistory}
             onRefresh={() => void history.refresh()}
             onRetry={() => void history.retry()}
@@ -785,15 +829,35 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
               )}
             </aside>
           )}
-          {confirmDelete && (
-            <PortalDialog busy={busy} onClose={() => setConfirmDelete(false)}>
+          {(confirmDelete || deleteTarget) && (
+            <PortalDialog
+              busy={busy}
+              onClose={() => {
+                setConfirmDelete(false);
+                setDeleteTarget(null);
+              }}
+            >
               <h2 id="portal-dialog-title">Delete this conversation?</h2>
-              <p>This chat will be permanently deleted. You can then start a new conversation.</p>
+              <p>
+                {deleteTarget
+                  ? `“${deleteTarget.title || "Untitled chat"}” will be permanently deleted.`
+                  : "This chat will be permanently deleted. You can then start a new conversation."}
+              </p>
               <div className="chat-delete-dialog-actions">
-                <button disabled={busy} onClick={() => setConfirmDelete(false)}>
+                <button
+                  disabled={busy}
+                  onClick={() => {
+                    setConfirmDelete(false);
+                    setDeleteTarget(null);
+                  }}
+                >
                   Keep conversation
                 </button>
-                <button className="portal-danger" disabled={busy} onClick={() => void reset()}>
+                <button
+                  className="portal-danger"
+                  disabled={busy}
+                  onClick={() => (deleteTarget ? void removeSaved() : void reset())}
+                >
                   <Trash2 size={15} /> Delete chat
                 </button>
               </div>
@@ -890,7 +954,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
                   <p className="chat-user-bubble">{pending.message}</p>
                 </article>
               )}
-              {busy && !openingId && (
+              {busy && !openingId && (pending || !initialized) && (
                 <article className="chat-turn assistant chat-incoming">
                   <div className="chat-speaker">
                     <span className="chat-avatar">

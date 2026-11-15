@@ -51,7 +51,9 @@ async function bootstrap() {
 async function start(cid: string) {
   const initial = await bootstrap();
   mockUpstream(vi.fn().mockResolvedValue(Response.json({ id: cid, storefront_id: "beauty" })));
-  return extractCookie(await handleCommerceRequest(req("session", "POST", initial), env));
+  return extractCookie(
+    await handleCommerceRequest(req("session/start", "POST", initial, { message: "shampoo" }), env),
+  );
 }
 afterEach(() => vi.unstubAllGlobals());
 describe("commerce browser gateway", () => {
@@ -173,8 +175,8 @@ describe("commerce browser gateway", () => {
         Promise.resolve(Response.json({ id: cidA, storefront_id: "beauty" })),
       );
     mockUpstream(fetchMock);
-    await handleCommerceRequest(req("session", "POST", initial), env);
-    await handleCommerceRequest(req("session", "POST", initial), env);
+    await handleCommerceRequest(req("session/start", "POST", initial, { message: "shampoo" }), env);
+    await handleCommerceRequest(req("session/start", "POST", initial, { message: "shampoo" }), env);
     expect(fetchMock.mock.calls[0][1].headers["idempotency-key"]).toBe(
       fetchMock.mock.calls[1][1].headers["idempotency-key"],
     );
@@ -254,7 +256,7 @@ describe("storefront session isolation", () => {
     const fetchMock = vi.fn().mockResolvedValue(Response.json({ id: cid, storefront_id: scope }));
     mockUpstream(fetchMock);
     const response = await handleCommerceRequest(
-      req(`session?storefront=${scope}`, "POST", cookie),
+      req(`session/start?storefront=${scope}`, "POST", cookie, { message: "shirt" }),
       env,
     );
     expect(response.status).toBe(200);
@@ -326,10 +328,165 @@ describe("storefront session isolation", () => {
     const cookie = extractCookie(await handleCommerceRequest(req("status?storefront=beauty"), env));
     mockUpstream(vi.fn().mockResolvedValue(Response.json({ id: cidA })));
     const oldBackend = await handleCommerceRequest(
-      req("session?storefront=beauty", "POST", cookie),
+      req("session/start?storefront=beauty", "POST", cookie, { message: "shampoo" }),
       env,
     );
     expect(oldBackend.status).toBe(503);
     expect(oldBackend.headers.get("set-cookie")).toContain("Max-Age=0");
+  });
+});
+
+describe("draft sessions and history cleanup", () => {
+  it("never persists a conversation on initial connect, refresh or repeated New chat", async () => {
+    let cookie = await bootstrap();
+    const fetchMock = vi.fn();
+    mockUpstream(fetchMock);
+    for (let i = 0; i < 4; i++) {
+      const draft = await handleCommerceRequest(req("session", "POST", cookie), env);
+      expect(await draft.json()).toMatchObject({ conversation_id: null });
+      cookie = extractCookie(draft);
+      const next = await handleCommerceRequest(req("session/new", "POST", cookie), env);
+      cookie = extractCookie(next);
+    }
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+  it("requires a valid first message before saving a draft and returns both IDs", async () => {
+    const cookie = await bootstrap();
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(Response.json({ id: cidA, storefront_id: "beauty" }));
+    mockUpstream(fetchMock);
+    const invalid = await handleCommerceRequest(
+      req("session/start", "POST", cookie, { message: " " }),
+      env,
+    );
+    expect(invalid.status).toBe(422);
+    expect(fetchMock).not.toHaveBeenCalled();
+    const started = await handleCommerceRequest(
+      req("session/start", "POST", cookie, { message: "shampoo" }),
+      env,
+    );
+    const data = await started.json();
+    expect(data.conversation_id).toBe(cidA);
+    expect(data.session_id).not.toBe(cidA);
+    const restored = await handleCommerceRequest(
+      req("session", "POST", extractCookie(started)),
+      env,
+    );
+    expect(await restored.json()).toEqual(data);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+  it("classifies only verified empty default-title records and keeps same-title real chats", async () => {
+    const cookie = await bootstrap();
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      if (url.includes("/conversations?"))
+        return Promise.resolve(
+          Response.json({
+            conversations: [
+              { id: cidA, title: "Querix shopping demo", storefront_id: "beauty" },
+              { id: cidB, title: "Querix shopping demo", storefront_id: "beauty" },
+            ],
+          }),
+        );
+      return Promise.resolve(
+        Response.json({
+          messages: url.includes(cidA) ? [] : [{ id: 1, role: "user", content: "shampoo" }],
+        }),
+      );
+    });
+    mockUpstream(fetchMock);
+    const response = await handleCommerceRequest(
+      req("conversations?offset=50", "GET", cookie),
+      env,
+    );
+    expect((await response.json()).conversations).toEqual([
+      expect.objectContaining({ id: cidA, is_empty: true }),
+      expect.objectContaining({ id: cidB, is_empty: false }),
+    ]);
+    expect(fetchMock.mock.calls[0][0]).toContain("offset=50");
+    expect(fetchMock.mock.calls.every(([, init]) => init.method !== "DELETE")).toBe(true);
+  });
+  it("keeps unverified chats visible when the empty check fails", async () => {
+    const cookie = await bootstrap();
+    mockUpstream(
+      vi.fn(async (url: string) => {
+        if (url.includes("/conversations?"))
+          return Response.json({
+            conversations: [
+              { id: cidA, title: "Querix shopping demo", storefront_id: "beauty", is_empty: true },
+            ],
+          });
+        return new Response(null, { status: 503 });
+      }),
+    );
+    const response = await handleCommerceRequest(req("conversations", "GET", cookie), env);
+    expect((await response.json()).conversations).toEqual([
+      { id: cidA, title: "Querix shopping demo", storefront_id: "beauty" },
+    ]);
+  });
+  it("deletes an older saved chat without switching or clearing the active chat cookie", async () => {
+    const cookie = await start(cidA);
+    const fetchMock = vi
+      .fn()
+      .mockImplementation((_url: string, init: RequestInit) =>
+        Promise.resolve(
+          init.method === "DELETE"
+            ? new Response(null, { status: 204 })
+            : Response.json({ id: cidB, storefront_id: "beauty" }),
+        ),
+      );
+    mockUpstream(fetchMock);
+    const response = await handleCommerceRequest(
+      req(`conversation?id=${cidB}`, "DELETE", cookie),
+      env,
+    );
+    expect(await response.json()).toEqual({ deleted: true, active: false });
+    expect(response.headers.get("set-cookie")).toBeNull();
+    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
+      `http://127.0.0.1:8000/conversations/${cidB}`,
+      `http://127.0.0.1:8000/conversations/${cidB}`,
+    ]);
+    expect(fetchMock.mock.calls[1][1].headers.authorization).toBe(`Bearer ${userToken}`);
+  });
+  it("clears only the active category cookie when its saved chat is deleted", async () => {
+    const cookie = await start(cidA);
+    mockUpstream(
+      vi
+        .fn()
+        .mockImplementation((_url: string, init: RequestInit) =>
+          Promise.resolve(
+            init.method === "DELETE"
+              ? new Response(null, { status: 204 })
+              : Response.json({ id: cidA, storefront_id: "beauty" }),
+          ),
+        ),
+    );
+    const response = await handleCommerceRequest(
+      req(`conversation?id=${cidA}`, "DELETE", cookie),
+      env,
+    );
+    expect(await response.json()).toEqual({ deleted: true, active: true });
+    expect(response.headers.get("set-cookie")).toContain("querix_commerce_beauty=;");
+  });
+  it("rejects wrong-owner, wrong-category and malformed saved-chat deletions", async () => {
+    const cookie = await start(cidA);
+    for (const response of [
+      new Response(null, { status: 403 }),
+      Response.json({ id: cidB, storefront_id: "clothing" }),
+    ]) {
+      const fetchMock = vi.fn().mockResolvedValue(response);
+      mockUpstream(fetchMock);
+      expect(
+        (await handleCommerceRequest(req(`conversation?id=${cidB}`, "DELETE", cookie), env)).status,
+      ).toBe(403);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(fetchMock.mock.calls[0][1].method).not.toBe("DELETE");
+    }
+    const fetchMock = vi.fn();
+    mockUpstream(fetchMock);
+    expect(
+      (await handleCommerceRequest(req("conversation?id=invalid", "DELETE", cookie), env)).status,
+    ).toBe(400);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
