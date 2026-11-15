@@ -87,21 +87,11 @@ it("keeps the readable draft available when clipboard access fails", async () =>
     (element.querySelector(".qx-email-draft textarea") as HTMLTextAreaElement).value,
   ).toContain("Example Store");
 });
-it("uses a conversational thread for commerce and catalog results for search", async () => {
+it("keeps the search preview focused on catalog results without fetching live data", async () => {
   const fetchMock = vi.fn();
   vi.stubGlobal("fetch", fetchMock);
   await act(async () => root.render(<ProductExperience />));
-  await act(async () => button("Keep it under $30").click());
-  expect(element.querySelectorAll(".qc-turn")).toHaveLength(2);
-  expect(element.querySelector('[data-turn="1"]')?.textContent).toContain("$22.00");
-  await act(async () => button("Compare these two").click());
-  expect(element.querySelector(".qc-comparison")?.textContent).toContain("cotton");
-  await act(async () => button("Restart preview").click());
-  expect(element.querySelector(".qc-comparison")).toBeNull();
-  expect(element.querySelector('[data-turn="0"]')?.textContent).toContain("$36.00");
-  await act(async () => button("Intelligent search").click());
   expect(element.querySelector(".qc-thread")).toBeNull();
-  expect(button("Intelligent search").getAttribute("aria-pressed")).toBe("true");
   await act(async () => button("Narrow the budget").click());
   expect(element.querySelector(".qx-filter-line")?.textContent).toContain("Under $30");
   expect(element.querySelector(".qs-products")?.textContent).toContain("$22.00");
@@ -121,7 +111,7 @@ it("opens accessible mobile navigation with a clearly separate demo sign-in", as
 });
 
 it("uses the canonical sample catalog when refining and resetting a selected search example", async () => {
-  await act(async () => root.render(<ProductExperience initialMode="search" />));
+  await act(async () => root.render(<ProductExperience />));
   await act(async () => button("Skincare").click());
   expect(element.querySelector(".qx-query")?.textContent).toContain("fragrance-free moisturizer");
   expect(element.querySelector(".qs-products")?.textContent).toContain("Daily comfort cream");

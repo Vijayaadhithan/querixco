@@ -2,8 +2,6 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { CommerceShowcase } from "./CommerceShowcase";
-import { IndustryShowcase } from "./IndustryShowcase";
-import { IntelligenceDashboard } from "./IntelligenceDashboard";
 
 let root: Root;
 let host: HTMLDivElement;
@@ -67,20 +65,6 @@ function button(text: string) {
 async function tick(ms: number) {
   await act(async () => vi.advanceTimersByTime(ms));
 }
-async function change(label: string, value: string) {
-  const select = [...host.querySelectorAll("label")]
-    .find((item) => item.textContent?.includes(label))
-    ?.querySelector("select");
-  if (!select) throw new Error(`Missing select ${label}`);
-  await act(async () => {
-    select.value = value;
-    select.dispatchEvent(new Event("change", { bubbles: true }));
-  });
-}
-function total() {
-  return Number(host.querySelector(".ql-dash-metrics strong")?.textContent?.replaceAll(",", ""));
-}
-
 it("appends refinements and comparison without replacing earlier products or fetching live data", async () => {
   await act(async () => root.render(<CommerceShowcase />));
   expect(host.querySelectorAll(".qc-turn")).toHaveLength(1);
@@ -239,46 +223,29 @@ it("waits for the introduction and pauses outside the viewport or in a hidden ta
   await tick(5500);
   expect(host.querySelectorAll(".qc-turn")).toHaveLength(2);
 });
-it("recalculates synthetic dashboard totals without requesting customer analytics", async () => {
-  await act(async () => root.render(<IntelligenceDashboard />));
-  const all = total();
-  await change("Dashboard catalogue", "Fashion");
-  const fashion = total();
-  await change("Dashboard catalogue", "Beauty");
-  const beauty = total();
-  expect(fashion + beauty).toBe(all);
-  expect(host.querySelector(".ql-interest")?.textContent).not.toContain("Cotton workwear");
-  await change("Dashboard period", "7");
-  expect(total()).toBeLessThan(beauty);
-  expect(host.querySelectorAll(".ql-chart-targets button")).toHaveLength(7);
-  expect(host.querySelector(".ql-trend-plot svg")?.getAttribute("aria-label")).toContain(
-    `${total()} searches in total`,
+it("ends the brief home preview after refinement and links to the full walkthrough", async () => {
+  vi.useFakeTimers();
+  await act(async () => root.render(<CommerceShowcase brief />));
+  await tick(30000);
+  expect(host.querySelectorAll(".qc-turn")).toHaveLength(2);
+  expect(host.querySelector(".qc-comparison")).toBeNull();
+  expect(host.querySelector(".qc-suggestion")).toBeNull();
+  expect(host.querySelector(".qc-examples")).toBeNull();
+  expect(host.querySelector(".qc-footer a")?.getAttribute("href")).toBe(
+    "/use-cases/conversational-commerce",
   );
-  expect(host.textContent).toContain("Illustrative data");
-  expect(fetch).not.toHaveBeenCalled();
+  expect(host.querySelector('[role="status"]')?.textContent).toContain("2 of 2 replies");
+  await act(async () => button("Replay conversation").click());
+  await tick(2300);
+  expect(host.querySelectorAll(".qc-turn")).toHaveLength(1);
 });
-it("exposes unmet demand and chart values through keyboard controls", async () => {
-  await act(async () => root.render(<IntelligenceDashboard />));
-  await act(async () => button("lightweight summer blazer").click());
-  expect(host.querySelector(".ql-query-detail")?.textContent).toContain(
-    "lightweight summer blazer",
-  );
-  await act(async () =>
-    (host.querySelector(".ql-chart-targets button") as HTMLButtonElement).focus(),
-  );
-  expect(host.querySelector(".ql-trend-label")?.textContent).toContain("Day 1");
-  await change("Dashboard period", "7");
-  expect(host.querySelector(".ql-trend-label")?.textContent).toContain("Day 28");
-});
-it("switches industry requirements and resets the previous refinement", async () => {
-  await act(async () => root.render(<IndustryShowcase />));
-  await act(async () => button("Electronics").click());
-  expect(host.querySelector(".ql-industry-query")?.textContent).toContain("Wireless headphones");
-  await act(async () => button("Only show noise-cancelling options").click());
-  expect(host.querySelector(".ql-filter-chips")?.textContent).toContain("Noise cancelling");
-  await act(async () => button("Automotive").click());
-  expect(host.querySelector(".ql-filter-chips")?.textContent).not.toContain("Noise cancelling");
-  expect(host.querySelector(".ql-industry-query")?.textContent).toContain("Replacement brake pads");
-  expect(host.textContent).toContain("Illustrative industry scenario");
-  expect(fetch).not.toHaveBeenCalled();
+it("starts the full walkthrough with skincare and preserves both category examples", async () => {
+  await act(async () => root.render(<CommerceShowcase initialScenario="beauty" />));
+  expect(host.querySelector(".qc-thread")?.textContent).toContain("fragrance-free");
+  await act(async () => button("Keep it under $20").click());
+  await act(async () => button("Compare these two").click());
+  expect(host.querySelector(".qc-comparison")?.textContent).toContain("40 ml");
+  await act(async () => button("Fashion").click());
+  expect(host.querySelectorAll(".qc-turn")).toHaveLength(1);
+  expect(host.querySelector(".qc-thread")?.textContent).toContain("cotton");
 });

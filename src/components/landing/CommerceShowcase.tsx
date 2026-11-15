@@ -26,15 +26,15 @@ const TYPE = 1600;
 const THINK = 700;
 const TURN_DURATION = WAIT + TYPE + THINK;
 const TICK = 50;
-const TURN_COUNT = 3;
 
 type PlaybackState = { revealed: number; elapsed: number };
-type PlaybackAction = { type: "tick" } | { type: "advance" } | { type: "reset"; animate: boolean };
+type PlaybackAction =
+  { type: "tick" | "advance"; limit: number } | { type: "reset"; animate: boolean };
 
 function playbackReducer(state: PlaybackState, action: PlaybackAction): PlaybackState {
   if (action.type === "reset")
     return { revealed: action.animate ? 0 : 1, elapsed: action.animate ? WAIT : 0 };
-  if (state.revealed >= TURN_COUNT) return state;
+  if (state.revealed >= action.limit) return state;
   if (action.type === "advance") return { revealed: state.revealed + 1, elapsed: 0 };
   const elapsed = state.elapsed + TICK;
   return elapsed >= TURN_DURATION
@@ -42,12 +42,18 @@ function playbackReducer(state: PlaybackState, action: PlaybackAction): Playback
     : { ...state, elapsed };
 }
 
-export function CommerceShowcase() {
+export function CommerceShowcase({
+  brief = false,
+  initialScenario = "fashion",
+}: {
+  brief?: boolean;
+  initialScenario?: DiscoveryExampleID;
+}) {
   const dialog = useRef<HTMLDialogElement>(null);
   const thread = useRef<HTMLDivElement>(null);
   const followTail = useRef(true);
   const { preview, canAdvance, reducedMotion } = usePreviewPlayback();
-  const [scenario, setScenario] = useState<DiscoveryExampleID>("fashion");
+  const [scenario, setScenario] = useState<DiscoveryExampleID>(initialScenario);
   const [{ revealed, elapsed }, dispatchPlayback] = useReducer(playbackReducer, {
     revealed: 1,
     elapsed: 0,
@@ -56,9 +62,13 @@ export function CommerceShowcase() {
   const [away, setAway] = useState(false);
   const [selected, setSelected] = useState<Product | null>(null);
   const example = DISCOVERY_EXAMPLES[scenario];
-  const prompts = [example.query, `Keep it under $${example.refinedBudget}`, "Compare these two"];
+  const prompts = [
+    example.query,
+    `Keep it under $${example.refinedBudget}`,
+    "Compare these two",
+  ].slice(0, brief ? 2 : 3);
   const replies = [example.answer, example.refinement, example.comparison];
-  const complete = revealed === prompts.length;
+  const complete = revealed >= prompts.length;
   const typing = !complete && elapsed >= WAIT && elapsed < WAIT + TYPE;
   const thinking = !complete && elapsed >= WAIT + TYPE;
   const draft = typing
@@ -67,9 +77,12 @@ export function CommerceShowcase() {
 
   useEffect(() => {
     if (!canAdvance || !playing || complete || selected) return;
-    const timer = window.setInterval(() => dispatchPlayback({ type: "tick" }), TICK);
+    const timer = window.setInterval(
+      () => dispatchPlayback({ type: "tick", limit: prompts.length }),
+      TICK,
+    );
     return () => window.clearInterval(timer);
-  }, [canAdvance, playing, complete, selected]);
+  }, [canAdvance, playing, complete, selected, prompts.length]);
 
   useEffect(() => {
     if (followTail.current) thread.current?.scrollTo?.({ top: thread.current.scrollHeight });
@@ -82,7 +95,7 @@ export function CommerceShowcase() {
   function sendNext() {
     if (complete) return;
     setPlaying(false);
-    dispatchPlayback({ type: "advance" });
+    dispatchPlayback({ type: "advance", limit: prompts.length });
   }
   function reset(nextScenario = scenario, autoplay = false) {
     const animate = autoplay && !reducedMotion;
@@ -101,7 +114,7 @@ export function CommerceShowcase() {
   return (
     <div ref={preview} className="commerce-app qc-preview" id="commerce-preview" tabIndex={-1}>
       <div className="qc-caption">
-        <span>THE COMMERCE EXPERIENCE</span>
+        <span>{brief ? "A QUICK LOOK" : "DISCOVER. REFINE. COMPARE."}</span>
         <span>Guided sample</span>
       </div>
       <div className="qc-window">
@@ -132,19 +145,21 @@ export function CommerceShowcase() {
             </button>
           </div>
         </header>
-        <div className="qc-examples" role="group" aria-label="Shopping example">
-          <span>Explore a conversation</span>
-          {Object.entries(DISCOVERY_EXAMPLES).map(([key, item]) => (
-            <button
-              key={key}
-              type="button"
-              aria-pressed={scenario === key}
-              onClick={() => reset(key as DiscoveryExampleID)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
+        {!brief && (
+          <div className="qc-examples" role="group" aria-label="Shopping example">
+            <span>Explore a conversation</span>
+            {Object.entries(DISCOVERY_EXAMPLES).map(([key, item]) => (
+              <button
+                key={key}
+                type="button"
+                aria-pressed={scenario === key}
+                onClick={() => reset(key as DiscoveryExampleID)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        )}
         <div
           ref={thread}
           className="qc-thread"
@@ -254,7 +269,9 @@ export function CommerceShowcase() {
           >
             <output className={typing ? "is-typing" : ""} aria-label="Next guided shopping message">
               {complete
-                ? "Try another example, or explore your own catalog."
+                ? brief
+                  ? "See the full walkthrough to explore comparisons."
+                  : "Try another example, or request a tailored demo."
                 : thinking
                   ? "Querix is replying…"
                   : draft || "Choose a suggested follow-up…"}
@@ -277,13 +294,17 @@ export function CommerceShowcase() {
         </div>
       </div>
       <div className="qc-footer">
-        <span>Discover. Refine. Compare.</span>
-        <a href="/commerce/login">
-          Try the live demo <ArrowUpRight size={12} />
+        <span>
+          {brief
+            ? "A budget changes. The preference stays."
+            : "Live demo access requires an approved account."}
+        </span>
+        <a href={brief ? "/use-cases/conversational-commerce" : "/commerce/login"}>
+          {brief ? "Full walkthrough" : "Demo sign-in"} <ArrowUpRight size={12} />
         </a>
       </div>
       <span className="qx-sr-only" role="status">
-        {example.label} example. {revealed} of 3 replies shown.
+        {example.label} example. {revealed} of {prompts.length} replies shown.
         {revealed > 1 ? ` ${example.preference} preference kept.` : ""}
       </span>
       {selected && (

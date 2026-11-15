@@ -18,15 +18,15 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
     ? [
         [
           "Remember the requirements",
-          "Structured shopping preferences carry across turns, so a new budget doesn’t erase the fabric or style already requested.",
+          "A lower budget doesn’t have to mean starting again. Keep the fabric, style or other preferences already discussed.",
         ],
         [
           "Keep different needs separate",
-          "A shampoo and a moisturizer can have different budgets and preferences. Each shopping task keeps its own requirements and results.",
+          "Ask for shampoo under $15 and moisturizer under $25. Each product need keeps its own budget and preferences.",
         ],
         [
           "Explain and compare",
-          "Help shoppers inspect supplied listing attributes and compare displayed products. Missing catalog details remain unknown.",
+          "Compare the details listed for the products in front of you. When an attribute is missing, the answer stays unknown.",
         ],
         [
           "Continue the conversation",
@@ -76,7 +76,7 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
           </h1>
           <p className="qx-hero-body">
             {commerce
-              ? "A shopping conversation that keeps context. Help customers refine what they need, explore relevant products, and understand their choices."
+              ? "Watch a shopper narrow a skincare budget, keep a fragrance-free preference and compare the resulting choices. Then switch to the clothing example to try another conversation."
               : "Connect the meaning behind a customer’s search to relevant inventory. Support natural language and precise requirements in the same experience."}
           </p>
           <div className="qx-actions">
@@ -93,7 +93,7 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
           </a>
         </div>
         <div className={commerce ? "ql-commerce-stage" : "qx-hero-stage"}>
-          {commerce ? <CommerceShowcase /> : <ProductExperience initialMode={product} />}
+          {commerce ? <CommerceShowcase initialScenario="beauty" /> : <ProductExperience />}
         </div>
       </section>
       <section className="qx-section qx-container">
@@ -173,9 +173,6 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
                   )}
                   <h3>{title}</h3>
                   <p>{quote}</p>
-                  <a href="/request-demo?product=commerce">
-                    Request demo access <ArrowUpRight size={15} />
-                  </a>
                 </article>
               ))}
             </div>
@@ -183,6 +180,9 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
               The live demo requires an approved account. Its catalog contains historical product
               metadata; current prices, stock, and variant availability are not verified.
             </p>
+            <a className="qx-text-link" href="/request-demo?product=commerce">
+              Request access to the live demo <ArrowUpRight size={15} />
+            </a>
           </div>
         </section>
       ) : (
@@ -201,7 +201,6 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
                 "Tenant-scoped access and approved response fields",
                 "Explicit filters and cursor-based pagination",
                 "Documented health checks and failure behavior",
-                "Company analytics and separate operational diagnostics",
               ].map((item) => (
                 <p key={item}>
                   <Check size={18} />

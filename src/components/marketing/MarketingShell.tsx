@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
-  BarChart3,
   ChevronDown,
   Menu,
   MessageCircle,
@@ -26,18 +25,8 @@ const products = [
     href: "/use-cases/conversational-commerce",
     icon: MessageCircle,
   },
-  {
-    title: "Commerce intelligence",
-    body: "Explore the insights behind discovery.",
-    href: "/#intelligence",
-    icon: BarChart3,
-  },
 ];
-const links = [
-  ["Industries", "/#industries"],
-  ["Developers", "/developers"],
-  ["Company", "/#company"],
-];
+const links = [["Developers", "/developers"]];
 
 export function MarketingShell({ children, active }: { children: ReactNode; active?: string }) {
   const [open, setOpen] = useState(false);
@@ -181,8 +170,6 @@ export function MarketingShell({ children, active }: { children: ReactNode; acti
               <span className="qx-label">PRODUCTS</span>
               <a href="/products/search">Intelligent search</a>
               <a href="/use-cases/conversational-commerce">Interactive commerce</a>
-              <a href="/#intelligence">Commerce intelligence</a>
-              <a href="/#industries">Industries</a>
             </div>
             <div>
               <span className="qx-label">RESOURCES</span>
@@ -194,9 +181,7 @@ export function MarketingShell({ children, active }: { children: ReactNode; acti
               </a>
             </div>
             <div>
-              <span className="qx-label">COMPANY</span>
-              <a href="/#company">About QuerixAI</a>
-              <a href="/#why-querix">Why QuerixAI</a>
+              <span className="qx-label">CONTACT & INFORMATION</span>
               <a href="/request-demo">Contact & demos</a>
               <a href="/privacy">Privacy</a>
               <a href="/legal">Website terms</a>
@@ -220,13 +205,13 @@ export function DemoCta({ product = "both" }: { product?: "search" | "commerce" 
     <section className="qx-cta">
       <div className="qx-container qx-cta-inner">
         <div>
-          <p className="qx-eyebrow">YOUR CATALOG. YOUR CUSTOMERS.</p>
+          <p className="qx-eyebrow">SEE QUERIX IN ACTION</p>
           <h2>
-            Let’s make discovery
+            Bring your next
             <br />
-            work for your business.
+            shopping journey.
           </h2>
-          <p>Bring the searches and shopping journeys that matter to you.</p>
+          <p>Tell us what your customers need to find. We’ll walk through a focused example.</p>
         </div>
         <a className="qx-button qx-button-white" href={`/request-demo?product=${product}`}>
           Request a demo <ArrowRight size={18} />

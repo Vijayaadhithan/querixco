@@ -4,7 +4,7 @@ import type { Product } from "./model";
 const products = (...ids: string[]): Product[] =>
   ids.map((id) => SAMPLE_PRODUCTS.find((product) => product.product_id === `sample:${id}`)!);
 
-/** One illustrative catalog for search, conversation, and industry previews. */
+/** One illustrative catalog for search and conversation previews. */
 export const DISCOVERY_EXAMPLES = {
   fashion: {
     label: "Fashion",

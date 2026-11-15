@@ -1,1501 +1,170 @@
+/* Public overview: one story, with blue light fading into the page. */
 .ql-home {
-  --ql-cyan: #84d8ba;
-  --ql-bright: #8db5ff;
-  --ql-soft: #a8b6cd;
-  background: radial-gradient(ellipse 55% 15% at 78% 6%, #245bdb16, transparent 90%);
+  background: radial-gradient(ellipse 75% 600px at 22% 220px, #245bdb24, transparent 85%), #0b1423;
 }
-.ql-home h1,
-.ql-home h2,
-.ql-home h3 {
-  text-wrap: balance;
-}
-.ql-home em {
-  color: #8db5ff;
-  font-style: normal;
-}
-.ql-home .qx-eyebrow {
-  color: #8db5ff;
-  font-size: 10px;
-  letter-spacing: 1.7px;
-}
-.ql-hero {
+.ql-home .ql-hero {
   position: relative;
   display: grid;
-  grid-template-columns: 0.93fr 1.2fr;
-  column-gap: 64px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
   align-items: center;
-  min-height: min(850px, calc(100svh - 84px));
-  padding-block: 70px 95px;
+  gap: 64px;
+  padding-block: 80px 72px;
+  isolation: isolate;
 }
-.ql-hero h1 {
-  font-size: clamp(44px, 4.65vw, 72px);
-  line-height: 1.07;
-  font-weight: 500;
-  letter-spacing: -0.06em;
-  margin-block: 27px 25px;
+.ql-hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -50px -48px -40px;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 35% 45%, #245bdb18, transparent 70%);
 }
-.ql-hero-description {
-  max-width: 370px;
-  font-size: 19px;
-  line-height: 1.5;
+.ql-hero-copy,
+.ql-commerce-stage {
+  min-width: 0;
+}
+.ql-home .ql-hero h1 {
+  max-width: 600px;
+  font-size: clamp(42px, 4.6vw, 66px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+.ql-hero h1 em {
+  color: #91baff;
+  font-style: normal;
+}
+.ql-home .ql-hero-description {
+  margin-top: 26px;
+  font-size: 20px;
   color: #e8eef8;
-  letter-spacing: -0.3px;
 }
 .ql-home .ql-hero-body {
   margin-top: 16px;
-  color: #a8b6cd;
-  max-width: 365px;
-  font-size: 14px;
+  max-width: 490px;
+  font-size: 15px;
   line-height: 1.85;
+  color: #b8cae7;
 }
-.ql-hero .qx-actions {
-  gap: 24px;
-  margin-top: 32px;
-}
-.ql-hero-proof {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-  margin-top: 32px;
-  font-size: 10px;
-  color: #a8b6cd;
-}
-.ql-hero-proof > span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.ql-hero-proof svg {
-  color: #84d8ba;
-}
-.ql-dash-foot i {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #16866e;
-  display: inline-block;
-}
-.ql-filter-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin: 10px 0 17px 33px;
-}
-.ql-filter-chips > span {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: #1a2b45;
-  color: #a8b6cd;
-  border: 1px solid #2b3d56;
-  border-radius: 4px;
-  padding: 3px 6px;
-  font-size: 8px;
-}
-.ql-filter-chips > .is-changed {
-  color: #8db5ff;
-  background: #1a2b45;
-  border-color: #2b3d56;
-}
-.ql-followup-message {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 9px;
-  color: #8db5ff;
+.ql-home .ql-hero-context {
   margin-top: 14px;
-  flex-wrap: wrap;
-}
-.ql-followup-message > span:last-child {
-  margin-left: auto;
-  color: #a8b6cd;
-  font-size: 8px;
-}
-.ql-section {
-  padding-block: 105px;
-  scroll-margin-top: 65px;
-}
-.ql-section-heading {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 90px;
-  align-items: end;
-  margin-bottom: 44px;
-}
-.ql-section-heading h2 {
-  font-size: clamp(33px, 3.2vw, 48px);
-  line-height: 1.14;
-  letter-spacing: -0.045em;
-  margin-top: 19px;
-  font-weight: 500;
-}
-.ql-section-heading > p {
-  font-size: 14px;
-  line-height: 1.85;
-  color: #a8b6cd;
-  max-width: 390px;
-  padding-bottom: 2px;
-}
-.ql-dashboard {
-  border: 1px solid #2b3d56;
-  border-radius: 12px;
-  background: #111f33;
-  box-shadow: 0 28px 70px -35px #173b7520;
-  overflow: hidden;
-}
-.ql-dash-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  padding: 19px 25px;
-  border-bottom: 1px solid #2b3d56;
-  background: #111f33;
-}
-.ql-dash-top > div:first-child {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-.ql-dash-top svg {
-  color: #8db5ff;
-}
-.ql-dash-top strong {
+  max-width: 430px;
   font-size: 12px;
-  font-weight: 500;
-}
-.ql-sample-badge {
-  color: #8db5ff;
-  font-size: 8px;
-  background: #1a2b45;
-  border: 1px solid #2b3d56;
-  border-radius: 4px;
-  padding: 3px 7px;
-  margin-left: 4px;
-  white-space: nowrap;
-}
-.ql-dash-filters {
-  display: flex;
-  gap: 8px;
-}
-.ql-dash-filters select {
-  background: #111f33;
+  line-height: 1.7;
   color: #a8b6cd;
-  border: 1px solid #2b3d56;
-  border-radius: 4px;
-  padding: 7px 9px;
-  font-size: 10px;
-  min-height: 34px;
-}
-.ql-dash-body {
-  padding: 25px;
-}
-.ql-dash-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border-bottom: 1px solid #2b3d56;
-  padding-bottom: 24px;
-}
-.ql-dash-metrics > div {
-  padding-inline: 25px;
-  border-left: 1px solid #2b3d56;
-}
-.ql-dash-metrics > div:first-child {
-  padding-left: 0;
-  border-left: 0;
-}
-.ql-dash-metrics > div:last-child {
-  padding-right: 0;
-}
-.ql-dash-metrics > div > span {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 5px;
-  color: #a8b6cd;
-  font-size: 10px;
-}
-.ql-dash-metrics svg {
-  color: #8db5ff;
-}
-.ql-dash-metrics strong {
-  display: block;
-  font-family: "Space Grotesk", sans-serif;
-  font-weight: 500;
-  font-size: 32px;
-  letter-spacing: -1px;
-  margin-top: 9px;
-  line-height: 1.3;
-}
-.ql-dash-metrics p {
-  color: #a8b6cd;
-  font-size: 9px;
-  margin-top: 5px;
-}
-.ql-dash-main {
-  display: grid;
-  grid-template-columns: 1.65fr 1fr;
-  gap: 30px;
-  margin-top: 26px;
-}
-.ql-chart-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.ql-chart-heading h3 {
-  font:
-    500 12px Inter,
-    sans-serif;
-  color: #8db5ff;
-}
-.ql-chart-heading > span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 8px;
-  color: #a8b6cd;
-}
-.ql-chart-heading i {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #245bdb;
-}
-.ql-chart-heading > svg {
-  color: #8db5ff;
-}
-.ql-trend {
-  min-width: 0;
-  padding-right: 28px;
-  border-right: 1px solid #2b3d56;
-}
-.ql-trend-label {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  font-size: 9px;
-  color: #a8b6cd;
-  margin-top: 27px;
-}
-.ql-trend-label strong {
-  font-weight: 500;
-  color: #8db5ff;
-  font-size: 10px;
-}
-.ql-trend-plot {
-  position: relative;
-  margin-top: 3px;
-}
-.ql-trend-plot > svg {
-  display: block;
-  width: 100%;
-  overflow: visible;
-}
-.ql-chart-targets {
-  position: absolute;
-  inset: 0 2.8% 9%;
-  display: grid;
-}
-.ql-chart-targets button {
-  background: transparent;
-  border: none;
-  padding: 0;
-  min-width: 0;
-}
-.ql-chart-targets button:hover {
-  background: #65a5ff06;
-}
-.ql-axis {
-  display: flex;
-  justify-content: space-between;
-  color: #a8b6cd;
-  font-size: 8px;
-  padding-inline: 2.8%;
-}
-.ql-interest-row {
-  display: block;
-  width: 100%;
-  border: none;
-  background: none;
-  color: #a8b6cd;
-  padding: 11px 0 0;
-  text-align: left;
-}
-.ql-interest-row > span {
-  display: flex;
-  justify-content: space-between;
-  font-size: 9px;
-  gap: 8px;
-}
-.ql-interest-row strong {
-  font-weight: 400;
-  color: #a8b6cd;
-}
-.ql-interest-row > i {
-  display: block;
-  height: 4px;
-  background: #243d5e;
-  border-radius: 3px;
-  margin-top: 7px;
-  overflow: hidden;
-}
-.ql-interest-row > i > i {
-  display: block;
-  height: 100%;
-  background: #365b8e;
-  border-radius: 3px;
-  transition: width 0.3s;
-}
-.ql-interest-row[aria-pressed="true"] > span {
-  color: #e8eef8;
-}
-.ql-interest-row[aria-pressed="true"] > i > i {
-  background: linear-gradient(90deg, #245bdb, #16866e);
-}
-.ql-query-detail {
-  border-top: 1px solid #2b3d56;
-  margin-top: 17px;
-  padding-top: 13px;
-}
-.ql-query-detail > span {
-  font-size: 7px;
-  letter-spacing: 1px;
-  color: #a8b6cd;
-}
-.ql-query-detail p {
-  font-size: 11px;
-  color: #8db5ff;
-  margin-top: 5px;
-}
-.ql-query-detail small {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 8px;
-  color: #a8b6cd;
-  margin-top: 5px;
-}
-.ql-dash-secondary {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 30px;
-  border-top: 1px solid #2b3d56;
-  padding-top: 22px;
-  margin-top: 25px;
-}
-.ql-price-buckets {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin-top: 22px;
-}
-.ql-price-buckets > div > span {
-  display: block;
-  font-size: 9px;
-  color: #a8b6cd;
-}
-.ql-price-buckets strong {
-  display: block;
-  font-weight: 500;
-  font-size: 19px;
-  margin-top: 6px;
-}
-.ql-price-buckets > div > i {
-  display: block;
-  height: 4px;
-  border-radius: 2px;
-  background: #28415f;
-  margin-top: 10px;
-  overflow: hidden;
-}
-.ql-price-buckets > div > i > i {
-  display: block;
-  height: 100%;
-  background: #245bdb;
-  transition: width 0.3s;
-}
-.ql-unmet {
-  border-left: 1px solid #2b3d56;
-  padding-left: 30px;
-}
-.ql-unmet > button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  text-align: left;
-  color: #a8b6cd;
-  border: 1px solid transparent;
-  background: #1a2b45;
-  border-radius: 4px;
-  padding: 8px;
-  margin-top: 10px;
-  font-size: 9px;
-}
-.ql-unmet > button > span {
-  flex: 1;
-}
-.ql-unmet > button > strong {
-  color: #a8b6cd;
-  font-weight: 500;
-  font-size: 8px;
-}
-.ql-unmet > button > svg {
-  color: #8db5ff;
-  flex-shrink: 0;
-}
-.ql-unmet > button[aria-pressed="true"],
-.ql-unmet > button:hover {
-  border-color: #2b3d565c;
-}
-.ql-dash-foot {
-  display: flex;
-  justify-content: space-between;
-  gap: 15px;
-  padding: 13px 25px;
-  border-top: 1px solid #2b3d56;
-  font-size: 8px;
-  color: #a8b6cd;
-}
-.ql-dash-foot > span:first-child {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.ql-section-foot {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  margin-top: 23px;
-  font-size: 10px;
-}
-.ql-section-foot p {
-  color: #a8b6cd;
-}
-.ql-section-foot a {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: #8db5ff;
-}
-.ql-industry-section {
-  background: #1a2b45;
-  border-block: 1px solid #2b3d56;
-}
-.ql-industry-tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 26px;
-}
-.ql-industry-tabs > button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  flex: 1;
-  color: #a8b6cd;
-  font-size: 11px;
-  background: transparent;
-  border: 1px solid #2b3d56;
-  border-radius: 5px;
-  padding: 14px 12px;
-}
-.ql-industry-tabs > button[aria-pressed="true"] {
-  background: #1a2b45;
-  color: #d8e7ff;
-  border-color: #2b3d5685;
-}
-.ql-industry-tabs > button[aria-pressed="true"] svg {
-  color: #8db5ff;
-}
-.ql-industry-panel {
-  display: grid;
-  grid-template-columns: 1fr 1.15fr;
-  gap: 80px;
-  border: 1px solid #2b3d56;
-  border-radius: 10px;
-  padding: 40px;
-  background: #111f33;
-}
-.ql-industry-copy {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-}
-.ql-section-index {
-  font-family: monospace;
-  font-size: 9px;
-  letter-spacing: 1px;
-  color: #a8b6cd;
-}
-.ql-industry-copy h3 {
-  font-size: 30px;
-  letter-spacing: -1px;
-  line-height: 1.25;
-  margin-top: 26px;
-  max-width: 300px;
-  font-weight: 500;
-}
-.ql-industry-copy > p {
-  color: #a8b6cd;
-  font-size: 12px;
-  line-height: 1.9;
-  margin-top: 19px;
-  max-width: 310px;
-}
-.ql-industry-copy > a {
-  margin-top: 20px;
-  color: #8db5ff;
-  font-size: 11px;
-}
-.ql-industry-disclosure {
-  color: #a8b6cd;
-  font-size: 8px;
-  margin-top: 35px;
-}
-.ql-industry-demo {
-  background: #1a2b45;
-  border-radius: 8px;
-  padding: 22px;
-  color: #edf3ff;
-  min-width: 0;
-}
-.ql-industry-query > span {
-  font-size: 7px;
-  letter-spacing: 1px;
-  color: #a8b6cd;
-}
-.ql-industry-query > p {
-  font-size: 13px;
-  margin-top: 7px;
-}
-.ql-industry-demo .ql-filter-chips {
-  margin: 12px 0 17px;
-}
-.ql-industry-products {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.ql-industry-products > article {
-  min-width: 0;
-  border: 1px solid #2b3d56;
-  border-radius: 5px;
-  overflow: hidden;
-  background: #111f33;
-}
-.ql-industry-products > article > svg,
-.ql-industry-products > article > img {
-  display: block;
-  width: 100%;
-  height: 155px;
-  object-fit: cover;
-  background: #1a2b45;
-}
-.ql-industry-products > article > div {
-  padding: 12px;
-}
-.ql-industry-products h4 {
-  font-size: 10px;
-  font-weight: 500;
-  line-height: 1.4;
-}
-.ql-industry-products p {
-  font-size: 8px;
-  color: #a8b6cd;
-  margin-top: 5px;
-}
-.ql-industry-products strong {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  margin-top: 9px;
-}
-.ql-industry-refine {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  width: 100%;
-  border: 1px solid #2b3d56;
-  border-radius: 4px;
-  background: #111f33;
-  color: #8db5ff;
-  padding: 11px;
-  font-size: 10px;
-  margin-top: 15px;
-}
-.ql-industry-refine[aria-pressed="true"] {
-  justify-content: flex-start;
-}
-.ql-industry-refine > span {
-  margin-left: auto;
-  text-decoration: underline;
-  font-size: 9px;
-}
-.ql-integration-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px;
-}
-.ql-architecture {
-  padding: 28px;
-  border: 1px solid #2b3d56;
-  border-radius: 9px;
-  background: #111f33;
-}
-.ql-architecture-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 18px;
-}
-.ql-architecture-top > span {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 18px 10px;
-  background: #1a2b45;
-  border: 1px solid #2b3d56;
-  border-radius: 6px;
-}
-.ql-architecture-top > span > svg {
-  color: #8db5ff;
-  margin-bottom: 11px;
-}
-.ql-architecture-top > svg {
-  color: #a8b6cd;
-  flex-shrink: 0;
-}
-.ql-architecture-top strong {
-  font-size: 11px;
-  font-weight: 500;
-}
-.ql-architecture-top small {
-  color: #a8b6cd;
-  font-size: 8px;
-  margin-top: 6px;
-}
-.ql-connectors {
-  display: flex;
-  justify-content: space-around;
-  padding-inline: 5%;
-}
-.ql-connectors > span {
-  width: 1px;
-  height: 35px;
-  background: linear-gradient(#65a5ff33, #245bdb);
-  position: relative;
-}
-.ql-connectors > span::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: -2px;
-  width: 5px;
-  height: 5px;
-  background: #245bdb;
-  border-radius: 50%;
-}
-.ql-engine {
-  background: linear-gradient(135deg, #245bdb1f, #1a2b45);
-  border: 1px solid #2b3d5663;
-  border-radius: 7px;
-  padding: 20px 18px;
-  text-align: center;
-}
-.ql-engine > span:not(.qx-brand) {
-  display: block;
-  font-size: 7px;
-  letter-spacing: 1.3px;
-  color: #a8b6cd;
-  margin: 4px 0 18px;
-}
-.ql-engine > div {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-}
-.ql-engine > div > span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #a8b6cd;
-  font-size: 9px;
-  padding: 7px 9px;
-  border: 1px solid #2b3d56;
-  border-radius: 4px;
-  background: #111f33;
-}
-.ql-engine > div svg {
-  color: #8db5ff;
-}
-.ql-integration-assurances {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 18px;
-  color: #a8b6cd;
-  font-size: 9px;
-  margin-top: 24px;
-}
-.ql-integration-assurances > span {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-.ql-code {
-  min-width: 0;
-  padding: 25px;
-  background: #111f33;
-  border: 1px solid #2b3d56;
-  border-radius: 9px;
-}
-.ql-code > div:first-child {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  border-bottom: 1px solid #2b3d56;
-  padding-bottom: 16px;
-}
-.ql-code > div:first-child > span,
-.ql-code > div:first-child > a {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #a8b6cd;
-  font-size: 9px;
-}
-.ql-code > div:first-child > span {
-  letter-spacing: 1px;
-}
-.ql-code > p {
-  font-size: 14px;
-  margin-top: 22px;
-  color: #8db5ff;
-}
-.ql-code > pre {
-  padding-block: 25px;
-  margin: 0;
-  overflow-x: auto;
-  font:
-    11px/1.9 ui-monospace,
-    monospace;
-  color: #8db5ff;
-}
-.ql-code-muted {
-  color: #a8b6cd;
-}
-.ql-code-blue {
-  color: #8db5ff;
-}
-.ql-code-key {
-  color: #8db5ff;
-}
-.ql-code-string {
-  color: #59d2d8;
-}
-.ql-code .ql-code-note {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: #a8b6cd;
-  font-size: 9px;
-  padding: 13px 0;
-  border-block: 1px solid #2b3d56;
-}
-.ql-code .ql-code-note svg {
-  color: #84d8ba;
-  flex-shrink: 0;
-}
-.ql-code > a {
-  color: #8db5ff;
-  font-size: 10px;
-  margin-top: 13px;
-}
-.ql-doc-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px 35px;
-  margin-top: 27px;
-}
-.ql-doc-links a {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 10px;
-  color: #a8b6cd;
-}
-.ql-why {
-  background: #1a2b45;
-  border-block: 1px solid #2b3d56;
-}
-.ql-benefits {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 30px;
-}
-.ql-benefits article {
-  padding-top: 22px;
-  border-top: 1px solid #2b3d56;
-}
-.ql-benefits article > div {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.ql-benefits svg {
-  color: #8db5ff;
-}
-.ql-benefits article > div > span {
-  font: 9px monospace;
-  color: #a8b6cd;
-}
-.ql-benefits h3 {
-  font-size: 18px;
-  letter-spacing: -0.4px;
-  margin-top: 28px;
-  font-weight: 500;
-}
-.ql-benefits p {
-  font-size: 12px;
-  color: #a8b6cd;
-  line-height: 1.85;
-  margin-top: 13px;
-}
-.ql-conversion {
-  position: relative;
-  text-align: center;
-  padding-block: 105px;
-  isolation: isolate;
-  overflow: hidden;
-}
-.ql-conversion .qx-eyebrow {
-  justify-content: center;
-}
-.ql-conversion h2 {
-  font-size: clamp(35px, 4.1vw, 59px);
-  line-height: 1.12;
-  letter-spacing: -0.045em;
-  margin-top: 23px;
-}
-.ql-conversion > p:not(.qx-eyebrow) {
-  font-size: 13px;
-  line-height: 1.9;
-  color: #a8b6cd;
-  margin-top: 25px;
-}
-.ql-conversion .qx-actions {
-  justify-content: center;
-  margin-top: 30px;
-  gap: 12px;
-}
-.ql-conversion > a {
-  margin-top: 20px;
-  color: #a8b6cd;
-  font-size: 10px;
-}
-@media (min-width: 1500px) {
-  .ql-hero {
-    min-height: 780px;
-  }
-}
-@media (max-width: 1150px) {
-  .ql-hero {
-    gap: 35px;
-  }
-  .ql-hero h1 {
-    font-size: 51px;
-  }
-  .ql-hero-description {
-    font-size: 17px;
-  }
-  .ql-hero .qx-actions {
-    gap: 18px;
-  }
-  .ql-section-heading {
-    gap: 50px;
-  }
-  .ql-industry-panel {
-    gap: 40px;
-    padding: 30px;
-  }
-  .ql-benefits {
-    gap: 22px;
-  }
-}
-@media (max-width: 900px) {
-  .ql-hero {
-    grid-template-columns: 0.9fr 1.1fr;
-    gap: 25px;
-    padding-block: 55px 80px;
-    min-height: 730px;
-  }
-  .ql-hero h1 {
-    font-size: 43px;
-  }
-  .ql-home .ql-hero-body {
-    font-size: 12px;
-  }
-  .ql-hero .qx-button {
-    padding-inline: 14px;
-    font-size: 11px;
-    gap: 9px;
-  }
-  .ql-hero .qx-text-link {
-    font-size: 11px;
-  }
-  .ql-hero .qx-actions {
-    gap: 9px 15px;
-  }
-  .ql-section {
-    padding-block: 78px;
-  }
-  .ql-dash-top {
-    flex-wrap: wrap;
-    gap: 14px;
-  }
-  .ql-dash-filters {
-    margin-left: auto;
-  }
-  .ql-industry-tabs {
-    gap: 7px;
-  }
-  .ql-industry-tabs > button {
-    font-size: 10px;
-    padding-inline: 8px;
-    gap: 7px;
-  }
-  .ql-industry-panel {
-    gap: 30px;
-    padding: 25px;
-  }
-  .ql-industry-copy h3 {
-    font-size: 26px;
-  }
-  .ql-industry-demo {
-    padding: 16px;
-  }
-  .ql-industry-products > article > svg,
-  .ql-industry-products > article > img {
-    height: 130px;
-  }
-  .ql-benefits {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 32px;
-  }
-  .ql-integration-grid {
-    gap: 16px;
-  }
-  .ql-architecture {
-    padding: 22px 16px;
-  }
-  .ql-architecture-top {
-    gap: 8px;
-  }
-  .ql-architecture-top small {
-    font-size: 7px;
-  }
-  .ql-code {
-    padding: 22px 18px;
-  }
-  .ql-code > pre {
-    font-size: 10px;
-  }
-}
-@media (max-width: 720px) {
-  .ql-hero {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    padding-block: 44px 74px;
-    min-height: auto;
-  }
-  .ql-hero h1 {
-    font-size: clamp(43px, 8.5vw, 62px);
-    margin-block: 21px 20px;
-  }
-  .ql-desktop-break {
-    display: none;
-  }
-  .ql-hero-copy {
-    max-width: 550px;
-  }
-  .ql-hero-description {
-    font-size: 18px;
-    max-width: 400px;
-  }
-  .ql-home .ql-hero-body {
-    font-size: 13px;
-    max-width: 450px;
-  }
-  .ql-hero .qx-actions {
-    gap: 24px;
-    margin-top: 25px;
-  }
-  .ql-hero .qx-button {
-    font-size: 12px;
-    padding: 14px 19px;
-    gap: 13px;
-  }
-  .ql-hero-proof {
-    margin-top: 23px;
-  }
-  .ql-section-heading {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    margin-bottom: 32px;
-  }
-  .ql-section-heading > p {
-    max-width: 470px;
-    font-size: 13px;
-  }
-  .ql-section-heading h2 {
-    font-size: 36px;
-  }
-  .ql-dash-body {
-    padding: 20px;
-  }
-  .ql-dash-main {
-    grid-template-columns: 1fr;
-    gap: 27px;
-  }
-  .ql-trend {
-    padding-right: 0;
-    border-right: 0;
-  }
-  .ql-interest {
-    border-top: 1px solid #2b3d56;
-    padding-top: 23px;
-  }
-  .ql-dash-secondary {
-    grid-template-columns: 1fr;
-    gap: 25px;
-  }
-  .ql-unmet {
-    padding-left: 0;
-    border-left: 0;
-    border-top: 1px solid #2b3d56;
-    padding-top: 22px;
-  }
-  .ql-dash-metrics strong {
-    font-size: 26px;
-  }
-  .ql-dash-metrics > div {
-    padding-inline: 14px;
-  }
-  .ql-dash-metrics p {
-    font-size: 8px;
-    line-height: 1.6;
-  }
-  .ql-dash-metrics > div > span {
-    font-size: 9px;
-    min-height: 28px;
-  }
-  .ql-dash-metrics svg {
-    display: none;
-  }
-  .ql-dash-foot {
-    padding-inline: 20px;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .ql-dash-foot > span:last-child {
-    margin-left: auto;
-  }
-  .ql-section-foot {
-    flex-direction: column;
-    gap: 10px;
-    line-height: 1.7;
-  }
-  .ql-industry-tabs {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .ql-industry-tabs > button {
-    flex: 1 1 calc(33% - 8px);
-    padding: 12px 9px;
-    font-size: 10px;
-  }
-  .ql-industry-panel {
-    grid-template-columns: 1fr;
-    gap: 27px;
-    padding: 25px;
-  }
-  .ql-industry-copy h3 {
-    max-width: 420px;
-    font-size: 28px;
-    margin-top: 17px;
-  }
-  .ql-industry-copy > p {
-    max-width: 430px;
-  }
-  .ql-industry-disclosure {
-    margin-top: 12px;
-  }
-  .ql-industry-products > article > svg,
-  .ql-industry-products > article > img {
-    height: 180px;
-  }
-  .ql-industry-copy > a {
-    margin-top: 12px;
-  }
-  .ql-integration-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  .ql-architecture {
-    padding: 25px;
-  }
-  .ql-architecture-top small {
-    font-size: 8px;
-  }
-  .ql-code {
-    padding: 25px;
-  }
-  .ql-code > pre {
-    font-size: 12px;
-  }
-  .ql-conversion {
-    padding-block: 80px;
-  }
-  .ql-conversion h2 {
-    font-size: 39px;
-  }
-}
-@media (max-width: 420px) {
-  .ql-home .qx-eyebrow {
-    font-size: 8px;
-    letter-spacing: 1.2px;
-  }
-  .ql-hero h1 {
-    font-size: 44px;
-  }
-  .ql-hero-description {
-    font-size: 17px;
-  }
-  .ql-hero-proof {
-    font-size: 9px;
-    gap: 10px;
-  }
-  .ql-filter-chips {
-    margin-left: 0;
-  }
-  .ql-section {
-    padding-block: 60px;
-  }
-  .ql-section-heading h2 {
-    font-size: 33px;
-  }
-  .ql-dash-top {
-    padding: 17px;
-    gap: 13px;
-  }
-  .ql-dash-top strong {
-    font-size: 11px;
-  }
-  .ql-sample-badge {
-    font-size: 7px;
-    margin-left: 0;
-  }
-  .ql-dash-filters {
-    width: 100%;
-    justify-content: space-between;
-  }
-  .ql-dash-filters select {
-    font-size: 9px;
-  }
-  .ql-dash-body {
-    padding: 17px;
-  }
-  .ql-dash-metrics strong {
-    font-size: 24px;
-  }
-  .ql-dash-metrics > div {
-    padding-inline: 10px;
-  }
-  .ql-dash-metrics > div > span {
-    font-size: 8px;
-    line-height: 1.5;
-  }
-  .ql-dash-metrics p {
-    font-size: 7px;
-  }
-  .ql-dash-foot {
-    font-size: 7px;
-    padding-inline: 17px;
-  }
-  .ql-chart-heading > span {
-    font-size: 7px;
-  }
-  .ql-price-buckets {
-    gap: 12px;
-  }
-  .ql-price-buckets > div > span {
-    font-size: 8px;
-  }
-  .ql-industry-panel {
-    padding: 18px;
-  }
-  .ql-industry-demo {
-    padding: 13px;
-  }
-  .ql-industry-products {
-    gap: 8px;
-  }
-  .ql-industry-products > article > svg,
-  .ql-industry-products > article > img {
-    height: 120px;
-  }
-  .ql-industry-products > article > div {
-    padding: 9px;
-  }
-  .ql-industry-products h4 {
-    font-size: 9px;
-  }
-  .ql-industry-products p {
-    font-size: 7px;
-  }
-  .ql-benefits {
-    gap: 28px 20px;
-  }
-  .ql-benefits h3 {
-    font-size: 17px;
-    margin-top: 20px;
-  }
-  .ql-benefits p {
-    font-size: 11px;
-  }
-  .ql-conversion h2 {
-    font-size: 34px;
-  }
-  .ql-conversion > p:not(.qx-eyebrow) {
-    font-size: 12px;
-  }
-  .ql-conversion .qx-actions {
-    gap: 10px;
-  }
-  .ql-conversion .qx-button {
-    gap: 9px;
-    padding-inline: 13px;
-    font-size: 11px;
-  }
-  .ql-conversion > a {
-    font-size: 9px;
-    gap: 7px;
-  }
-  .ql-code {
-    padding: 20px;
-  }
-  .ql-code > pre {
-    font-size: 10px;
-  }
-  .ql-architecture {
-    padding: 20px 15px;
-  }
-  .ql-doc-links {
-    gap: 15px 22px;
-  }
-  .ql-doc-links a {
-    font-size: 9px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ql-home *,
-  .ql-home *::before,
-  .ql-home *::after {
-    animation: none !important;
-    transition: none !important;
-  }
-}
-
-/* Second pass: a compact first viewport, readable previews, and a steady journey. */
-.ql-hero {
-  grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.14fr);
-  column-gap: 46px;
-  min-height: min(760px, calc(100svh - 84px));
-  padding-block: 36px 65px;
-}
-.ql-hero h1 {
-  font-size: clamp(40px, 3.85vw, 60px);
-  line-height: 1.07;
-  margin-block: 22px;
-}
-.ql-headline-line {
-  display: block;
-}
-.ql-no-break {
-  white-space: nowrap;
-}
-.ql-hero-description {
-  font-size: 18px;
-  max-width: 390px;
-}
-.ql-home .ql-hero-body {
-  font-size: 13px;
-  max-width: 390px;
 }
 .ql-hero .qx-actions {
   gap: 12px;
-  margin-top: 25px;
+  margin-top: 28px;
 }
-.ql-hero .qx-actions > .qx-button {
-  min-height: 46px;
+.ql-hero .qc-window {
+  border-color: #2b3d5680;
+  box-shadow: 0 24px 80px -40px #245bdb40;
 }
-.ql-hero-proof {
-  margin-top: 24px;
-  font-size: 11px;
-  gap: 9px 16px;
-}
-.ql-company {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 95px;
-  align-items: center;
-}
-.ql-company h2,
-.ql-faq h2,
-.ql-evaluation h2 {
-  font-size: clamp(32px, 3.1vw, 46px);
-  line-height: 1.15;
+.ql-home h2 {
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 600;
   letter-spacing: -0.045em;
-  margin-top: 19px;
+  line-height: 1.2;
+  text-wrap: balance;
 }
-.ql-company-story > p:not(.qx-eyebrow) {
-  color: #a8b6cd;
-  font-size: 14px;
-  line-height: 1.85;
-  margin-top: 23px;
-  max-width: 440px;
+.ql-home .qx-eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.4px;
 }
-.ql-company-story > .qx-text-link {
-  color: #8db5ff;
-  margin-top: 17px;
+.ql-offering {
+  padding-block: 56px 80px;
 }
-.ql-company-email {
+.ql-offering-heading {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 64px;
+  align-items: end;
+  margin-bottom: 28px;
+}
+.ql-offering-heading > .qx-eyebrow {
+  max-width: 230px;
+}
+.ql-offering-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.ql-offering-card {
   display: flex;
+  flex-direction: column;
+  border: 1px solid #2b3d56;
+  border-radius: 16px;
+  padding: 30px;
+  background: #111f3380;
+  transition:
+    border-color 0.2s,
+    transform 0.2s;
+}
+.ql-offering-card:hover {
+  border-color: #5478a8;
+  transform: translateY(-3px);
+}
+.ql-offering-card > div {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 7px;
-  width: fit-content;
+  margin-bottom: 22px;
+}
+.ql-offering-card > div > svg {
+  color: #8db5ff;
+}
+.ql-offering-card > div > span {
   color: #a8b6cd;
-  font-size: 12px;
-  margin-top: 12px;
-}
-.ql-proof-links {
-  display: grid;
-}
-.ql-proof-links > a {
-  display: flex;
-  align-items: flex-start;
-  gap: 18px;
-  border-top: 1px solid #2b3d56;
-  padding-block: 25px;
-}
-.ql-proof-links > a:last-child {
-  border-bottom: 1px solid #2b3d56;
-}
-.ql-proof-links > a > svg {
-  flex-shrink: 0;
-  color: #8db5ff;
-  margin-top: 2px;
-}
-.ql-proof-links strong {
-  display: block;
-  color: #e8eef8;
-  font-size: 16px;
-  font-weight: 500;
-}
-.ql-proof-links > a > span > span {
-  display: block;
-  font-size: 12px;
-  line-height: 1.8;
-  color: #a8b6cd;
-  margin-top: 8px;
-}
-.ql-proof-links small {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: 12px;
-  color: #8db5ff;
-  font-size: 11px;
-}
-.ql-proof-links > a:hover small {
-  color: #e8eef8;
-}
-.ql-evaluation {
-  padding-block: 65px;
-  border-block: 1px solid #2b3d56;
-  background: #1a2b45;
-}
-.ql-evaluation > div {
-  display: grid;
-  grid-template-columns: 0.9fr 1.6fr;
-  column-gap: 70px;
-  row-gap: 25px;
-}
-.ql-evaluation h2 {
-  font-size: 30px;
-}
-.ql-evaluation ol {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
-}
-.ql-evaluation li > span {
-  color: #8db5ff;
   font:
     11px ui-monospace,
     monospace;
 }
-.ql-evaluation h3 {
-  font-size: 16px;
-  letter-spacing: -0.3px;
-  margin-top: 20px;
+.ql-offering-card h3 {
+  font-size: 24px;
+  letter-spacing: -0.6px;
 }
-.ql-evaluation li p {
+.ql-offering-card p {
+  max-width: 470px;
+  font-size: 14px;
   color: #a8b6cd;
-  font-size: 12px;
-  line-height: 1.85;
-  margin-top: 10px;
+  line-height: 1.8;
+  margin-block: 14px 24px;
 }
-.ql-evaluation .ql-evaluation-note {
-  grid-column: 2;
+.ql-offering-link {
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: #a8b6cd;
-  font-size: 10px;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  font-size: 13px;
+  color: #8db5ff;
 }
-.ql-evaluation-note svg {
-  color: #84d8ba;
-  flex-shrink: 0;
+.ql-connect {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 64px;
+  align-items: start;
+  padding-block: 56px;
+  border-block: 1px solid #2b3d56;
+}
+.ql-connect h2,
+.ql-faq h2 {
+  margin-top: 16px;
+}
+.ql-connect > div > p:not(.qx-eyebrow) {
+  color: #a8b6cd;
+  font-size: 15px;
+  line-height: 1.85;
+  margin-bottom: 12px;
 }
 .ql-faq {
   display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
-  gap: 95px;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 64px;
   align-items: start;
-}
-.ql-faq > div:first-child > p:not(.qx-eyebrow) {
-  color: #a8b6cd;
-  font-size: 13px;
-  line-height: 1.85;
-  margin-top: 23px;
-  max-width: 290px;
-}
-.ql-faq > div:first-child > a {
-  color: #8db5ff;
-  margin-top: 18px;
-  font-size: 12px;
+  padding-block: 80px;
 }
 .ql-faq-list > details {
   border-bottom: 1px solid #2b3d56;
@@ -1512,7 +181,6 @@
   cursor: pointer;
   padding-block: 22px;
   font-size: 14px;
-  line-height: 1.6;
   color: #e8eef8;
 }
 .ql-faq summary::-webkit-details-marker {
@@ -1520,7 +188,7 @@
 }
 .ql-faq summary > svg {
   flex-shrink: 0;
-  color: #7da7e2;
+  color: #8db5ff;
   transition: transform 0.2s;
 }
 .ql-faq details[open] summary > svg {
@@ -1531,760 +199,89 @@
   color: #a8b6cd;
   line-height: 1.9;
   padding-bottom: 24px;
-  max-width: 570px;
 }
 .ql-faq details a {
   color: #8db5ff;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.ql-home .ql-dash-metrics > div > span,
-.ql-home .ql-chart-heading h3 {
-  font-size: 12px;
-}
-.ql-home .ql-interest-row > span,
-.ql-home .ql-price-buckets > div > span {
-  font-size: 11px;
-}
-.ql-home .ql-query-detail p {
-  font-size: 12px;
-}
-.ql-home .ql-unmet > button {
-  font-size: 11px;
-}
-.ql-home .ql-dash-filters select {
-  font-size: 11px;
-}
-.ql-home .ql-industry-refine {
-  font-size: 12px;
-  min-height: 42px;
-}
-.ql-home .ql-industry-products h4 {
-  font-size: 12px;
-}
-.ql-home .ql-industry-products p {
-  font-size: 10px;
-}
-.ql-home .ql-industry-products strong {
-  font-size: 14px;
-}
-@media (min-width: 1500px) {
-  .ql-hero {
-    min-height: 760px;
-  }
-}
-@media (min-width: 1000px) and (max-height: 800px) {
-  .ql-hero {
-    padding-block: 28px 55px;
-  }
-  .ql-hero h1 {
-    font-size: clamp(39px, 3.5vw, 54px);
-  }
-}
 @media (max-width: 1100px) {
-  .ql-hero {
-    gap: 30px;
-  }
-  .ql-hero h1 {
-    font-size: 42px;
-  }
-  .ql-company,
+  .ql-home .ql-hero,
+  .ql-offering-heading,
+  .ql-connect,
   .ql-faq {
-    gap: 55px;
+    gap: 32px;
   }
-  .ql-evaluation > div {
-    column-gap: 40px;
-  }
-  .ql-evaluation ol {
-    gap: 18px;
+  .ql-hero .qx-button {
+    font-size: 12px;
+    padding-inline: 15px;
   }
 }
 @media (max-width: 900px) {
-  .ql-hero {
-    grid-template-columns: 1fr;
-    gap: 36px;
-    padding-block: 40px 70px;
-    min-height: auto;
+  .ql-home .ql-hero {
+    grid-template-columns: minmax(0, 1fr);
+    padding-block: 56px;
+    gap: 40px;
+  }
+  .ql-home .ql-hero h1 {
+    font-size: clamp(42px, 7.2vw, 62px);
   }
   .ql-hero-copy {
     max-width: 620px;
   }
-  .ql-hero h1 {
-    font-size: 54px;
+  .ql-home .qc-preview {
+    max-width: 620px;
+    width: 100%;
   }
-  .ql-hero-description {
-    max-width: 450px;
-  }
-  .ql-home .ql-hero-body {
-    max-width: 500px;
-  }
-  .ql-hero .qx-actions {
-    gap: 12px;
-  }
-  .ql-company {
-    gap: 40px;
-  }
-  .ql-evaluation > div {
-    grid-template-columns: 1fr;
-    row-gap: 30px;
-  }
-  .ql-evaluation .ql-evaluation-note {
-    grid-column: 1;
-  }
-}
-@media (max-width: 640px) {
-  .ql-hero h1 {
-    font-size: clamp(36px, 8.9vw, 52px);
-    margin-block: 20px;
-  }
-  .ql-hero-description {
-    font-size: 17px;
-  }
-  .ql-hero .qx-actions > .qx-button {
-    font-size: 12px;
-    gap: 10px;
-    padding-inline: 15px;
-  }
-  .ql-hero-proof {
-    font-size: 10px;
-  }
-  .ql-company,
+  .ql-offering-heading,
+  .ql-connect,
   .ql-faq {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-  .ql-company h2,
-  .ql-faq h2 {
-    font-size: 34px;
-  }
-  .ql-company-story > p:not(.qx-eyebrow) {
-    font-size: 13px;
-  }
-  .ql-proof-links > a {
-    padding-block: 22px;
-  }
-  .ql-evaluation {
-    padding-block: 45px;
-  }
-  .ql-evaluation ol {
-    grid-template-columns: 1fr;
-    gap: 25px;
-  }
-  .ql-evaluation li {
-    display: grid;
-    grid-template-columns: 28px 1fr;
-    column-gap: 12px;
-  }
-  .ql-evaluation li > span {
-    grid-row: 1 / 3;
-    padding-top: 2px;
-  }
-  .ql-evaluation h3 {
-    margin-top: 0;
-  }
-  .ql-evaluation li p {
-    grid-column: 2;
-    margin-top: 7px;
-  }
-  .ql-faq > div:first-child > p:not(.qx-eyebrow) {
-    max-width: 430px;
-  }
-  .ql-faq summary {
-    font-size: 14px;
-    padding-block: 19px;
-  }
-  .ql-home .ql-dash-metrics p {
-    font-size: 10px;
-  }
-  .ql-home .ql-dash-metrics > div > span {
-    font-size: 10px;
-  }
-  .ql-home .ql-dash-filters select {
-    font-size: 11px;
-    min-height: 40px;
-  }
-  .ql-home .ql-chart-heading > span {
-    font-size: 10px;
-  }
-  .ql-home .ql-interest-row {
-    padding-top: 15px;
-  }
-  .ql-home .ql-unmet > button {
-    min-height: 42px;
-    font-size: 11px;
-  }
-  .ql-home .ql-dash-foot {
-    font-size: 9px;
-    line-height: 1.7;
-  }
-}
-@media (max-width: 360px) {
-  .ql-hero h1 {
-    font-size: 35px;
-  }
-  .ql-hero .qx-actions {
-    gap: 10px;
-  }
-  .ql-hero .qx-actions > .qx-button {
-    padding-inline: 12px;
-    font-size: 11px;
-  }
-  .ql-hero-proof {
-    font-size: 9px;
-  }
-  .ql-home .ql-dash-filters select {
-    font-size: 10px;
-    padding-inline: 7px;
-  }
-}
-
-/* Product-led composition. Dark blue frames the experience; light sections explain it. */
-.ql-home {
-  background: #0b1423;
-}
-.ql-home h2 {
-  font-weight: 600;
-}
-.ql-home .qx-eyebrow {
-  font-size: 11px;
-  letter-spacing: 1.5px;
-}
-.ql-home .ql-hero {
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: 48px;
-  min-height: 0;
-  margin-top: 24px;
-  padding: 52px 48px;
-  border: 1px solid #153363;
-  border-radius: 24px;
-  background: radial-gradient(ellipse at 10% 100%, #245bdb38, transparent 65%), #10264b;
-  color: #ffffff;
-  overflow: hidden;
-}
-.ql-home .ql-hero h1 {
-  font-size: clamp(44px, 4.7vw, 68px);
-  font-weight: 600;
-  line-height: 1.04;
-  letter-spacing: -0.065em;
-  margin-block: 24px;
-}
-.ql-hero h1 em {
-  color: #91baff;
-}
-.ql-home .ql-hero .qx-eyebrow {
-  color: #a5c6ff;
-  font-size: 10px;
-}
-.ql-hero .qx-eyebrow > span {
-  background: #1a2b45;
-}
-.ql-home .ql-hero-description {
-  color: #f0f5ff;
-  font-size: 18px;
-  max-width: 390px;
-  line-height: 1.6;
-}
-.ql-home .ql-hero-body {
-  color: #c1d1ea;
-  font-size: 14px;
-  line-height: 1.85;
-  max-width: 405px;
-}
-.ql-home .ql-hero .qx-actions {
-  gap: 12px;
-  margin-top: 28px;
-}
-.ql-hero .qx-button-outline {
-  background: #111f3308;
-  color: #f0f5ff;
-  border-color: #2b3d5661;
-}
-.ql-hero .qx-button-outline:hover {
-  background: #111f3314;
-  border-color: #2b3d56;
-}
-.ql-home .ql-hero-proof {
-  color: #b8cae7;
-  font-size: 11px;
-  gap: 16px;
-  margin-top: 27px;
-}
-.ql-hero-proof svg {
-  color: #8cdec5;
-}
-.ql-offering {
-  padding-block: 72px 76px;
-}
-.ql-offering-heading {
-  display: flex;
-  justify-content: space-between;
-  gap: 32px;
-  align-items: end;
-  margin-bottom: 28px;
-}
-.ql-offering-heading > .qx-eyebrow {
-  max-width: 205px;
-}
-.ql-offering-heading h2 {
-  font-size: clamp(26px, 2.7vw, 36px);
-  letter-spacing: -0.045em;
-}
-.ql-offering-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
-}
-.ql-offering-card {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #2b3d56;
-  border-radius: 16px;
-  padding: 28px;
-  background: #111f33;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s,
-    transform 0.2s;
-}
-.ql-offering-card:hover {
-  border-color: #2b3d56;
-  box-shadow: 0 16px 40px -24px #173b7540;
-  transform: translateY(-3px);
-}
-.ql-offering-card > div {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-}
-.ql-offering-card > div > svg {
-  color: #8db5ff;
-  box-sizing: content-box;
-  padding: 12px;
-  background: #1a2b45;
-  border-radius: 12px;
-}
-.ql-offering-card > div > span {
-  color: #a8b6cd;
-  font:
-    11px ui-monospace,
-    monospace;
-}
-.ql-offering-card h3 {
-  font-size: 22px;
-  line-height: 1.25;
-  letter-spacing: -0.6px;
-}
-.ql-offering-card p {
-  font-size: 14px;
-  color: #a8b6cd;
-  line-height: 1.8;
-  margin-block: 14px 24px;
-}
-.ql-offering-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: auto;
-  font-size: 12px;
-  font-weight: 600;
-  color: #8db5ff;
-}
-.ql-home .ql-section {
-  padding-block: 88px;
-}
-.ql-home #intelligence {
-  padding-top: 24px;
-}
-.ql-home .ql-section-heading {
-  grid-template-columns: 1.2fr 1fr;
-  gap: 64px;
-  margin-bottom: 36px;
-}
-.ql-home .ql-section-heading h2 {
-  font-size: clamp(32px, 3.1vw, 44px);
-  font-weight: 600;
-}
-.ql-home .ql-section-heading > p {
-  font-size: 15px;
-  line-height: 1.85;
-}
-.ql-dashboard {
-  border-radius: 18px;
-  box-shadow: 0 18px 55px -30px #173b7530;
-}
-.ql-home .ql-dash-top {
-  padding: 21px 28px;
-}
-.ql-home .ql-dash-top strong {
-  font-size: 14px;
-  font-weight: 600;
-}
-.ql-home .ql-sample-badge {
-  font-size: 10px;
-}
-.ql-home .ql-dash-filters select {
-  border-radius: 7px;
-  min-height: 38px;
-}
-.ql-home .ql-dash-body {
-  padding: 28px;
-}
-.ql-home .ql-dash-metrics strong {
-  font-size: 38px;
-  font-weight: 600;
-}
-.ql-home .ql-dash-metrics p {
-  font-size: 11px;
-}
-.ql-home .ql-chart-heading h3 {
-  font-size: 13px;
-  font-weight: 600;
-}
-.ql-home .ql-chart-heading > span {
-  font-size: 10px;
-}
-.ql-home .ql-dash-foot {
-  font-size: 10px;
-}
-.ql-home .ql-industry-section {
-  background: #1a2b45;
-  border-block: 1px solid #2b3d56;
-}
-.ql-home .ql-industry-panel {
-  border-radius: 16px;
-}
-.ql-home .ql-industry-tabs button {
-  font-size: 12px;
-  min-height: 44px;
-}
-.ql-home .ql-industry-tabs button[aria-selected="true"],
-.ql-home .ql-industry-tabs button[aria-pressed="true"] {
-  color: #8db5ff;
-}
-.ql-home .ql-industry-copy h3 {
-  font-size: 31px;
-  line-height: 1.2;
-}
-.ql-home .ql-industry-copy > p {
-  font-size: 14px;
-}
-.ql-home .ql-industry-disclosure {
-  font-size: 11px;
-}
-.ql-home .ql-section-foot {
-  font-size: 13px;
-}
-.ql-home .ql-architecture {
-  border-radius: 16px;
-  padding: 30px;
-}
-.ql-engine {
-  background: #1a2b45;
-  border-color: #2b3d56;
-}
-.ql-home .ql-code {
-  border-radius: 16px;
-  background: #10264b;
-  border-color: #213e6c;
-}
-.ql-home .ql-code > div:first-child {
-  border-color: #2b3d561a;
-}
-.ql-home .ql-code > div:first-child > span,
-.ql-home .ql-code > div:first-child > a {
-  color: #b7d0f5;
-  font-size: 11px;
-}
-.ql-home .ql-code > p {
-  color: white;
-  font-size: 17px;
-}
-.ql-home .ql-code > pre {
-  color: #e8f0ff;
-  font-size: 13px;
-}
-.ql-home .ql-code-muted {
-  color: #adc1df;
-}
-.ql-home .ql-code-blue {
-  color: #91baff;
-}
-.ql-home .ql-code-key {
-  color: #d5e3ff;
-}
-.ql-home .ql-code-string {
-  color: #8cdec5;
-}
-.ql-home .ql-code .ql-code-note {
-  color: #b7d0f5;
-}
-.ql-home .ql-code .ql-code-note > svg {
-  color: #8cdec5;
-}
-.ql-home .ql-code > a {
-  color: #bdd5ff;
-}
-.ql-home .ql-doc-links a {
-  font-size: 12px;
-}
-.ql-home .ql-why {
-  background: #1a2b45;
-  border-block: 1px solid #2b3d56;
-}
-.ql-home .ql-benefits {
-  gap: 20px;
-}
-.ql-home .ql-benefits > article {
-  padding: 24px;
-  border: 1px solid #2b3d56;
-  border-radius: 14px;
-  background: #111f33;
-}
-.ql-home .ql-benefits h3 {
-  font-size: 19px;
-}
-.ql-home .ql-benefits p {
-  font-size: 13px;
-  line-height: 1.85;
-}
-.ql-home .ql-company h2,
-.ql-home .ql-faq h2 {
-  font-size: clamp(32px, 3.1vw, 44px);
-}
-.ql-home .ql-company-story > p:not(.qx-eyebrow),
-.ql-home .ql-faq > div:first-child > p:not(.qx-eyebrow) {
-  font-size: 14px;
-}
-.ql-home .ql-proof-links > a {
-  padding: 24px;
-  border: 1px solid #2b3d56;
-  border-radius: 12px;
-  background: #111f33;
-  margin-bottom: 12px;
-}
-.ql-home .ql-proof-links > a:last-child {
-  margin-bottom: 0;
-}
-.ql-home .ql-faq summary {
-  font-size: 15px;
-  font-weight: 500;
-}
-.ql-home .ql-faq details > div {
-  font-size: 14px;
-}
-.ql-home .ql-evaluation {
-  background: #1a2b45;
-}
-.ql-home .ql-evaluation h3 {
-  font-weight: 600;
-}
-.ql-home .ql-evaluation li p {
-  font-size: 13px;
-}
-.ql-home .ql-conversion {
-  position: relative;
-  border-radius: 24px;
-  background: #10264b;
-  color: white;
-  margin-bottom: 72px;
-  padding: 64px 32px;
-  overflow: hidden;
-}
-.ql-home .ql-conversion .qx-eyebrow {
-  color: #a5c6ff;
-}
-.ql-home .ql-conversion h2 {
-  font-size: clamp(34px, 3.6vw, 50px);
-}
-.ql-home .ql-conversion h2 em {
-  color: #91baff;
-}
-.ql-home .ql-conversion > p:not(.qx-eyebrow) {
-  color: #c1d1ea;
-  font-size: 15px;
-}
-.ql-home .ql-conversion > a {
-  color: #bdd5ff;
-  font-size: 12px;
-}
-.ql-home .ql-conversion .qx-button-outline {
-  color: white;
-  border-color: #2b3d5661;
-  background: #111f3308;
-}
-.ql-home .ql-conversion .qx-button-outline:hover {
-  background: #111f3314;
-}
-@media (max-width: 1100px) {
-  .ql-home .ql-hero {
-    gap: 32px;
-    padding: 40px 32px;
-  }
-  .ql-home .ql-hero h1 {
-    font-size: 48px;
-  }
-  .ql-home .ql-hero .qx-actions > .qx-button {
-    font-size: 12px;
-    padding-inline: 14px;
-  }
-  .ql-offering-card {
-    padding: 24px;
-  }
-  .ql-offering-card h3 {
-    font-size: 20px;
-  }
-}
-@media (max-width: 900px) {
-  .ql-home .ql-hero {
     grid-template-columns: minmax(0, 1fr);
-    gap: 40px;
-    padding: 44px;
-  }
-  .ql-home .ql-hero h1 {
-    font-size: 64px;
-  }
-  .ql-home .ql-hero-copy {
-    max-width: 580px;
-  }
-  .ql-home .ql-hero-body {
-    max-width: 520px;
-  }
-  .ql-home .ql-hero-description {
-    max-width: 520px;
-  }
-  .ql-offering-heading {
-    align-items: start;
-    flex-direction: column;
-    gap: 12px;
+    gap: 24px;
   }
   .ql-offering-heading > .qx-eyebrow {
     max-width: none;
   }
-  .ql-offering-grid {
-    gap: 14px;
-  }
-  .ql-offering-card {
-    padding: 20px;
-  }
-  .ql-offering-card p {
-    font-size: 13px;
-  }
-  .ql-home .ql-section-heading {
-    gap: 32px;
-  }
 }
 @media (max-width: 640px) {
   .ql-home .ql-hero {
-    margin-top: 16px;
-    border-radius: 18px;
-    padding: 30px 20px 24px;
+    padding-block: 40px;
     gap: 32px;
   }
+  .ql-hero::before {
+    inset-inline: -20px;
+  }
   .ql-home .ql-hero h1 {
-    font-size: clamp(40px, 10vw, 58px);
-    margin-block: 20px;
+    font-size: clamp(36px, 9.8vw, 54px);
   }
   .ql-home .ql-hero-description {
-    font-size: 17px;
+    font-size: 18px;
+    margin-top: 22px;
   }
   .ql-home .ql-hero-body {
-    font-size: 13px;
-    line-height: 1.8;
+    font-size: 14px;
   }
-  .ql-home .ql-hero .qx-eyebrow {
-    font-size: 9px;
-    letter-spacing: 1.1px;
-  }
-  .ql-home .ql-hero .qx-actions {
-    gap: 10px;
-  }
-  .ql-home .ql-hero .qx-actions > .qx-button {
-    font-size: 11px;
-    padding-inline: 12px;
-    min-height: 46px;
-  }
-  .ql-home .ql-hero-proof {
-    gap: 10px;
-    font-size: 10px;
-  }
-  .ql-offering {
+  .ql-offering,
+  .ql-faq {
     padding-block: 48px;
   }
   .ql-offering-grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
+    gap: 16px;
   }
   .ql-offering-card {
     padding: 24px;
   }
-  .ql-offering-card > div {
-    margin-bottom: 20px;
-  }
-  .ql-offering-card h3 {
-    font-size: 23px;
-  }
-  .ql-offering-card p {
-    font-size: 14px;
-  }
-  .ql-offering-heading h2 {
-    font-size: 29px;
-  }
-  .ql-home .ql-section {
-    padding-block: 56px;
-  }
-  .ql-home .ql-section-heading {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 20px;
-  }
-  .ql-home .ql-section-heading h2 {
-    font-size: 32px;
-  }
-  .ql-home .ql-section-heading > p {
-    font-size: 14px;
-  }
-  .ql-home .ql-dash-top {
-    padding: 18px 16px;
-  }
-  .ql-home .ql-dash-body {
-    padding: 20px 16px;
-  }
-  .ql-home .ql-dash-metrics strong {
-    font-size: 27px;
-  }
-  .ql-home .ql-dash-metrics p {
-    font-size: 10px;
-  }
-  .ql-home .ql-industry-copy h3 {
-    font-size: 28px;
-  }
-  .ql-home .ql-benefits {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .ql-home .ql-conversion {
-    padding: 44px 20px;
-    border-radius: 18px;
-    margin-bottom: 40px;
-  }
-  .ql-home .ql-conversion .qx-actions {
-    gap: 12px;
-  }
-  .ql-home .ql-conversion > a {
-    max-width: 280px;
-    line-height: 1.8;
+  .ql-connect {
+    padding-block: 40px;
   }
 }
-@media (max-width: 640px) {
-  .ql-home .ql-hero-description,
-  .ql-home .ql-hero-proof {
-    display: none;
+@media (prefers-reduced-motion: reduce) {
+  .ql-offering-card,
+  .ql-faq summary > svg {
+    transition: none;
   }
-  .ql-home .ql-hero .qx-actions {
-    margin-top: 22px;
-  }
-  .ql-home .ql-hero {
-    padding-top: 26px;
-    gap: 26px;
+  .ql-offering-card:hover {
+    transform: none;
   }
 }

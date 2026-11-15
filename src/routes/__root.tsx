@@ -80,7 +80,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Help shoppers find what they mean with intent-aware search and conversational shopping grounded in your catalog.",
+          "Let shoppers ask questions, refine their needs and compare products through conversations grounded in your catalog.",
       },
       { name: "theme-color", content: "#0A1B2E" },
       { property: "og:title", content: "Querix AI — Intelligent search & interactive commerce" },
@@ -90,13 +90,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://querix.co" },
-      { property: "og:image", content: "https://querix.co/og-discovery.png?v=8" },
+      { property: "og:image", content: "https://querix.co/og-discovery.png?v=9" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       {
         property: "og:image:alt",
         content:
-          "Querix AI — From I need to that’s it. Intelligent search and interactive commerce.",
+          "Querix AI — The next evolution of e-commerce starts here. Introducing Interactive Commerce.",
       },
       { name: "twitter:card", content: "summary_large_image" },
       {
@@ -107,7 +107,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "twitter:description",
         content: "Search, refine, and compare products with Querix AI.",
       },
-      { name: "twitter:image", content: "https://querix.co/og-discovery.png?v=8" },
+      { name: "twitter:image", content: "https://querix.co/og-discovery.png?v=9" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

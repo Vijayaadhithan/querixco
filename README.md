@@ -9,7 +9,7 @@ and comparisons of supplied catalog details. The two services have separate acce
 
 ## Product surfaces
 
-- `/` — shared product story, interactive illustrative walkthrough, use cases, and demo request
+- `/` — commerce introduction, brief sample walkthrough, product links, integration summary and FAQs
 - `/products/search` — intelligent search product page
 - `/use-cases/conversational-commerce` — conversational shopping product page and demo boundaries
 - `/request-demo` — prepare an email to `hello@querix.co` for Search, Commerce, or Both
@@ -144,15 +144,20 @@ query history, category selection, chat, account and admin surfaces. Workspace c
 resolve CSS variables so table, chart, form and status colours follow their scoped theme.
 Developer documentation shares that palette across the overview and every guide, including
 code examples, tables, sidebar navigation, status badges and mobile controls.
-The public homepage includes an animated sample-catalogue shopping preview with product details,
-Fashion and Beauty examples, budget refinement, comparison, playback controls and reduced-motion support. Autoplay only advances when the preview is visible, the browser tab is active and the opening animation has finished; opening product details or using journey controls pauses it. The public interactive commerce product page reuses this preview. The separate live
-commerce demo retains its approved-account sign-in boundary. The intelligence dashboard uses
-synthetic activity only; catalogue and period filters recalculate its totals, trends, interests,
-price preferences and unmet demand without requesting private customer data. Industry examples
-are explicitly illustrative, including categories outside the live demo's current scope.
+The public homepage leads with Interactive Commerce and a short, two-turn sample shopping preview.
+Its blue hero background fades into the page, with no enclosing panel border. Only Intelligent Search
+and Interactive Commerce appear as products; the public synthetic analytics dashboard and broad
+industry showcase have been removed. Existing authenticated company and internal analytics are unchanged.
+The commerce product page starts with skincare and offers the complete discover/refine/compare
+walkthrough, with a clothing example available separately. The search page focuses on catalog results
+and budget refinement. Previews use sample products and prices without requesting live catalog data.
+Playback controls, product details and reduced-motion support remain available. Autoplay advances
+only while the preview is visible, the browser tab is active and the opening animation has finished;
+opening product details or using journey controls pauses it. The live commerce demo still requires
+an approved account and uses historical product metadata.
 The demo form supports demo, integration and proof-of-concept intents and prepares a reviewable
 email draft; it does not transmit form data or report delivery. Public privacy and website
 information are at `/privacy` and `/legal`. The opening icon animation plays once per tab session on public product pages, using the
 original artwork and blue signal dots. It fades into the page after 2.4 seconds, supports Escape
-and reduced motion, skips private workflows, and fails open if hydration is unavailable. Scroll reveals leave server-rendered content visible until JavaScript enables them. Company-focused information, documented product/access boundaries, a practical evaluation process and FAQs support public enquiries without unverified customer claims. Product navigation links directly to search, commerce and intelligence; mobile navigation and the product dropdown support Escape with focus restoration.
+and reduced motion, skips private workflows, and fails open if hydration is unavailable. Scroll reveals leave server-rendered content visible until JavaScript enables them. A short catalog/access FAQ supports public enquiries. Evaluation and request steps are consolidated on the demo-request page. Product navigation links directly to search and commerce; mobile navigation and the product dropdown support Escape with focus restoration.
 `public/og-discovery.svg` is the editable source for the existing social preview PNG.

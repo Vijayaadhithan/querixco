@@ -5,17 +5,17 @@ import { LandingPage } from "@/components/landing/LandingPage";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Querix AI — Intelligent search & interactive commerce" },
+      { title: "Querix AI — The next evolution of e-commerce starts here" },
       {
         name: "description",
         content:
-          "Help shoppers find what they mean with intent-aware search and conversational shopping grounded in your catalog.",
+          "Introducing Interactive Commerce. Let shoppers ask questions, refine their needs and compare products through conversations grounded in your catalog.",
       },
-      { property: "og:title", content: "Querix AI — Intelligent search & interactive commerce" },
+      { property: "og:title", content: "Querix AI — The next evolution of e-commerce starts here" },
       {
         property: "og:description",
         content:
-          "Help shoppers find what they mean. Intelligent search, conversational shopping and insight into customer demand.",
+          "Ask, refine and compare. Discover Interactive Commerce and Intelligent Search from Querix AI.",
       },
     ],
   }),

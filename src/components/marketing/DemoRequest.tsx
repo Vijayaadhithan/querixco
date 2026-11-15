@@ -67,8 +67,8 @@ export function DemoRequest({
             Querix can do for you.
           </h1>
           <p>
-            Tell us what you’re building. We’ll use your catalog, customer needs, and integration
-            goals to shape the demo conversation.
+            Tell us what you’re building and what shoppers need to find. Share your catalog context
+            and choose a demo, integration discussion or focused proof of concept.
           </p>
           <ol className="qx-request-steps">
             <li>
@@ -93,6 +93,10 @@ export function DemoRequest({
               </div>
             </li>
           </ol>
+          <p className="qx-small-note">
+            We’ll review the fit together. Scope, costs and success criteria are agreed before a
+            proof of concept begins.
+          </p>
           <a href="mailto:hello@querix.co" className="qx-text-link">
             hello@querix.co <ArrowUpRight size={16} />
           </a>
