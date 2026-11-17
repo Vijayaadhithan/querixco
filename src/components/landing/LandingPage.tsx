@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUpRight, MessageCircle, Play, Search } from "lucide-react";
+import { ArrowRight, ArrowUpRight, MessageCircle, Search } from "lucide-react";
 import { MarketingShell, DemoCta } from "@/components/marketing/MarketingShell";
 import { CommerceShowcase } from "./CommerceShowcase";
 import { BuyerConfidence } from "./BuyerConfidence";
@@ -23,18 +23,6 @@ export function LandingPage() {
             <p className="ql-hero-context">
               Answers grounded in the product details your catalog provides.
             </p>
-            <div className="qx-actions">
-              <a className="qx-button" href="/request-demo?product=commerce">
-                Request a demo <ArrowUpRight size={16} />
-              </a>
-              <a
-                className="qx-button qx-button-outline"
-                href="#commerce-preview"
-                onClick={() => document.getElementById("commerce-preview")?.focus()}
-              >
-                <Play size={14} /> See it in action
-              </a>
-            </div>
           </div>
           <CommerceShowcase brief />
         </section>
