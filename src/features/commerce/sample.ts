@@ -8,6 +8,15 @@ import {
 } from "./model";
 
 type Kind = "moisturizer" | "shampoo" | "shirt";
+const SAMPLE_PHOTOS: Record<string, string> = {
+  f1: "navy-shirt",
+  f2: "sand-shirt",
+  f3: "blue-shirt",
+  m1: "daily-cream",
+  m2: "cloud-moisturizer",
+  m4: "quiet-cream",
+  m5: "daily-lotion",
+};
 const rows: [string, string, string, Kind, number, string, Record<string, string | boolean>][] = [
   [
     "m1",
@@ -83,7 +92,7 @@ const rows: [string, string, string, Kind, number, string, Record<string, string
   ],
   [
     "f1",
-    "The everyday Oxford",
+    "The everyday navy shirt",
     "COMMON GROUND",
     "shirt",
     36,
@@ -115,7 +124,9 @@ export const SAMPLE_PRODUCTS: Product[] = rows.map(
     title,
     brand: { value: brand },
     price: { amount: price.toFixed(2), currency: "USD" },
-    image_urls: [`/commerce/${art}.svg`],
+    image_urls: [
+      id in SAMPLE_PHOTOS ? `/commerce/photos/${SAMPLE_PHOTOS[id]}.webp` : `/commerce/${art}.svg`,
+    ],
     attributes: Object.fromEntries(
       Object.entries(attributes).map(([key, value]) => [key, { value }]),
     ),

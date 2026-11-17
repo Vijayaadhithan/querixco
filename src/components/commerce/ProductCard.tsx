@@ -18,16 +18,19 @@ export function ProductCard({
   const candidate = product.image_urls?.[0];
   const image =
     candidate &&
-    (/^https:\/\//.test(candidate) || (sample && /^\/commerce\/[a-z-]+\.svg$/.test(candidate)))
+    (/^https:\/\//.test(candidate) ||
+      (sample && /^\/commerce\/(?:[a-z-]+\.svg|photos\/[a-z-]+\.webp)$/.test(candidate)))
       ? candidate
       : undefined;
   return (
     <article className="commerce-product">
-      <div className="commerce-product-image">
+      <div className={`commerce-product-image${image?.endsWith(".webp") ? " has-photo" : ""}`}>
         {image && !failed ? (
           <img
             src={image}
-            alt={sample ? `Illustration of ${product.title}` : product.title}
+            alt={product.title}
+            width={640}
+            height={640}
             loading="lazy"
             referrerPolicy="no-referrer"
             onError={() => setFailed(true)}
@@ -41,7 +44,7 @@ export function ProductCard({
         <span className="commerce-product-number">
           {String(product.display_position ?? 1).padStart(2, "0")}
         </span>
-        {sample && <span className="commerce-image-label">Sample illustration</span>}
+        {sample && <span className="commerce-image-label">Sample product</span>}
       </div>
       <div className="commerce-product-body">
         <p className="commerce-brand">{product.brand?.value || "Brand not specified"}</p>
@@ -75,8 +78,13 @@ export function ProductCard({
           </dl>
         )}
         {onDetails && (
-          <button className="commerce-card-action" onClick={onDetails} disabled={disabled}>
-            View listing details <ArrowUpRight size={15} />
+          <button
+            className="commerce-card-action"
+            onClick={onDetails}
+            disabled={disabled}
+            aria-label={`View ${product.title}`}
+          >
+            {sample ? "View details" : "View listing details"} <ArrowUpRight size={15} />
           </button>
         )}
       </div>

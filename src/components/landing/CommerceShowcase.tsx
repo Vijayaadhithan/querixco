@@ -1,9 +1,11 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import {
   ArrowDown,
-  ArrowUp,
   ArrowUpRight,
   Check,
+  GitCompareArrows,
+  SlidersHorizontal,
+  Sparkles,
   ChevronRight,
   Pause,
   Play,
@@ -18,28 +20,62 @@ import {
 } from "@/features/commerce/discovery-examples";
 import { attributeText, productPrice, type Product } from "@/features/commerce/model";
 import { usePreviewPlayback } from "./use-preview-playback";
+import {
+  advanceConversation,
+  choiceLabel,
+  startConversation,
+  type GuidedAction,
+  type GuidedConversation,
+} from "./guided-conversation";
 import "@/components/commerce/commerce.css";
 import "./commerce-preview.css";
 
-const WAIT = 3200;
-const TYPE = 1600;
-const THINK = 700;
-const TURN_DURATION = WAIT + TYPE + THINK;
-const TICK = 50;
+type PreviewState = {
+  conversation: GuidedConversation;
+  pending: GuidedConversation | null;
+  playing: boolean;
+  elapsed: number;
+};
+type PreviewAction =
+  | { type: "tick"; brief: boolean }
+  | { type: "choose"; action: GuidedAction; instant: boolean }
+  | { type: "commit" }
+  | { type: "pause" }
+  | { type: "toggle" }
+  | { type: "reset"; scenario: DiscoveryExampleID; autoplay?: boolean };
 
-type PlaybackState = { revealed: number; elapsed: number };
-type PlaybackAction =
-  { type: "tick" | "advance"; limit: number } | { type: "reset"; animate: boolean };
-
-function playbackReducer(state: PlaybackState, action: PlaybackAction): PlaybackState {
+function previewReducer(state: PreviewState, action: PreviewAction): PreviewState {
   if (action.type === "reset")
-    return { revealed: action.animate ? 0 : 1, elapsed: action.animate ? WAIT : 0 };
-  if (state.revealed >= action.limit) return state;
-  if (action.type === "advance") return { revealed: state.revealed + 1, elapsed: 0 };
-  const elapsed = state.elapsed + TICK;
-  return elapsed >= TURN_DURATION
-    ? { revealed: state.revealed + 1, elapsed: 0 }
-    : { ...state, elapsed };
+    return {
+      conversation: startConversation(action.scenario),
+      pending: null,
+      playing: Boolean(action.autoplay),
+      elapsed: 0,
+    };
+  if (action.type === "pause") return { ...state, playing: false };
+  if (action.type === "toggle") return { ...state, playing: !state.playing };
+  if (action.type === "commit")
+    return state.pending
+      ? { ...state, conversation: state.pending, pending: null, elapsed: 0 }
+      : state;
+  if (action.type === "choose") {
+    if (state.pending) return state;
+    const next = advanceConversation(state.conversation, action.action);
+    return {
+      ...state,
+      playing: false,
+      elapsed: 0,
+      conversation: action.instant ? next : state.conversation,
+      pending: action.instant || next === state.conversation ? null : next,
+    };
+  }
+  if (!state.playing || state.pending) return state;
+  const elapsed = state.elapsed + 100;
+  if (elapsed < 3800) return { ...state, elapsed };
+  const nextAction = state.conversation.narrowed ? "compare" : "budget";
+  const pending = advanceConversation(state.conversation, nextAction);
+  if (pending === state.conversation) return { ...state, playing: false, elapsed: 0 };
+  return { ...state, pending, elapsed: 0, playing: !action.brief && nextAction !== "compare" };
 }
 
 export function CommerceShowcase({
@@ -53,69 +89,69 @@ export function CommerceShowcase({
   const thread = useRef<HTMLDivElement>(null);
   const followTail = useRef(true);
   const { preview, canAdvance, reducedMotion } = usePreviewPlayback();
-  const [scenario, setScenario] = useState<DiscoveryExampleID>(initialScenario);
-  const [{ revealed, elapsed }, dispatchPlayback] = useReducer(playbackReducer, {
-    revealed: 1,
+  const [{ conversation, pending, playing }, dispatch] = useReducer(previewReducer, {
+    conversation: startConversation(initialScenario),
+    pending: null,
+    playing: true,
     elapsed: 0,
   });
-  const [playing, setPlaying] = useState(true);
   const [away, setAway] = useState(false);
   const [selected, setSelected] = useState<Product | null>(null);
+  const { scenario, turns, narrowed, preferred } = conversation;
   const example = DISCOVERY_EXAMPLES[scenario];
-  const prompts = [
-    example.query,
-    `Keep it under $${example.refinedBudget}`,
-    "Compare these two",
-  ].slice(0, brief ? 2 : 3);
-  const replies = [example.answer, example.refinement, example.comparison];
-  const complete = revealed >= prompts.length;
-  const typing = !complete && elapsed >= WAIT && elapsed < WAIT + TYPE;
-  const thinking = !complete && elapsed >= WAIT + TYPE;
-  const draft = typing
-    ? prompts[revealed].slice(0, Math.ceil(((elapsed - WAIT) / TYPE) * prompts[revealed].length))
-    : "";
+  const latest = turns.at(-1)!;
+  const choices: GuidedAction[] = [
+    ...(!narrowed ? ["budget" as const] : []),
+    ...(!preferred ? ["preference" as const] : []),
+    ...(!latest.comparison && latest.products.length > 1 ? ["compare" as const] : []),
+  ];
+  const canPlay = !narrowed || (!brief && !latest.comparison && latest.products.length > 1);
 
   useEffect(() => {
-    if (!canAdvance || !playing || complete || selected) return;
-    const timer = window.setInterval(
-      () => dispatchPlayback({ type: "tick", limit: prompts.length }),
-      TICK,
-    );
+    if (!canAdvance || !playing || pending || selected) return;
+    const timer = window.setInterval(() => dispatch({ type: "tick", brief }), 100);
     return () => window.clearInterval(timer);
-  }, [canAdvance, playing, complete, selected, prompts.length]);
+  }, [canAdvance, playing, pending, selected, brief]);
+
+  useEffect(() => {
+    if (!pending || selected) return;
+    const timer = window.setTimeout(() => dispatch({ type: "commit" }), reducedMotion ? 0 : 650);
+    return () => window.clearTimeout(timer);
+  }, [pending, selected, reducedMotion]);
 
   useEffect(() => {
     if (followTail.current) thread.current?.scrollTo?.({ top: thread.current.scrollHeight });
-  }, [revealed, thinking]);
+  }, [turns.length, pending]);
 
   useEffect(() => {
     if (selected) dialog.current?.showModal();
   }, [selected]);
 
-  function sendNext() {
-    if (complete) return;
-    setPlaying(false);
-    dispatchPlayback({ type: "advance", limit: prompts.length });
-  }
   function reset(nextScenario = scenario, autoplay = false) {
-    const animate = autoplay && !reducedMotion;
-    setScenario(nextScenario);
-    dispatchPlayback({ type: "reset", animate });
-    setPlaying(animate);
+    dispatch({ type: "reset", scenario: nextScenario, autoplay: autoplay && !reducedMotion });
     followTail.current = true;
     setAway(false);
-    if (!animate) thread.current?.scrollTo?.({ top: 0 });
+    thread.current?.scrollTo?.({ top: 0 });
   }
   function showDetails(product: Product) {
     setSelected(product);
-    setPlaying(false);
+    dispatch({ type: "pause" });
   }
 
   return (
-    <div ref={preview} className="commerce-app qc-preview" id="commerce-preview" tabIndex={-1}>
+    <div
+      ref={preview}
+      className={`commerce-app qc-preview${brief ? " qc-preview-brief" : ""}`}
+      id="commerce-preview"
+      tabIndex={-1}
+    >
       <div className="qc-caption">
-        <span>{brief ? "A QUICK LOOK" : "DISCOVER. REFINE. COMPARE."}</span>
-        <span>Guided sample</span>
+        <span>
+          {brief ? "A LITTLE CONVERSATION. A BETTER FIND." : "DISCOVER. REFINE. COMPARE."}
+        </span>
+        <span className="qc-demo-badge">
+          <i /> Interactive preview
+        </span>
       </div>
       <div className="qc-window">
         <header className="qc-header">
@@ -123,21 +159,21 @@ export function CommerceShowcase({
             <Brand light markOnly />
             <span>
               <strong>Shopping with Querix</strong>
-              <small>Your catalog, in conversation</small>
+              <small>A few words. The right products.</small>
             </span>
           </div>
           <div className="qc-playback">
             {!reducedMotion && (
               <button
                 type="button"
-                aria-label={playing && !complete ? "Pause preview" : "Play preview"}
-                aria-pressed={playing && !complete}
+                aria-label={playing ? "Pause preview" : canPlay ? "Play preview" : "Replay preview"}
+                aria-pressed={playing}
                 onClick={() => {
-                  if (complete) reset(scenario, true);
-                  else setPlaying(!playing);
+                  if (!canPlay) reset(scenario, true);
+                  else dispatch({ type: "toggle" });
                 }}
               >
-                {playing && !complete ? <Pause size={14} /> : <Play size={14} />}
+                {playing ? <Pause size={14} /> : <Play size={14} />}
               </button>
             )}
             <button type="button" aria-label="Restart preview" onClick={() => reset()}>
@@ -145,21 +181,19 @@ export function CommerceShowcase({
             </button>
           </div>
         </header>
-        {!brief && (
-          <div className="qc-examples" role="group" aria-label="Shopping example">
-            <span>Explore a conversation</span>
-            {Object.entries(DISCOVERY_EXAMPLES).map(([key, item]) => (
-              <button
-                key={key}
-                type="button"
-                aria-pressed={scenario === key}
-                onClick={() => reset(key as DiscoveryExampleID)}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="qc-examples" role="group" aria-label="Shopping example">
+          <span>Shop a little</span>
+          {Object.keys(DISCOVERY_EXAMPLES).map((key) => (
+            <button
+              key={key}
+              type="button"
+              aria-pressed={scenario === key}
+              onClick={() => reset(key as DiscoveryExampleID)}
+            >
+              {key === "fashion" ? "Workwear" : "Skincare"}
+            </button>
+          ))}
+        </div>
         <div
           ref={thread}
           className="qc-thread"
@@ -177,29 +211,35 @@ export function CommerceShowcase({
               thread.current?.scrollTo?.({ top: thread.current.scrollHeight });
           }}
         >
-          {prompts.slice(0, revealed).map((prompt, index) => (
+          {turns.map((turn, index) => (
             <section className="qc-turn" data-turn={index} key={`${scenario}-${index}`}>
               <div className="qc-user">
                 <span className="qx-sr-only">You: </span>
-                {prompt}
+                {turn.prompt}
               </div>
               <div className="qc-reply">
                 <span className="qc-avatar">
                   <Brand light markOnly />
                 </span>
                 <div>
-                  <p>{replies[index]}</p>
-                  {index < 2 ? (
+                  <p>{turn.reply}</p>
+                  {!turn.comparison ? (
                     <>
                       <div className="qc-preferences">
                         <span>
                           <Check size={10} />
                           {example.preference}
                         </span>
-                        <span>Under ${index === 0 ? example.budget : example.refinedBudget}</span>
+                        <span>Under ${turn.budget}</span>
+                        {turn.preference && (
+                          <span>
+                            <Check size={10} />
+                            {turn.preference}
+                          </span>
+                        )}
                       </div>
                       <div className="qc-products">
-                        {(index === 0 ? example.initial : example.refined).map((product) => (
+                        {turn.products.map((product) => (
                           <ProductCard
                             key={product.product_id}
                             product={product}
@@ -211,7 +251,7 @@ export function CommerceShowcase({
                     </>
                   ) : (
                     <PreviewComparison
-                      products={example.refined}
+                      products={turn.products}
                       fields={example.fields}
                       onSelect={showDetails}
                     />
@@ -220,9 +260,9 @@ export function CommerceShowcase({
               </div>
             </section>
           ))}
-          {thinking && (
+          {pending && (
             <section className="qc-turn qc-incoming">
-              <div className="qc-user">{prompts[revealed]}</div>
+              <div className="qc-user">{pending.turns.at(-1)!.prompt}</div>
               <div className="qc-reply">
                 <span className="qc-avatar">
                   <Brand light markOnly />
@@ -254,49 +294,63 @@ export function CommerceShowcase({
               <ArrowDown size={14} /> Latest message
             </button>
           )}
-          {!complete && (
-            <button type="button" className="qc-suggestion" onClick={sendNext}>
-              {prompts[revealed]}
-              <ChevronRight size={13} />
-            </button>
-          )}
-          <form
-            className="qc-composer"
-            onSubmit={(event) => {
-              event.preventDefault();
-              sendNext();
-            }}
+          <div className="qc-choice-heading">
+            <span>{pending ? "Finding your next match…" : "Make it yours"}</span>
+            <span>{pending ? "" : "Choose a follow-up"}</span>
+          </div>
+          <div
+            className="qc-choices"
+            role="group"
+            aria-label="Suggested follow-ups"
+            aria-busy={Boolean(pending)}
           >
-            <output className={typing ? "is-typing" : ""} aria-label="Next guided shopping message">
-              {complete
-                ? brief
-                  ? "See the full walkthrough to explore comparisons."
-                  : "Try another example, or request a tailored demo."
-                : thinking
-                  ? "Querix is replying…"
-                  : draft || "Choose a suggested follow-up…"}
-            </output>
-            {complete ? (
-              <button
-                type="button"
-                aria-label="Replay conversation"
-                onClick={() => reset(scenario, true)}
-              >
-                <RotateCcw size={15} />
-              </button>
-            ) : (
-              <button type="submit" aria-label="Send next example">
-                <ArrowUp size={16} />
+            {choices.map((action) => {
+              const Icon =
+                action === "budget"
+                  ? SlidersHorizontal
+                  : action === "compare"
+                    ? GitCompareArrows
+                    : Sparkles;
+              return (
+                <button
+                  key={action}
+                  type="button"
+                  className="qc-suggestion"
+                  disabled={Boolean(pending)}
+                  onClick={() => dispatch({ type: "choose", action, instant: reducedMotion })}
+                >
+                  <Icon size={13} />
+                  {choiceLabel(action, scenario)}
+                  <ChevronRight size={12} />
+                </button>
+              );
+            })}
+            {!choices.length && (
+              <button type="button" className="qc-suggestion" onClick={() => reset()}>
+                <RotateCcw size={13} /> Start again
               </button>
             )}
-          </form>
-          <p className="qc-guidance">Guided example · Sample products and prices</p>
+          </div>
+          <div className="qc-choice-footer">
+            <button
+              type="button"
+              onClick={() => reset(scenario === "fashion" ? "beauty" : "fashion")}
+            >
+              Try {scenario === "fashion" ? "skincare" : "workwear"} <ArrowUpRight size={12} />
+            </button>
+            {turns.length > 1 && choices.length > 0 && (
+              <button type="button" onClick={() => reset()}>
+                <RotateCcw size={11} /> Start again
+              </button>
+            )}
+          </div>
+          <p className="qc-guidance">Guided experience · Sample products & prices</p>
         </div>
       </div>
       <div className="qc-footer">
         <span>
           {brief
-            ? "A budget changes. The preference stays."
+            ? "Your next find starts with a conversation."
             : "Live demo access requires an approved account."}
         </span>
         <a href={brief ? "/use-cases/conversational-commerce" : "/commerce/login"}>
@@ -304,8 +358,8 @@ export function CommerceShowcase({
         </a>
       </div>
       <span className="qx-sr-only" role="status">
-        {example.label} example. {revealed} of {prompts.length} replies shown.
-        {revealed > 1 ? ` ${example.preference} preference kept.` : ""}
+        {example.label} example. {turns.length} replies shown.{" "}
+        {pending ? "Preparing a reply." : latest.reply}
       </span>
       {selected && (
         <dialog
@@ -351,6 +405,14 @@ function PreviewComparison({
             <th scope="col">Compare</th>
             {products.map((product) => (
               <th scope="col" key={product.product_id}>
+                <img
+                  className="qc-compare-photo"
+                  src={product.image_urls?.[0]}
+                  alt=""
+                  width={140}
+                  height={120}
+                  loading="lazy"
+                />
                 <button
                   type="button"
                   onClick={() => onSelect(product)}

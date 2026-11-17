@@ -143,7 +143,7 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
             </h2>
             <div className="qx-storefront-grid">
               {[
-                ["Clothing", "“A cotton shirt for work under $40.”", "shirt"],
+                ["Clothing", "“A cotton shirt for work under $40.”", "navy-shirt"],
                 [
                   "Beauty & personal care",
                   "“Shampoo under $15 and moisturizer under $25.”",
@@ -156,10 +156,10 @@ export function ProductPage({ product }: { product: "search" | "commerce" }) {
                   <span className="qx-storefront-index">0{index + 1} / STOREFRONT</span>
                   {asset ? (
                     <img
-                      src={`/commerce/${asset}.svg`}
+                      src={`/commerce/photos/${asset}.webp`}
                       width="150"
                       height="150"
-                      alt={`${title} sample illustration`}
+                      alt={`${title} sample products`}
                       loading="lazy"
                     />
                   ) : (

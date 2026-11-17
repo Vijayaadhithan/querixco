@@ -880,7 +880,8 @@
 .qx-storefront-grid img {
   height: 150px;
   width: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  border-radius: 8px;
   margin-block: 15px;
 }
 .qx-type-art {

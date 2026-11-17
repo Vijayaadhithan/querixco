@@ -601,6 +601,9 @@
   object-fit: contain;
   mix-blend-mode: normal;
 }
+.commerce-product-image.has-photo img {
+  object-fit: cover;
+}
 .commerce-product-number {
   position: absolute;
   top: 10px;
