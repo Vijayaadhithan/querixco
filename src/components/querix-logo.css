@@ -1,0 +1,11 @@
+/* Transforms use the original logo's SVG coordinates at every rendered size. */
+.qx-logo-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .qx-logo-dot {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

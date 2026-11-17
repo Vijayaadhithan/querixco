@@ -120,7 +120,7 @@ it("shows only the animated logo and keeps focus within the intro until it finis
   const intro = host.querySelector('[role="dialog"]')!;
   expect(intro.querySelector(".qx-intro-logo")).not.toBeNull();
   expect(intro.querySelector("image")?.getAttribute("href")).toBe("/querixai-logo.png");
-  expect(intro.querySelectorAll(".qx-intro-signals circle")).toHaveLength(3);
+  expect(intro.querySelectorAll(".qx-logo-dots circle")).toHaveLength(6);
   expect(intro.querySelector("button")).toBeNull();
   expect(intro.textContent?.trim()).toBe("");
   const tab = new KeyboardEvent("keydown", { key: "Tab", cancelable: true });

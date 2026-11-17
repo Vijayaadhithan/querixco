@@ -69,7 +69,7 @@ export function MarketingShell({ children, active }: { children: ReactNode; acti
       <header className="qx-header">
         <div className="qx-container qx-nav">
           <a href="/" aria-label="Querix AI home">
-            <Brand light />
+            <Brand light interactive />
           </a>
           <nav className="qx-desktop-nav" aria-label="Main navigation">
             <details ref={productMenu} className="qx-product-menu">

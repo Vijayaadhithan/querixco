@@ -38,37 +38,7 @@ html[data-qx-intro="revealing"] .qx-intro-logo {
   display: block;
   width: clamp(112px, 22vw, 156px);
   height: auto;
-  overflow: visible;
-}
-.qx-intro-artwork {
-  filter: brightness(0) invert(1);
-  animation: qx-intro-ring 700ms ease-out both;
-}
-.qx-intro-signals circle {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: qx-intro-dance 1250ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-.qx-intro-signals circle:nth-child(1) {
-  --from-x: -78px;
-  --from-y: -58px;
-  --gather-x: 23px;
-  --gather-y: -16px;
-  animation-delay: 180ms;
-}
-.qx-intro-signals circle:nth-child(2) {
-  --from-x: 0px;
-  --from-y: -104px;
-  --gather-x: 0px;
-  --gather-y: 13px;
-  animation-delay: 280ms;
-}
-.qx-intro-signals circle:nth-child(3) {
-  --from-x: 78px;
-  --from-y: -52px;
-  --gather-x: -23px;
-  --gather-y: -16px;
-  animation-delay: 380ms;
+  overflow: hidden;
 }
 @keyframes qx-intro-arrive {
   from {
@@ -78,29 +48,6 @@ html[data-qx-intro="revealing"] .qx-intro-logo {
   to {
     opacity: 1;
     scale: 1;
-  }
-}
-@keyframes qx-intro-dance {
-  0% {
-    opacity: 0;
-    transform: translate(var(--from-x), var(--from-y)) scale(0.3);
-  }
-  32% {
-    opacity: 1;
-    transform: translate(var(--gather-x), var(--gather-y)) scale(1);
-  }
-  55% {
-    transform: translate(0, -10px) scale(1.12);
-  }
-  70% {
-    transform: translate(0, 6px) scale(0.94);
-  }
-  84% {
-    transform: translate(0, -3px) scale(1.03);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(0, 0) scale(1);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -116,15 +63,6 @@ html[data-qx-intro="revealing"] .qx-intro-logo {
   .qx-intro-mark * {
     animation: none !important;
     transition: none !important;
-  }
-}
-
-@keyframes qx-intro-ring {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
   }
 }
 

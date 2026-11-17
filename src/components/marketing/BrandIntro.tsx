@@ -1,4 +1,5 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { QuerixLogo } from "@/components/QuerixLogo";
 import "./brand-intro.css";
 
 const REVEAL_AT = 1950;
@@ -80,7 +81,7 @@ export function BrandIntro({ children }: { children: ReactNode }) {
           aria-label="Querix AI introduction"
         >
           <div className="qx-intro-logo">
-            <IntroMark />
+            <QuerixLogo className="qx-intro-mark" size={156} tone="dark" markOnly motion="intro" />
           </div>
         </div>
       )}
@@ -88,38 +89,5 @@ export function BrandIntro({ children }: { children: ReactNode }) {
         {children}
       </div>
     </>
-  );
-}
-
-// Preserve the original icon artwork; animate only its three blue signal dots.
-function IntroMark() {
-  const maskId = `intro-mark-${useId().replaceAll(":", "")}`;
-  return (
-    <svg
-      className="qx-intro-mark"
-      viewBox="48 435 250 250"
-      width="156"
-      height="156"
-      aria-hidden="true"
-    >
-      <defs>
-        <mask id={maskId} maskUnits="userSpaceOnUse" x="48" y="435" width="250" height="250">
-          <rect x="48" y="435" width="250" height="250" fill="white" />
-          <rect x="108" y="534" width="118" height="40" fill="black" />
-        </mask>
-      </defs>
-      <image
-        className="qx-intro-artwork"
-        href="/querixai-logo.png"
-        width="1380"
-        height="1020"
-        mask={`url(#${maskId})`}
-      />
-      <g className="qx-intro-signals" fill="#65A5FF">
-        <circle cx="129" cy="554" r="14" />
-        <circle cx="168" cy="554" r="14" />
-        <circle cx="206" cy="554" r="14" />
-      </g>
-    </svg>
   );
 }
