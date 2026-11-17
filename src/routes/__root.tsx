@@ -114,7 +114,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "canonical", href: `https://querix.co${matches.at(-1)?.pathname ?? "/"}` },
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg?v=8" },
       { rel: "shortcut icon", href: "/favicon.ico?v=8" },
-      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png?v=8" },
+      // Keep the existing manifest URL so installed clients can pick up browser-only mode.
+      // The website's BrandIntro supplies the opening animation; no OS splash icons are advertised.
       { rel: "manifest", href: "/site.webmanifest?v=8" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
