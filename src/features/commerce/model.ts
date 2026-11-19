@@ -12,7 +12,9 @@ export type Task = {
   id: number;
   query: string;
   need?: string;
+  recipient?: string;
   filters: {
+    min_price?: string | number | null;
     max_price?: string | number | null;
     attributes?: Record<string, string | boolean>;
   };
@@ -42,6 +44,7 @@ export type Commerce = {
   state_version?: number;
 };
 export type Message = {
+  superseded?: boolean;
   id: string | number;
   role: "user" | "assistant";
   content: string;

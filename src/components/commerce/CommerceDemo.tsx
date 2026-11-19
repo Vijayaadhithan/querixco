@@ -42,6 +42,7 @@ import { sampleTurn } from "@/features/commerce/sample";
 import { PortalAccountBar } from "./Portal";
 import { CommerceHeader } from "./CommerceChrome";
 import { Brand } from "@/components/marketing/Brand";
+import { ShoppingFilters } from "./ShoppingFilters";
 import { ProductCard } from "./ProductCard";
 import { ConversationHistory } from "./ConversationHistory";
 import { useConversationHistory } from "./use-conversation-history";
@@ -51,7 +52,31 @@ import "./chat.css";
 import { STOREFRONTS, isStorefront, type StorefrontID } from "@/features/commerce/storefronts";
 
 type Mode = "sample" | "live";
-type Pending = { key: string; message: string; sessionId?: string };
+type Operation = { key: string; message: string; requestText?: string };
+type Pending = Operation & { sessionId?: string; following?: Operation[] };
+
+function pinReference(text: string, commerce?: Commerce | null) {
+  if (!commerce) return text;
+  const ordinals = ["first", "second", "third", "fourth", "fifth"];
+  const positions = new Set<number>();
+  for (const match of text.matchAll(
+    /\b(first|second|third|fourth|fifth)\b|\b(?:option|product|item)\s*#?([1-5])\b/gi,
+  )) {
+    positions.add(match[2] ? Number(match[2]) : ordinals.indexOf(match[1].toLowerCase()) + 1);
+  }
+  if (/\bfirst two\b/i.test(text)) positions.add(2);
+  if (!positions.size) return text;
+  const groups = latestGroups([{ id: "visible", role: "assistant", content: "", commerce }]);
+  const taskId = /\btask ([1-5])\b/i.exec(text)?.[1];
+  const group = taskId
+    ? groups.find((g) => g.task_id === Number(taskId))
+    : groups.length === 1
+      ? groups[0]
+      : undefined;
+  const ids = [...positions].map((pos) => group?.products[pos - 1]?.product_id);
+  if (!group || ids.some((id) => !id)) return null;
+  return `${text} (referring to ${ids.join(" and ")} in task ${group.task_id})`;
+}
 const MODE_KEY = "querix-commerce-mode-v1"; // gitleaks:allow -- non-secret browser storage name
 function restorePending(sessionId?: string, storageKey = PENDING_KEY): Pending | null {
   try {
@@ -59,7 +84,17 @@ function restorePending(sessionId?: string, storageKey = PENDING_KEY): Pending |
     return value &&
       value.sessionId === sessionId &&
       typeof value.key === "string" &&
-      typeof value.message === "string"
+      typeof value.message === "string" &&
+      (value.requestText === undefined || typeof value.requestText === "string") &&
+      (value.following === undefined ||
+        (Array.isArray(value.following) &&
+          value.following.every(
+            (item: Operation) =>
+              item &&
+              typeof item.key === "string" &&
+              typeof item.message === "string" &&
+              (item.requestText === undefined || typeof item.requestText === "string"),
+          )))
       ? value
       : null;
   } catch {
@@ -305,6 +340,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
   const [progress, setProgress] = useState("");
   const [showContext, setShowContext] = useState(false);
   const [awayFromBottom, setAwayFromBottom] = useState(false);
+  const inFlight = useRef<Pending | null>(null);
   const controller = useRef<AbortController | null>(null);
   const thread = useRef<HTMLDivElement>(null);
   const followTail = useRef(true);
@@ -425,6 +461,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
   }, [busy]);
   const savePending = useCallback(
     (value: Pending | null) => {
+      inFlight.current = value;
       setPending(value);
       try {
         if (value) sessionStorage.setItem(pendingKey, JSON.stringify(value));
@@ -470,13 +507,31 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
   }
   const send = useCallback(
     async (text: string, retry?: Pending) => {
-      if (lock.current || !text.trim() || (pending && !retry)) return;
-      if (mode === "live" && !state.sessionId) {
-        setError("The live session is not connected. Use Reconnect before sending.");
-        return;
-      }
+      if (!text.trim()) return;
       if (new TextEncoder().encode(text).length > 4000) {
         setError("Please keep your message within 4,000 UTF-8 bytes.");
+        return;
+      }
+      if (lock.current) {
+        const active = inFlight.current;
+        if (retry || !active || !controller.current || controller.current.signal.aborted) return;
+        const requestText = pinReference(text, streamCommerce ?? lastResponse?.commerce);
+        if (!requestText || new TextEncoder().encode(requestText).length > 4000) {
+          setError("Name the item or task you mean before sending this follow-up.");
+          return;
+        }
+        const next = { key: crypto.randomUUID(), message: text, requestText };
+        savePending({ ...active, following: [...(active.following ?? []), next] });
+        followTail.current = true;
+        setDraft("");
+        setStreamText("");
+        setStreamCommerce(null);
+        setError("");
+        return;
+      }
+      if (pending && !retry) return;
+      if (mode === "live" && !state.sessionId) {
+        setError("The live session is not connected. Use Reconnect before sending.");
         return;
       }
       if (mode === "live" && Date.now() < retryAt) {
@@ -491,8 +546,8 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
       setBusy(true);
       setElapsed(0);
       setError("");
-      setDraft("");
-      const operation = retry ?? {
+      if (!retry) setDraft("");
+      let operation: Pending = retry ?? {
         message: text,
         key: crypto.randomUUID(),
         sessionId: state.sessionId,
@@ -519,43 +574,73 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
               operation.message,
               storefront,
               controller.current.signal,
+              state.sessionId,
             );
             setState((current) => ({ ...current, conversationId: started.conversation_id }));
           }
-          const result = await sendLive(
-            operation.message,
-            operation.key,
-            (event) => {
-              if (event.type === "status") setProgress(event.text);
-              if (event.type === "delta") setStreamText((current) => current + event.text);
-              if (event.type === "commerce") setStreamCommerce(event.commerce);
-            },
-            controller.current.signal,
-            storefront,
-          );
-          setState((current) =>
-            current.messages.some((message) => message.id === result.message_id)
-              ? current
-              : {
-                  sessionId: current.sessionId,
-                  conversationId: current.conversationId,
-                  preferences: result.commerce.preferences,
-                  messages: [
-                    ...current.messages,
-                    {
-                      id: operation.key,
-                      role: "user",
-                      content: operation.message,
-                    },
-                    {
-                      id: result.message_id,
-                      role: "assistant",
-                      content: result.reply,
-                      commerce: result.commerce,
-                    },
-                  ],
-                },
-          );
+          const signal = controller.current.signal;
+          while (true) {
+            const sendingKey = operation.key;
+            const result = await sendLive(
+              operation.requestText ?? operation.message,
+              operation.key,
+              (event) => {
+                if (
+                  signal.aborted ||
+                  inFlight.current?.key !== sendingKey ||
+                  inFlight.current.following?.length
+                )
+                  return;
+                if (event.type === "status") setProgress(event.text);
+                if (event.type === "delta") setStreamText((current) => current + event.text);
+                if (event.type === "commerce") setStreamCommerce(event.commerce);
+              },
+              signal,
+              storefront,
+              state.sessionId,
+            );
+            if (signal.aborted) throw new DOMException("Stopped waiting", "AbortError");
+            const completed = operation;
+            const [next, ...remaining] = inFlight.current?.following ?? [];
+            setState((current) =>
+              current.messages.some((message) => message.id === result.message_id)
+                ? next
+                  ? {
+                      ...current,
+                      messages: current.messages.map((m) =>
+                        m.id === result.message_id ? { ...m, superseded: true } : m,
+                      ),
+                    }
+                  : current
+                : {
+                    sessionId: current.sessionId,
+                    conversationId: current.conversationId,
+                    preferences: result.commerce.preferences,
+                    messages: [
+                      ...current.messages,
+                      {
+                        id: completed.key,
+                        role: "user",
+                        content: completed.message,
+                      },
+                      {
+                        id: result.message_id,
+                        role: "assistant",
+                        content: result.reply,
+                        commerce: result.commerce,
+                        superseded: Boolean(next),
+                      },
+                    ],
+                  },
+            );
+            if (!next) break;
+            operation = { ...next, sessionId: completed.sessionId, following: remaining };
+            savePending(operation);
+            setStreamText("");
+            setStreamCommerce(null);
+            setElapsed(0);
+            setProgress("Updating your search…");
+          }
           savePending(null);
         }
       } catch (cause) {
@@ -580,6 +665,8 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
     },
     [
       pending,
+      streamCommerce,
+      lastResponse,
       mode,
       retryAt,
       state,
@@ -597,6 +684,11 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
       setRetryAt,
     ],
   );
+  const acceptingFollowups = busy && Boolean(pending);
+  const composerDisabled =
+    ((busy || Boolean(pending)) && !acceptingFollowups) || (mode === "live" && !state.sessionId);
+  const previousPreferences = state.messages.filter((m) => m.commerce).at(-2)
+    ?.commerce?.preferences;
   async function reset(remove = true) {
     if (lock.current) return;
     if (!remove && mode === "live" && state.sessionId && !state.messages.length && !pending) {
@@ -936,6 +1028,18 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
                   </div>
                   {message.role === "user" ? (
                     <p className="chat-user-bubble">{message.content}</p>
+                  ) : message.superseded ? (
+                    <details className="chat-full-response">
+                      <summary>Earlier response</summary>
+                      <AssistantResponse
+                        content={message.content}
+                        commerce={message.commerce}
+                        sample={false}
+                        actionable={false}
+                        disabled
+                        onSend={() => undefined}
+                      />
+                    </details>
                   ) : (
                     <AssistantResponse
                       commerce={message.commerce}
@@ -954,6 +1058,12 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
                   <p className="chat-user-bubble">{pending.message}</p>
                 </article>
               )}
+              {pending?.following?.map((item) => (
+                <article key={item.key} className="chat-turn user">
+                  <div className="chat-speaker">You · Queued</div>
+                  <p className="chat-user-bubble">{item.message}</p>
+                </article>
+              ))}
               {busy && !openingId && (pending || !initialized) && (
                 <article className="chat-turn assistant chat-incoming">
                   <div className="chat-speaker">
@@ -962,7 +1072,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
                     </span>{" "}
                     Querix
                   </div>
-                  {streamText ? (
+                  {streamText || streamCommerce ? (
                     <AssistantResponse
                       content={streamText}
                       commerce={streamCommerce}
@@ -974,7 +1084,9 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
                   ) : (
                     <div className="chat-progress" role="status">
                       <LoaderCircle size={15} className="commerce-spin" />
-                      {progress || "Connecting to your conversation…"}
+                      {pending?.following?.length
+                        ? "Your follow-up is queued."
+                        : progress || "Connecting to your conversation…"}
                       {elapsed > 0 && <span>{elapsed}s</span>}
                     </div>
                   )}
@@ -997,6 +1109,16 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
               >
                 <ArrowDown size={18} />
               </button>
+            )}
+            {mode === "live" && tasks.length > 0 && (
+              <ShoppingFilters
+                key={`${state.sessionId}:${state.preferences.active_task_id}:${lastResponse?.id}`}
+                current={state.preferences}
+                previous={previousPreferences}
+                previousEdit={state.messages.at(-2)?.content}
+                disabled={busy || Boolean(pending)}
+                onSend={(text) => void send(text)}
+              />
             )}
             <div className="commerce-composer chat-composer">
               {error && (
@@ -1062,7 +1184,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
                   placeholder="Ask for a product, or tell me what to change…"
                   rows={1}
                   maxLength={4000}
-                  disabled={busy || Boolean(pending) || (mode === "live" && !state.sessionId)}
+                  disabled={composerDisabled}
                   onKeyDown={(event) => {
                     if (
                       event.key === "Enter" &&
@@ -1074,7 +1196,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
                     }
                   }}
                 />
-                {busy && pending ? (
+                {busy && pending && !draft.trim() ? (
                   <button
                     type="button"
                     aria-label="Stop waiting for response"
@@ -1087,12 +1209,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
                   <button
                     type="submit"
                     aria-label="Send message"
-                    disabled={
-                      busy ||
-                      !draft.trim() ||
-                      Boolean(pending) ||
-                      (mode === "live" && !state.sessionId)
-                    }
+                    disabled={composerDisabled || !draft.trim()}
                   >
                     <ArrowUp size={18} />
                   </button>

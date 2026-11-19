@@ -90,10 +90,20 @@ export async function connectLive(storefront?: StorefrontID): Promise<Conversati
       EMPTY_CONVERSATION.preferences,
   };
 }
-export const startLive = (message: string, storefront?: StorefrontID, signal?: AbortSignal) =>
+export const startLive = (
+  message: string,
+  storefront?: StorefrontID,
+  signal?: AbortSignal,
+  sessionId?: string,
+) =>
   request<{ session_id: string; conversation_id: string }>(
     "session/start",
-    { method: "POST", body: JSON.stringify({ message }), signal },
+    {
+      method: "POST",
+      body: JSON.stringify({ message }),
+      signal,
+      headers: sessionId ? { "x-commerce-session": sessionId } : {},
+    },
     storefront,
   );
 export type LiveReply = { reply: string; message_id: number; commerce: Commerce };
@@ -107,6 +117,7 @@ export async function sendLive(
   onEvent: (event: ChatEvent) => void,
   signal?: AbortSignal,
   storefront?: StorefrontID,
+  sessionId?: string,
 ): Promise<LiveReply> {
   const response = await fetch(commerceURL("messages", storefront), {
     method: "POST",
@@ -117,6 +128,7 @@ export async function sendLive(
       "content-type": "application/json",
       accept: "text/event-stream",
       "idempotency-key": key,
+      ...(sessionId ? { "x-commerce-session": sessionId } : {}),
     },
     body: JSON.stringify({ message }),
   });

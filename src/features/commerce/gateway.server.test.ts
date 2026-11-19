@@ -203,6 +203,23 @@ describe("commerce browser gateway", () => {
     );
     expect(fetchMock.mock.calls[0][1].headers.authorization).toBe(`Bearer ${userToken}`);
   });
+  it("rejects delayed submissions after another tab changes the shopping session", async () => {
+    const cookie = await start(cidA);
+    const upstream = vi.fn();
+    mockUpstream(upstream);
+    const response = await handleCommerceRequest(
+      req(
+        "messages",
+        "POST",
+        cookie,
+        { message: "Under $50" },
+        { "idempotency-key": "retry-key-123", "x-commerce-session": "other-session" },
+      ),
+      env,
+    );
+    expect(response.status).toBe(409);
+    expect(upstream).not.toHaveBeenCalled();
+  });
   it("sanitizes upstream failures and preserves retry guidance", async () => {
     const cookie = await start(cidA);
     mockUpstream(

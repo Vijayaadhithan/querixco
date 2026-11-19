@@ -226,6 +226,14 @@ export async function handleCommerceRequest(request: Request, env: CommerceEnv):
     }
     if (!session)
       return json({ error: "Your demo session expired. Reconnect to start a new one." }, 401);
+    const expectedSession = request.headers.get("x-commerce-session");
+    if (expectedSession && expectedSession !== session.sid)
+      return json(
+        {
+          error: "The active chat changed in another tab. Reopen the intended chat before sending.",
+        },
+        409,
+      );
     if (path === "/api/commerce/catalog" && request.method === "GET") {
       return await safeResponse(await upstream(env, "/catalog/summary"));
     }

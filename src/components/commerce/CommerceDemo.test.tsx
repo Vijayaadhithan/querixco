@@ -101,6 +101,7 @@ it("keeps products in each chat turn and scopes actions to the latest response",
     expect.any(Function),
     expect.any(AbortSignal),
     undefined,
+    "test-session",
   );
 });
 
@@ -127,6 +128,7 @@ it("keeps scoped routes live and sends every request with the selected section",
     expect.any(Function),
     expect.any(AbortSignal),
     "clothing",
+    "test-session",
   );
 });
 it("offers a handoff with only the literal request and prefills the destination", async () => {
@@ -558,4 +560,152 @@ it("reuses the first saved conversation and message key after a failed first tur
   expect(vi.mocked(client.sendLive).mock.calls[1].slice(0, 2)).toEqual(operation.slice(0, 2));
   expect(element.querySelectorAll(".chat-turn.user")).toHaveLength(1);
   expect(element.querySelectorAll(".chat-turn.assistant")).toHaveLength(1);
+});
+
+async function submitText(text: string) {
+  const input = element.querySelector("textarea")!;
+  await act(async () => {
+    Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!.call(input, text);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  await act(async () => {
+    input.form!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+  });
+}
+function shoeReply(id: number, budget: string) {
+  return {
+    message_id: id,
+    reply: `Shoes at ${budget}`,
+    commerce: {
+      action: "recommend",
+      products: SAMPLE_PRODUCTS.slice(0, 1),
+      preferences: {
+        active_task_id: 1,
+        tasks: [
+          {
+            id: 1,
+            query: "Running shoes",
+            filters: { max_price: budget, attributes: { size: "US 9" } },
+          },
+        ],
+      },
+    },
+  };
+}
+it("accepts a correction while finding products, suppresses stale cards and preserves the size", async () => {
+  let finish!: (reply: client.LiveReply) => void;
+  let corrected!: (reply: client.LiveReply) => void;
+  vi.mocked(client.sendLive)
+    .mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    )
+    .mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          corrected = resolve;
+        }),
+    );
+  await act(async () => root.render(<CommerceDemo storefront="footwear" />));
+  await submitText("Running shoes under $100 in size US 9");
+  expect(element.querySelector("textarea")!.disabled).toBe(false);
+  await submitText("Wait, under $50, same size");
+  expect(element.textContent).toContain("You · Queued");
+  expect(client.sendLive).toHaveBeenCalledTimes(1);
+  const pending = JSON.parse(sessionStorage.getItem("querix-commerce-pending-v1-footwear")!);
+  await act(async () => finish(shoeReply(2, "99.99")));
+  expect(client.sendLive).toHaveBeenCalledTimes(2);
+  expect(vi.mocked(client.sendLive).mock.calls[1].slice(0, 2)).toEqual([
+    "Wait, under $50, same size",
+    pending.following[0].key,
+  ]);
+  expect(
+    element.querySelector(".chat-turn.assistant details:not([open]) summary")?.textContent,
+  ).toBe("Earlier response");
+  await act(async () => corrected(shoeReply(4, "49.99")));
+  expect(element.querySelector('[aria-label="Edit maximum price: 49.99"]')).toBeTruthy();
+  expect(element.querySelector('[aria-label="Edit size: US 9"]')).toBeTruthy();
+  expect(sessionStorage.getItem("querix-commerce-pending-v1-footwear")).toBeNull();
+  vi.mocked(client.sendLive).mockResolvedValueOnce(shoeReply(6, "99.99"));
+  await act(async () => button("Undo maximum price change").click());
+  expect(vi.mocked(client.sendLive).mock.calls.at(-1)?.[0]).toBe(
+    "For task 1, set maximum price to $99.99",
+  );
+});
+it("recovers the original key before draining queued edits after a reload", async () => {
+  sessionStorage.setItem(
+    "querix-commerce-pending-v1-footwear",
+    JSON.stringify({
+      sessionId: "test-session",
+      key: "first-key",
+      message: "Shoes",
+      following: [{ message: "Under $50", key: "follow-key" }],
+    }),
+  );
+  vi.mocked(client.sendLive)
+    .mockResolvedValueOnce(shoeReply(2, "99.99"))
+    .mockResolvedValueOnce(shoeReply(4, "49.99"));
+  await act(async () => root.render(<CommerceDemo storefront="footwear" />));
+  await act(async () => button("Recover response").click());
+  expect(vi.mocked(client.sendLive).mock.calls.map((c) => c[1])).toEqual([
+    "first-key",
+    "follow-key",
+  ]);
+});
+
+it.each(["beauty", "clothing", "fashion", "footwear"] as const)(
+  "removes one saved preference and offers undo in %s",
+  async (section) => {
+    const previous = shoeReply(2, "49.99");
+    vi.mocked(client.connectLive).mockResolvedValueOnce({
+      sessionId: "test-session",
+      conversationId: "test-chat",
+      preferences: previous.commerce.preferences,
+      messages: [
+        { id: 2, role: "assistant", content: "Earlier results", commerce: previous.commerce },
+      ],
+    });
+    const updated = shoeReply(4, "49.99");
+    Reflect.deleteProperty(updated.commerce.preferences.tasks[0].filters.attributes, "size");
+    vi.mocked(client.sendLive)
+      .mockResolvedValueOnce(updated)
+      .mockResolvedValueOnce(shoeReply(6, "49.99"));
+    await act(async () => root.render(<CommerceDemo storefront={section} />));
+    await act(async () => button("Edit size: US 9").click());
+    await act(async () => button("Remove").click());
+    expect(vi.mocked(client.sendLive).mock.calls[0][0]).toBe("For task 1, remove size");
+    expect(element.querySelector('[aria-label="Edit size: US 9"]')).toBeNull();
+    await act(async () => button("Undo size change").click());
+    expect(vi.mocked(client.sendLive).mock.calls[1][0]).toBe("For task 1, set size to US 9");
+    expect(element.querySelector('[aria-label="Edit maximum price: 49.99"]')).toBeTruthy();
+  },
+);
+it("keeps the visible card identity when a shopper refers to a position during an update", async () => {
+  const first = shoeReply(2, "49.99");
+  first.commerce.products = [
+    { ...SAMPLE_PRODUCTS[0], product_id: "amazon:B000000001" },
+    { ...SAMPLE_PRODUCTS[1], product_id: "amazon:B000000002" },
+  ];
+  vi.mocked(client.connectLive).mockResolvedValueOnce({
+    sessionId: "test-session",
+    conversationId: "test-chat",
+    preferences: first.commerce.preferences,
+    messages: [{ id: 2, role: "assistant", content: "Two options", commerce: first.commerce }],
+  });
+  let finish!: (reply: client.LiveReply) => void;
+  vi.mocked(client.sendLive)
+    .mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    )
+    .mockResolvedValueOnce(shoeReply(6, "24.99"));
+  await act(async () => root.render(<CommerceDemo storefront="footwear" />));
+  await submitText("Under $25 instead");
+  await submitText("Does the second one come in wide?");
+  await act(async () => finish(shoeReply(4, "24.99")));
+  expect(vi.mocked(client.sendLive).mock.calls[1][0]).toContain("amazon:B000000002 in task 1");
 });

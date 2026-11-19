@@ -1154,3 +1154,44 @@
 .chat-history-group:last-of-type {
   padding-bottom: 36px;
 }
+
+.shopping-filters {
+  max-width: 804px;
+  margin: 0 auto 6px;
+  font-size: 13px;
+}
+.shopping-filter-row,
+.shopping-filter-edit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.shopping-filter-row {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.shopping-filters button,
+.shopping-filters select,
+.shopping-filters input {
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  background: var(--c-surface);
+  color: var(--c-ink);
+  padding: 5px 9px;
+  font: inherit;
+}
+.shopping-filters button:disabled {
+  opacity: 0.55;
+}
+.shopping-filter-edit {
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.shopping-filter-edit label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.shopping-filter-edit input {
+  width: 9em;
+}
