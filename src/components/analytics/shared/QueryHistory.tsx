@@ -1,9 +1,13 @@
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LoaderCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useAnalyticsLocation } from "@/features/analytics/lib/use-analytics-location";
 import { useRetainedResult } from "@/features/analytics/lib/use-retained-result";
-import { emptyQueryFilters, safeDashboardReturn } from "@/features/analytics/lib/navigation";
+import {
+  emptyQueryFilters,
+  queryDateRange,
+  safeDashboardReturn,
+} from "@/features/analytics/lib/navigation";
 
 import { PortalState } from "./PortalState";
 import { QueryFilters } from "./QueryFilters";
@@ -11,6 +15,7 @@ import { QueryTable } from "./QueryTable";
 import {
   getCompanyQueries,
   getInternalQueries,
+  getInternalQueryFacets,
   isAnalyticsApiError,
 } from "@/features/analytics/api";
 import { useUnauthorizedRedirect } from "@/features/analytics/auth/session";
@@ -59,6 +64,14 @@ export function QueryHistory({
   );
   const internal = audience === "internal";
 
+  const [loadChoices, setLoadChoices] = useState(false);
+  const choices = useQuery({
+    queryKey: ["analytics", audience, company, "query-facets"],
+    enabled: internal && loadChoices,
+    queryFn: ({ signal }) => getInternalQueryFacets(company, signal),
+    staleTime: 300_000,
+    retry: false,
+  });
   const history = useInfiniteQuery<
     QueryPage<QueryRecord> & { selection: QueryFiltersValue },
     Error
@@ -89,7 +102,7 @@ export function QueryHistory({
   });
 
   const loginPath = internal ? "/internal/analytics/login" : `/analytics/${company}/login`;
-  useUnauthorizedRedirect([history.error], audience, loginPath, queryClient);
+  useUnauthorizedRedirect([history.error, choices.error], audience, loginPath, queryClient);
   const displayed = useRetainedResult(
     history.data,
     history.isPlaceholderData,
@@ -153,15 +166,33 @@ export function QueryHistory({
       ).sort((left, right) => left.localeCompare(right)),
     [items],
   );
-  const facets = displayed?.pages[0]?.facets;
+  const facets = internal ? choices.data : displayed?.pages[0]?.facets;
+  const back = safeDashboardReturn(location.search, company, audience);
+  const view = new URL(back, "https://querix.co").searchParams.get("view");
+  const backLabel =
+    view === "performance"
+      ? "Performance & usage"
+      : view === "activity"
+        ? internal
+          ? "Activity breakdowns"
+          : "Search insights"
+        : view === "catalog"
+          ? "Catalog & reports"
+          : "Overview";
+  const timedOut =
+    history.error?.name === "TimeoutError" ||
+    /timed? ?out|timeout/i.test(history.error?.message ?? "") ||
+    isAnalyticsApiError(history.error, 504);
+  const shorter = queryDateRange(filters, 7);
+  const sevenDays =
+    timedOut && (shorter.from !== filters.from || shorter.to !== filters.to)
+      ? { label: "Try last 7 days", onClick: () => setFilters(shorter) }
+      : undefined;
 
   return (
     <main className="mx-auto max-w-[1480px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-      <a
-        className="analytics-secondary-link mb-5"
-        href={safeDashboardReturn(location.search, company, audience)}
-      >
-        ← Back to overview
+      <a className="analytics-secondary-link mb-5" href={back}>
+        ← Back to {backLabel}
       </a>
       <div className="mb-7">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-workspace-blue">
@@ -185,6 +216,18 @@ export function QueryHistory({
         executionPathOptions={executionPathOptions}
         languageOptions={languageOptions}
         facets={facets}
+        onOpenAdvanced={() => setLoadChoices(true)}
+        facetStatus={
+          internal &&
+          (choices.isFetching ? (
+            <p role="status">Loading filter choices…</p>
+          ) : choices.isError ? (
+            <p role="alert">
+              Filter choices could not be loaded.{" "}
+              <button onClick={() => void choices.refetch()}>Retry filter choices</button>
+            </p>
+          ) : null)
+        }
         onChange={setFilters}
         onReset={() => setFilters(emptyQueryFilters)}
       />
@@ -204,14 +247,21 @@ export function QueryHistory({
           role="alert"
           className="mb-4 rounded-md border border-workspace-warning-line bg-workspace-warning-tint px-4 py-3 text-sm text-workspace-warning"
         >
-          Existing results are still available, but the latest request failed.{" "}
+          {timedOut
+            ? "Loading the selected requests took too long. Your previous results are still visible."
+            : "Existing results are still available, but the latest request failed."}{" "}
           <button
             type="button"
             onClick={() => void history.refetch()}
             className="font-semibold underline underline-offset-2"
           >
             Retry
-          </button>
+          </button>{" "}
+          {sevenDays && (
+            <button className="ml-3 underline" onClick={sevenDays.onClick}>
+              {sevenDays.label}
+            </button>
+          )}
         </div>
       )}
       <div className="mt-6" aria-live="polite">
@@ -239,9 +289,14 @@ export function QueryHistory({
                   ? "Company not found"
                   : "Query history unavailable"
             }
-            message={history.error.message}
+            message={
+              timedOut
+                ? "Loading requests for this selection took too long. Your filters are still applied."
+                : history.error.message
+            }
+            secondaryAction={sevenDays}
             internal={internal}
-            action={{ label: "Try again", onClick: () => void history.refetch() }}
+            action={{ label: "Retry", onClick: () => void history.refetch() }}
           />
         ) : items.length === 0 ? (
           <div className="rounded-lg border border-dashed border-workspace-line p-10 text-center">

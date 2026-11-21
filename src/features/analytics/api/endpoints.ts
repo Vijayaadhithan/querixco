@@ -19,6 +19,7 @@ import {
   decodeInternalQueryPage,
   decodeLogout,
   decodeRecord,
+  decodeQueryFacets,
 } from "./validate";
 
 function authEndpoint(audience: AnalyticsAudience, action: "login" | "me" | "logout"): string {
@@ -127,17 +128,15 @@ function dashboardQueryString(filters: DashboardFilterValue, internal: boolean):
   return params.toString();
 }
 
-function queryString(filters: QueryFilters, cursor: string | null): string {
+function queryString(filters: QueryFilters, cursor: string | null, includeFacets = true): string {
   const params = new URLSearchParams({
     limit: "50",
     sort_by: filters.sortBy,
     sort_direction: filters.sortDirection,
   });
 
-  if (cursor) {
-    params.set("cursor", cursor);
-    params.set("include_facets", "false");
-  }
+  if (cursor) params.set("cursor", cursor);
+  if (cursor || !includeFacets) params.set("include_facets", "false");
   if (filters.query) params.set("query", filters.query.slice(0, 1000));
   if (filters.outcome) params.set("outcome", filters.outcome);
   if (filters.category) params.set("category", filters.category.slice(0, 191));
@@ -187,8 +186,20 @@ export function getInternalQueries(
   signal?: AbortSignal,
 ): Promise<QueryPage<InternalQueryRecord>> {
   return analyticsRequest<QueryPage<InternalQueryRecord>>(
-    `/api/v1/admin/analytics/${encodeURIComponent(company)}/queries?${queryString(filters, cursor)}`,
+    `/api/v1/admin/analytics/${encodeURIComponent(company)}/queries?${queryString(filters, cursor, false)}`,
     companyQueryDecoder(company, decodeInternalQueryPage),
+    { signal },
+  );
+}
+
+export function getInternalQueryFacets(company: string, signal?: AbortSignal) {
+  return analyticsRequest(
+    `/api/v1/admin/analytics/${encodeURIComponent(company)}/query-facets`,
+    (value) => {
+      const result = decodeRecord(value);
+      if (result.company_id !== company) throw new AnalyticsCompanyMismatchError();
+      return decodeQueryFacets(result.facets);
+    },
     { signal },
   );
 }

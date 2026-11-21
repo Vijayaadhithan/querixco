@@ -295,7 +295,7 @@ function OutcomeBadge({ outcome }: { outcome: unknown }) {
     {
       fulfilled: "Results found",
       zero_result: "No results",
-      failure: "System error",
+      failure: "Failed request",
       telemetry_missing: "Telemetry unavailable",
     }[normalizedOutcome] ?? humanizeKey(normalizedOutcome);
   const className =

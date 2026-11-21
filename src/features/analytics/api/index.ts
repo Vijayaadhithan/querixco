@@ -6,6 +6,7 @@ export {
   getInternalCompanies,
   getInternalDashboard,
   getInternalQueries,
+  getInternalQueryFacets,
   getSession,
   login,
   logout,

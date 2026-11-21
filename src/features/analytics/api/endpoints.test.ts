@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { emptyQueryFilters } from "../lib/navigation";
-import { getCompanyQueries, getInternalQueries, login } from "./endpoints";
+import { getCompanyQueries, getInternalQueries, getInternalQueryFacets, login } from "./endpoints";
 
 const emptyFacets = {
   request_kinds: [],
@@ -171,6 +171,27 @@ describe("analytics API contract", () => {
     });
   });
 
+  it("loads internal filter choices independently and rejects another company's choices", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({
+          company_id: "gainr",
+          returned: 0,
+          has_more: false,
+          next_cursor: null,
+          items: [],
+        }),
+      )
+      .mockResolvedValueOnce(jsonResponse({ company_id: "different", facets: emptyFacets }));
+    vi.stubGlobal("fetch", fetchMock);
+    await getInternalQueries("gainr", emptyQueryFilters, null);
+    expect(new URL(fetchMock.mock.calls[0][0]).searchParams.get("include_facets")).toBe("false");
+    await expect(getInternalQueryFacets("gainr")).rejects.toThrow("different company");
+    expect(new URL(fetchMock.mock.calls[1][0]).pathname).toBe(
+      "/api/v1/admin/analytics/gainr/query-facets",
+    );
+  });
   it("uses exact dashboard boundaries without widening to calendar days", async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       jsonResponse({

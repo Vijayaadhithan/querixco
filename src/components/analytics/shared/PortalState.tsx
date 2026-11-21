@@ -8,10 +8,18 @@ type PortalStateProps = {
   title?: string;
   message?: string;
   internal?: boolean;
+  secondaryAction?: { label: string; onClick: () => void };
   action?: { label: string; onClick: () => void };
 };
 
-export function PortalState({ kind, title, message, internal = false, action }: PortalStateProps) {
+export function PortalState({
+  kind,
+  title,
+  message,
+  internal = false,
+  action,
+  secondaryAction,
+}: PortalStateProps) {
   const Icon =
     kind === "loading" ? LoaderCircle : kind === "forbidden" ? LockKeyhole : AlertTriangle;
 
@@ -51,6 +59,15 @@ export function PortalState({ kind, title, message, internal = false, action }: 
             className="mt-6 rounded-md qx-action bg-workspace-ink px-4 py-2.5 text-sm font-semibold text-workspace-ink transition hover:bg-workspace-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
           >
             {action.label}
+          </button>
+        )}
+        {secondaryAction && (
+          <button
+            type="button"
+            className="ml-3 analytics-secondary-link"
+            onClick={secondaryAction.onClick}
+          >
+            {secondaryAction.label}
           </button>
         )}
       </section>

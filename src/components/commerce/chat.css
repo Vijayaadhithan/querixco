@@ -1195,3 +1195,52 @@
 .shopping-filter-edit input {
   width: 9em;
 }
+
+.chat-product-strip.is-single {
+  grid-auto-columns: 100%;
+}
+@media (min-width: 700px) {
+  .chat-product-strip.is-single .commerce-product {
+    display: grid;
+    grid-template-columns: minmax(160px, 34%) minmax(0, 1fr);
+  }
+  .chat-product-strip.is-single .commerce-product-image {
+    height: 100%;
+    min-height: 190px;
+  }
+  .chat-product-strip.is-single .commerce-product h3 {
+    display: block;
+  }
+}
+.chat-compare-picker fieldset {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--c-line);
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 8px;
+}
+.chat-compare-picker legend,
+.chat-manage-history,
+.comparison-disclosure {
+  font-size: 13px;
+  color: var(--c-muted);
+}
+.chat-compare-picker label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: 14px;
+}
+.comparison-disclosure {
+  padding: 10px;
+  text-decoration: underline;
+}
+.comparison-listing-link {
+  display: block;
+  padding: 6px 0;
+  color: var(--c-accent);
+  font-size: 12px;
+  text-decoration: underline;
+}

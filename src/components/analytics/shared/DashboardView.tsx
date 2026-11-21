@@ -58,13 +58,16 @@ export function DashboardView({
       ];
   const drill = queryDrilldown(dashboard, company, audience, currentHref);
   const queryHref = (outcome?: QueryOutcome) =>
-    stale ? undefined : queryDrilldown(dashboard, company, audience, currentHref, outcome).href;
+    stale
+      ? undefined
+      : queryDrilldown(dashboard, company, audience, currentHref, outcome, {
+          textSearchMetric: !internal,
+        }).href;
   const applied = dashboard.filtering.applied;
   return (
     <main className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <header className="analytics-page-heading">
         <div>
-          <p className="analytics-eyebrow">{internal ? "INTERNAL WORKSPACE" : "YOUR ANALYTICS"}</p>
           <h1>{formatCompanyName(company)}</h1>
           <p>
             {internal
@@ -141,6 +144,13 @@ export function DashboardView({
             dashboard={dashboard}
             audience={audience}
             mode={view}
+            slowestHref={
+              internal && view === "performance" && !stale
+                ? queryDrilldown(dashboard, company, audience, currentHref, undefined, {
+                    sortBy: "duration",
+                  }).href
+                : undefined
+            }
             queryHref={queryHref}
           />
           {view === "overview" && (

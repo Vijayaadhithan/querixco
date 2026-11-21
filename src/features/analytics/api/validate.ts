@@ -5,6 +5,7 @@ import type {
   CompanyQueryRecord,
   InternalQueryRecord,
   QueryPage,
+  QueryFacets,
 } from "../model/types";
 
 export type ResponseDecoder<T> = (value: unknown) => T;
@@ -118,6 +119,21 @@ export function decodeLogout(value: unknown): { logged_out: boolean } {
   return value as { logged_out: boolean };
 }
 
+export function decodeQueryFacets(value: unknown): QueryFacets {
+  const facets = record(value, "query facets");
+  stringArray(facets.request_kinds, "query request kinds");
+  stringArray(facets.ad_types, "query ad types");
+  stringArray(facets.diagnostic_codes, "query diagnostic codes");
+  for (const key of ["cities", "subcategories"]) {
+    array(facets[key], `query ${key}`).forEach((option, index) => {
+      const facet = record(option, `${key} option ${index + 1}`);
+      finiteNumber(facet.id, `${key} id`);
+      string(facet.label, `${key} label`);
+    });
+  }
+  return facets as QueryFacets;
+}
+
 function decodeQueryPage(value: unknown): QueryPage<Record<string, unknown>> {
   const root = record(value, "query page");
   string(root.company_id, "query page company");
@@ -135,17 +151,7 @@ function decodeQueryPage(value: unknown): QueryPage<Record<string, unknown>> {
   }
   const items = array(root.items, "query items");
   if (root.facets !== undefined) {
-    const facets = record(root.facets, "query facets");
-    stringArray(facets.request_kinds, "query request kinds");
-    stringArray(facets.ad_types, "query ad types");
-    stringArray(facets.diagnostic_codes, "query diagnostic codes");
-    for (const key of ["cities", "subcategories"]) {
-      array(facets[key], `query ${key}`).forEach((option, index) => {
-        const facet = record(option, `${key} option ${index + 1}`);
-        finiteNumber(facet.id, `${key} id`);
-        string(facet.label, `${key} label`);
-      });
-    }
+    decodeQueryFacets(root.facets);
   }
   items.forEach((item, index) => {
     const query = record(item, `query item ${index + 1}`);

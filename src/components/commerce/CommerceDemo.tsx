@@ -29,13 +29,12 @@ import {
 } from "@/features/commerce/client";
 import {
   EMPTY_CONVERSATION,
-  attributeText,
   type CatalogSummary,
   type Commerce,
   STARTERS,
   latestGroups,
-  productPrice,
   type Conversation,
+  type Group,
   type Product,
 } from "@/features/commerce/model";
 import { sampleTurn } from "@/features/commerce/sample";
@@ -43,6 +42,7 @@ import { PortalAccountBar } from "./Portal";
 import { CommerceHeader } from "./CommerceChrome";
 import { Brand } from "@/components/marketing/Brand";
 import { ShoppingFilters } from "./ShoppingFilters";
+import { Comparison, ComparePicker } from "./ProductComparison";
 import { ProductCard } from "./ProductCard";
 import { ConversationHistory } from "./ConversationHistory";
 import { useConversationHistory } from "./use-conversation-history";
@@ -127,47 +127,42 @@ function storedSample(): Conversation {
     return EMPTY_CONVERSATION;
   }
 }
-function Comparison({ products, sample }: { products: Product[]; sample: boolean }) {
-  const fields = [...new Set(products.flatMap((product) => Object.keys(product.attributes)))].slice(
-    0,
-    10,
-  );
-  return (
-    <div className="commerce-comparison" tabIndex={0} role="region" aria-label="Product comparison">
-      <table>
-        <caption>Compare supplied listing details</caption>
-        <thead>
-          <tr>
-            <th>Attribute</th>
-            {products.map((product) => (
-              <th key={product.product_id}>{product.title}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th>{sample ? "Sample" : "Historical"} price</th>
-            {products.map((product) => (
-              <td key={product.product_id}>{productPrice(product)}</td>
-            ))}
-          </tr>
-          {fields.map((field) => (
-            <tr key={field}>
-              <th>{field.replaceAll("_", " ")}</th>
-              {products.map((product) => (
-                <td key={product.product_id}>{attributeText(product.attributes[field]?.value)}</td>
-              ))}
-            </tr>
-          ))}
-          <tr>
-            <th>Current stock</th>
-            {products.map((product) => (
-              <td key={product.product_id}>Not verified</td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
-    </div>
+function shopperMessage(text: string, groups: Group[]) {
+  const action =
+    /^(More options for|Cheaper options for|Details about (.+?) in|Compare (.+?) in) task (\d+)(?: \(referring to (.+?) in task \d+\))?$/i.exec(
+      text,
+    );
+  if (action) {
+    const group = groups.find((g) => g.task_id === Number(action[4]));
+    const subject = group?.query || "options";
+    if (action[1] === "More options for")
+      return group?.query ? `Show me more ${subject}.` : "Show me more options.";
+    if (action[1] === "Cheaper options for") return `Show me cheaper ${subject}.`;
+    if (action[2]) {
+      const p = group?.products.find(
+        (p) => p.product_id === action[2] || String(p.display_position) === action[2],
+      );
+      return p ? `Show details for ${p.title}.` : "Show listing details.";
+    }
+    if (action[3]) {
+      const ids = action[5]?.split(" and ") ?? [];
+      const titles = ids.map((id) => group?.products.find((p) => p.product_id === id)?.title);
+      return titles.length === 2 && titles.every(Boolean)
+        ? `Compare ${titles.join(" and ")}.`
+        : `Compare ${action[3]}.`;
+    }
+  }
+  const edit =
+    /^For task (\d+), (set|remove) (maximum price|minimum price|size|color|material|style|scent)(?: to (.+))?$/i.exec(
+      text,
+    );
+  if (edit) {
+    const subject = groups.find((g) => g.task_id === Number(edit[1]))?.query;
+    return `${edit[2] === "set" ? "Set" : "Remove"} the ${edit[3]}${subject ? " for " + subject : ""}${edit[4] ? " to " + edit[4] : ""}.`;
+  }
+  return text.replace(
+    / \(referring to (?:amazon:[A-Z0-9]{10})(?: and amazon:[A-Z0-9]{10})* in task \d+\)$/,
+    "",
   );
 }
 function AssistantResponse({
@@ -175,6 +170,7 @@ function AssistantResponse({
   content,
   sample,
   actionable,
+  previousGroups = [],
   disabled,
   onSend,
 }: {
@@ -182,6 +178,7 @@ function AssistantResponse({
   content: string;
   sample: boolean;
   actionable: boolean;
+  previousGroups?: Group[];
   disabled: boolean;
   onSend: (message: string) => void;
 }) {
@@ -234,6 +231,20 @@ function AssistantResponse({
   return (
     <div className="chat-response-content">
       {groups.map((group) => {
+        const earlier = previousGroups.find(
+          (g) =>
+            g.task_id === group.task_id &&
+            group.products.every((p) =>
+              g.products.some((candidate) => candidate.product_id === p.product_id),
+            ),
+        );
+        const choices = group.action === "compare" && earlier ? earlier.products : group.products;
+        const viewDetails = actionable
+          ? (product: Product) =>
+              onSend(
+                `Details about ${product.product_id.startsWith("sample:") ? (product.display_position ?? 1) : product.product_id} in task ${group.task_id}`,
+              )
+          : undefined;
         const intro =
           group.action === "compare"
             ? "Here’s how these options compare."
@@ -248,41 +259,41 @@ function AssistantResponse({
           >
             {groups.length > 1 && <h3>{group.query || `Task ${group.task_id}`}</h3>}
             <p className="chat-prose">{intro}</p>
-            {group.action === "compare" && <Comparison products={group.products} sample={sample} />}
-            <div
-              className={`chat-product-strip ${group.action === "details" ? "is-detail" : ""}`}
-              role="region"
-              aria-label="Product options"
-              tabIndex={0}
-            >
-              {group.products.map((product) => (
-                <ProductCard
-                  key={product.product_id}
-                  product={product}
-                  sample={sample}
-                  details={group.action === "details"}
-                  disabled={disabled}
-                  onDetails={
-                    actionable
-                      ? () =>
-                          onSend(
-                            `Details about ${product.product_id.startsWith("sample:") ? (product.display_position ?? 1) : product.product_id} in task ${group.task_id}`,
-                          )
-                      : undefined
-                  }
-                />
-              ))}
-            </div>
+            {group.action === "compare" && (
+              <Comparison
+                products={group.products}
+                sample={sample}
+                disabled={disabled}
+                onDetails={viewDetails}
+              />
+            )}
+            {group.action !== "compare" && (
+              <div
+                className={`chat-product-strip ${group.products.length === 1 ? "is-single" : ""} ${group.action === "details" ? "is-detail" : ""}`}
+                role="region"
+                aria-label="Product options"
+                tabIndex={0}
+              >
+                {group.products.map((product) => (
+                  <ProductCard
+                    key={product.product_id}
+                    product={product}
+                    sample={sample}
+                    details={group.action === "details"}
+                    disabled={disabled}
+                    onDetails={viewDetails ? () => viewDetails(product) : undefined}
+                  />
+                ))}
+              </div>
+            )}
             {actionable && group.products.length > 0 && (
               <div className="chat-suggestions">
-                {group.products.length > 1 && (
-                  <button
-                    disabled={disabled}
-                    onClick={() => onSend(`Compare the first two in task ${group.task_id}`)}
-                  >
-                    Compare first two
-                  </button>
-                )}
+                <ComparePicker
+                  products={choices}
+                  group={group}
+                  disabled={disabled}
+                  onSend={onSend}
+                />
                 <button
                   disabled={disabled}
                   onClick={() => onSend(`More options for task ${group.task_id}`)}
@@ -344,6 +355,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
   const controller = useRef<AbortController | null>(null);
   const thread = useRef<HTMLDivElement>(null);
   const followTail = useRef(true);
+  const landOnReply = useRef(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<SavedConversation | null>(null);
   const lock = useRef(true);
@@ -351,6 +363,18 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
   const input = useRef<HTMLTextAreaElement>(null);
   const lastResponse = [...state.messages].reverse().find((message) => message.commerce);
   const tasks = state.preferences.tasks;
+  // Preserve the displayed choices for each turn, including restored conversations.
+  const choicesByTask = new Map<number, Group>();
+  const beforeTurn = state.messages.map((message) => {
+    const previous = [...choicesByTask.values()];
+    if (message.commerce)
+      for (const group of latestGroups([message])) {
+        if (group.products.length && group.action !== "compare" && group.action !== "details")
+          choicesByTask.set(group.task_id, group);
+      }
+    return previous;
+  });
+  const latestChoices = [...choicesByTask.values()];
   const history = useConversationHistory(
     storefront,
     Boolean(portalUser && initialized && !busy && mode === "live"),
@@ -363,6 +387,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
   }
   function resetChatView() {
     followTail.current = true;
+    landOnReply.current = false;
     setAwayFromBottom(false);
     setDraft("");
     setStreamText("");
@@ -441,8 +466,24 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
     };
   }, [storefront, pendingKey]);
   useEffect(() => {
-    if (followTail.current) thread.current?.scrollTo({ top: thread.current.scrollHeight });
-  }, [state.sessionId, state.messages.length, busy, streamText, streamCommerce]);
+    const el = thread.current;
+    if (!el || !followTail.current) return;
+    if (!busy && landOnReply.current && state.messages.at(-1)?.role === "assistant") {
+      landOnReply.current = false;
+      const turns = el.querySelectorAll(".chat-turn.assistant");
+      const last = turns[turns.length - 1];
+      if (last) {
+        el.scrollTo({
+          top:
+            el.scrollTop + last.getBoundingClientRect().top - el.getBoundingClientRect().top - 12,
+        });
+        followTail.current = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+        setAwayFromBottom(!followTail.current);
+        return;
+      }
+    }
+    el.scrollTo({ top: el.scrollHeight });
+  }, [state.sessionId, state.messages, busy, streamText, streamCommerce]);
   useEffect(() => {
     if (input.current) {
       input.current.style.height = "auto";
@@ -542,6 +583,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
       followTail.current = true;
       setStreamText("");
       setStreamCommerce(null);
+      landOnReply.current = true;
       setProgress("Connecting…");
       setBusy(true);
       setElapsed(0);
@@ -787,7 +829,6 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
             openingId={openingId}
             disabled={busy}
             category={section?.label ?? "Shopping"}
-            onNew={() => void reset(false)}
             onOpen={(id) => void resume(id)}
             onDelete={(item) => {
               setDeleteTarget(item);
@@ -998,10 +1039,12 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
                       >
                         <small>{starter.kind}</small>
                         <strong>{starter.label}</strong>
-                        <span>
-                          {starter.text}
-                          <ArrowRight size={14} />
-                        </span>
+                        {starter.label !== starter.text && (
+                          <span>
+                            {starter.text}
+                            <ArrowRight size={14} />
+                          </span>
+                        )}
                       </button>
                     ))}
                   </div>
@@ -1012,7 +1055,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
                   )}
                 </div>
               )}
-              {state.messages.map((message) => (
+              {state.messages.map((message, index) => (
                 <article key={message.id} className={`chat-turn ${message.role}`}>
                   <div className="chat-speaker">
                     {message.role === "user" ? (
@@ -1027,7 +1070,9 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
                     )}
                   </div>
                   {message.role === "user" ? (
-                    <p className="chat-user-bubble">{message.content}</p>
+                    <p className="chat-user-bubble">
+                      {shopperMessage(message.content, beforeTurn[index])}
+                    </p>
                   ) : message.superseded ? (
                     <details className="chat-full-response">
                       <summary>Earlier response</summary>
@@ -1045,6 +1090,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
                       commerce={message.commerce}
                       content={message.content}
                       sample={mode === "sample"}
+                      previousGroups={beforeTurn[index]}
                       actionable={message === lastResponse}
                       disabled={busy || Boolean(pending)}
                       onSend={(text) => void send(text)}
@@ -1055,13 +1101,15 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
               {pending && (
                 <article className="chat-turn user">
                   <div className="chat-speaker">You</div>
-                  <p className="chat-user-bubble">{pending.message}</p>
+                  <p className="chat-user-bubble">
+                    {shopperMessage(pending.message, latestChoices)}
+                  </p>
                 </article>
               )}
               {pending?.following?.map((item) => (
                 <article key={item.key} className="chat-turn user">
                   <div className="chat-speaker">You · Queued</div>
-                  <p className="chat-user-bubble">{item.message}</p>
+                  <p className="chat-user-bubble">{shopperMessage(item.message, latestChoices)}</p>
                 </article>
               ))}
               {busy && !openingId && (pending || !initialized) && (
@@ -1114,6 +1162,7 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
               <ShoppingFilters
                 key={`${state.sessionId}:${state.preferences.active_task_id}:${lastResponse?.id}`}
                 current={state.preferences}
+                messages={state.messages}
                 previous={previousPreferences}
                 previousEdit={state.messages.at(-2)?.content}
                 disabled={busy || Boolean(pending)}
@@ -1161,7 +1210,8 @@ export function CommerceDemo({ storefront }: { storefront?: StorefrontID } = {})
               )}
               {pending && !busy && !error && (
                 <div className="commerce-error">
-                  An earlier message may have completed: “{pending.message}”
+                  An earlier message may have completed: “
+                  {shopperMessage(pending.message, latestChoices)}”
                   <button onClick={() => void send(pending.message, pending)}>
                     <RotateCcw size={13} /> Recover response
                   </button>

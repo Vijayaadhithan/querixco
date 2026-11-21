@@ -8,10 +8,18 @@ export function formatCompanyName(value: string): string {
     .join(" ");
 }
 
-export function formatDateTime(value: unknown): string {
+export function formatDateTime(value: unknown, indiaTime = false): string {
   if (typeof value !== "string" || !value) return "Not available";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
+  if (indiaTime)
+    return (
+      new Intl.DateTimeFormat("en-IN", {
+        dateStyle: "medium",
+        timeStyle: "short",
+        timeZone: "Asia/Kolkata",
+      }).format(date) + " IST"
+    );
   return new Intl.DateTimeFormat(undefined, {
     dateStyle: "medium",
     timeStyle: "short",
@@ -37,6 +45,7 @@ export function formatMetricValue(value: unknown, key = ""): string {
 }
 
 export function humanizeKey(value: string): string {
+  if (value === "p95_ms") return "P95 latency";
   return value
     .replace(/^[a-z]\d+_/i, "")
     .replaceAll("_", " ")

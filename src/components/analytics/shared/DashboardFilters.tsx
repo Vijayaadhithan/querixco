@@ -45,7 +45,7 @@ const labels: Record<string, string> = {
 const outcomeOptions = [
   { value: "fulfilled", label: "Results found" },
   { value: "zero_result", label: "No results" },
-  { value: "failure", label: "System error" },
+  { value: "failure", label: "Failed request" },
   { value: "telemetry_missing", label: "Telemetry unavailable" },
 ];
 export function DashboardFilters(props: Props) {

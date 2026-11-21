@@ -144,6 +144,7 @@ export function queryDrilldown(
   audience: AnalyticsAudience,
   back: string,
   outcome?: QueryOutcome,
+  options: { sortBy?: QueryFilters["sortBy"]; textSearchMetric?: boolean } = {},
 ): { href?: string; reason?: string } {
   const applied = dashboard.filtering.applied;
   if (outcome && applied.outcome && outcome !== applied.outcome)
@@ -166,8 +167,10 @@ export function queryDrilldown(
     return { reason: "An exact reporting range is unavailable for this selection." };
   const filters: QueryFilters = {
     ...emptyQueryFilters,
-    includeFilteredResults: applied.request_scope === "all",
-    requestKind: applied.request_scope === "text_search" ? "text_search" : "",
+    sortBy: options.sortBy ?? "created_at",
+    includeFilteredResults: !options.textSearchMetric && applied.request_scope === "all",
+    requestKind:
+      options.textSearchMetric || applied.request_scope === "text_search" ? "text_search" : "",
     outcome: outcome ?? applied.outcome ?? "",
     category: applied.category ?? "",
     language: applied.language ?? "",
@@ -180,4 +183,23 @@ export function queryDrilldown(
   const params = new URLSearchParams(filterSearch(filters));
   params.set("back", back);
   return { href: `${dashboardPath(company, audience)}/queries?${params}` };
+}
+
+export function queryDateRange(value: QueryFilters, days: number | null): QueryFilters {
+  const end = new Date();
+  const start = new Date(end);
+  if (days) start.setDate(start.getDate() - (days - 1));
+  return {
+    ...value,
+    from: days ? dateInputValue(start) : "",
+    to: days ? dateInputValue(end) : "",
+    exactFrom: "",
+    exactTo: "",
+  };
+}
+function dateInputValue(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }

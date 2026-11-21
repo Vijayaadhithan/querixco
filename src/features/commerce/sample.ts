@@ -200,10 +200,20 @@ export function sampleTurn(previous: Conversation, text: string): Conversation {
     const last = groups.at(-1);
     if (!last) return clarify("There are no displayed products for this task yet.");
     const position = lower.match(/details.*?(\d+)/)?.[1];
-    const products = /compare/.test(lower)
-      ? last.products.slice(0, 2)
-      : last.products.filter((product) => product.display_position === Number(position ?? 1));
+    const requestedIds = lower.match(/sample:[a-z0-9-]+/g);
     const action = /compare/.test(lower) ? "compare" : "details";
+    let products = last.products.filter(
+      (product) => product.display_position === Number(position ?? 1),
+    );
+    if (action === "compare") {
+      const latestOptions =
+        [...groups]
+          .reverse()
+          .find((group) => group.action !== "compare" && group.action !== "details") ?? last;
+      products = requestedIds
+        ? latestOptions.products.filter((p) => requestedIds.includes(p.product_id))
+        : last.products.slice(0, 2);
+    }
     const content =
       action === "compare"
         ? "Here are the sample listings side by side. Unspecified attributes stay unknown."

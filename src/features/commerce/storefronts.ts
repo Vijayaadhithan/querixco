@@ -19,7 +19,7 @@ export const STOREFRONTS = {
     ],
     welcome: "A little care, chosen for you",
     prompts: [
-      "Hair fall need a shampoo and dandruf under 30$",
+      "A dandruff shampoo under $30",
       "A moisturizer for dry skin under $30",
       "Shampoo under $15 and moisturizer under $25",
     ],

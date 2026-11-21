@@ -44,7 +44,7 @@ describe("InternalQueryDetails", () => {
       },
     } as InternalQueryRecord;
 
-    const html = renderToStaticMarkup(<InternalQueryDetails item={item} />);
+    const html = renderToStaticMarkup(<InternalQueryDetails item={item} defaultOpen />);
 
     expect(html).toContain("Why filters returned no results");
     expect(html).toContain("Removing these filter groups recovered candidates");

@@ -1,7 +1,7 @@
 import { CalendarDays, RotateCcw } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { formatDateTime } from "@/features/analytics/lib/format";
-import { emptyQueryFilters, validDate } from "@/features/analytics/lib/navigation";
+import { emptyQueryFilters, queryDateRange, validDate } from "@/features/analytics/lib/navigation";
 
 import { humanizeKey } from "@/features/analytics/lib/format";
 import type {
@@ -17,7 +17,7 @@ const outcomes: Array<{ value: QueryOutcome | ""; label: string }> = [
   { value: "", label: "All outcomes" },
   { value: "fulfilled", label: "Results found" },
   { value: "zero_result", label: "No results" },
-  { value: "failure", label: "System error" },
+  { value: "failure", label: "Failed request" },
   { value: "telemetry_missing", label: "Telemetry unavailable" },
 ];
 
@@ -54,6 +54,8 @@ type FilterProps = {
   executionPathOptions: string[];
   languageOptions: string[];
   facets?: QueryFacets;
+  onOpenAdvanced?: () => void;
+  facetStatus?: ReactNode;
   onChange: (value: QueryFiltersValue) => void;
   onReset: () => void;
 };
@@ -68,16 +70,7 @@ export function QueryFilters(props: FilterProps) {
       item != null,
   );
   function dates(days: number | null) {
-    const end = new Date();
-    const start = new Date(end);
-    if (days) start.setDate(start.getDate() - (days - 1));
-    onChange({
-      ...value,
-      from: days ? dateInputValue(start) : "",
-      to: days ? dateInputValue(end) : "",
-      exactFrom: "",
-      exactTo: "",
-    });
+    onChange(queryDateRange(value, days));
   }
   return (
     <section className="analytics-filterbar" aria-label="Search history filters">
@@ -110,7 +103,10 @@ export function QueryFilters(props: FilterProps) {
         <button
           className="analytics-filter-toggle"
           aria-expanded={open}
-          onClick={() => setOpen(!open)}
+          onClick={() => {
+            if (!open) props.onOpenAdvanced?.();
+            setOpen(!open);
+          }}
         >
           More filters & sorting
         </button>
@@ -143,7 +139,12 @@ export function QueryFilters(props: FilterProps) {
             aria-label={`Remove ${filterLabels[key] ?? humanizeKey(key)} filter`}
           >
             {filterLabels[key] ?? humanizeKey(key)}:{" "}
-            {typeof item === "boolean" ? "On" : humanizeKey(String(item))} ×
+            {typeof item === "boolean"
+              ? "On"
+              : key === "outcome"
+                ? outcomes.find((outcome) => outcome.value === item)?.label
+                : humanizeKey(String(item))}{" "}
+            ×
           </button>
         ))}
         <button
@@ -156,6 +157,7 @@ export function QueryFilters(props: FilterProps) {
           Clear filters
         </button>
       </div>
+      {open && props.facetStatus}
       {open && (
         <QueryFilterDraft key={JSON.stringify(value)} {...props} onClose={() => setOpen(false)} />
       )}
@@ -198,6 +200,8 @@ function QueryFilterEditor({
   executionPathOptions: string[];
   languageOptions: string[];
   facets?: QueryFacets;
+  onOpenAdvanced?: () => void;
+  facetStatus?: ReactNode;
   onChange: (next: QueryFiltersValue) => void;
   onReset: () => void;
   onApply: () => void;
@@ -556,13 +560,6 @@ function DateInput({
       />
     </div>
   );
-}
-
-function dateInputValue(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
 }
 
 function optionsWithCurrent(options: string[], current: string): string[] {

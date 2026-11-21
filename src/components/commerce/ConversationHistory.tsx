@@ -3,7 +3,6 @@ import {
   LoaderCircle,
   MessageSquare,
   PanelLeftClose,
-  Plus,
   RotateCcw,
   Ellipsis,
   Trash2,
@@ -36,7 +35,6 @@ export function ConversationHistory({
   openingId,
   disabled,
   category,
-  onNew,
   onOpen,
   onDelete,
   onClose,
@@ -52,7 +50,6 @@ export function ConversationHistory({
   openingId: string | null;
   disabled: boolean;
   category: string;
-  onNew: () => void;
   onOpen: (id: string) => void;
   onDelete: (item: SavedConversation) => void;
   onClose: () => void;
@@ -78,6 +75,7 @@ export function ConversationHistory({
   }, [mobile]);
 
   const groups = new Map<string, SavedConversation[]>();
+  const [manage, setManage] = useState(false);
   const emptyChats = items.filter((item) => item.is_empty);
   const conversations = items.filter((item) => !item.is_empty);
   for (const item of conversations) {
@@ -145,9 +143,7 @@ export function ConversationHistory({
           <PanelLeftClose size={18} />
         </button>
       </div>
-      <button className="chat-new-conversation" disabled={disabled} onClick={onNew}>
-        <Plus size={18} /> New chat
-      </button>
+
       <div className="chat-history-list" aria-busy={loading}>
         {items.length === 0 && loading && (
           <p className="chat-history-status" role="status">
@@ -167,8 +163,8 @@ export function ConversationHistory({
             <ul>{conversations.map(renderRow)}</ul>
           </section>
         ))}
-        {emptyChats.length > 0 && (
-          <details className="chat-empty-conversations">
+        {manage && emptyChats.length > 0 && (
+          <details className="chat-empty-conversations" open>
             <summary>Empty chats ({emptyChats.length})</summary>
             <p>No saved messages. You can delete these chats from their menu.</p>
             <ul>{emptyChats.map(renderRow)}</ul>
@@ -195,7 +191,17 @@ export function ConversationHistory({
         )}
       </div>
       <div className="chat-history-footer">
-        <span>Saved to your account</span>
+        {emptyChats.length > 0 ? (
+          <button
+            className="chat-manage-history"
+            aria-pressed={manage}
+            onClick={() => setManage(!manage)}
+          >
+            {manage ? "Done" : "Manage history"}
+          </button>
+        ) : (
+          <span>Saved to your account</span>
+        )}
         <button
           className="chat-icon-button"
           aria-label="Refresh history"

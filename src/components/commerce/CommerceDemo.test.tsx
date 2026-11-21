@@ -65,7 +65,7 @@ afterEach(async () => {
 it("keeps products in each chat turn and scopes actions to the latest response", async () => {
   const commerce = {
     action: "recommend",
-    products: SAMPLE_PRODUCTS.slice(0, 2),
+    products: SAMPLE_PRODUCTS.slice(0, 4),
     preferences: { active_task_id: 1, tasks: [{ id: 1, query: "moisturizer", filters: {} }] },
   };
   vi.mocked(client.sendLive).mockResolvedValueOnce({
@@ -76,19 +76,28 @@ it("keeps products in each chat turn and scopes actions to the latest response",
   vi.mocked(client.sendLive).mockResolvedValueOnce({
     message_id: 4,
     reply: "Compare these listings.",
-    commerce: { ...commerce, action: "compare" },
+    commerce: {
+      ...commerce,
+      products: [commerce.products[1], commerce.products[3]],
+      action: "compare",
+    },
   });
   await act(async () => root.render(<CommerceDemo />));
   const starter = [...element.querySelectorAll<HTMLButtonElement>("button")].find((button) =>
     button.textContent?.includes("A little care for dry skin"),
   )!;
   await act(async () => starter.click());
-  expect(element.querySelectorAll(".chat-turn.assistant .commerce-product")).toHaveLength(2);
+  expect(element.querySelectorAll(".chat-turn.assistant .commerce-product")).toHaveLength(4);
   expect(element.querySelector(".commerce-results")).toBeNull();
-  const compare = [...element.querySelectorAll<HTMLButtonElement>("button")].find(
-    (button) => button.textContent === "Compare first two",
-  )!;
-  await act(async () => compare.click());
+  await act(async () => button("Choose products to compare").click());
+  const options = element.querySelectorAll<HTMLInputElement>(".chat-compare-picker input");
+  await act(async () => options[1].click());
+  await act(async () => options[3].click());
+  await act(async () => button("Compare selected products").click());
+  expect(element.querySelectorAll(".chat-user-bubble")[1].textContent).toBe(
+    `Compare ${commerce.products[1].title} and ${commerce.products[3].title}.`,
+  );
+  expect(button("Choose different products")).toBeTruthy();
   expect(element.querySelectorAll(".chat-turn.assistant")).toHaveLength(2);
   expect(element.querySelectorAll(".chat-turn.assistant .commerce-product")).toHaveLength(4);
   expect(element.querySelectorAll(".commerce-comparison")).toHaveLength(1);
@@ -96,7 +105,7 @@ it("keeps products in each chat turn and scopes actions to the latest response",
     element.querySelector(".chat-turn.assistant")?.querySelector(".chat-suggestions"),
   ).toBeNull();
   expect(client.sendLive).toHaveBeenLastCalledWith(
-    "Compare the first two in task 1",
+    `Compare option 2 and option 4 in task 1 (referring to ${commerce.products[1].product_id} and ${commerce.products[3].product_id} in task 1)`,
     expect.any(String),
     expect.any(Function),
     expect.any(AbortSignal),
@@ -485,8 +494,10 @@ it("separates verified empty chats and confirms row deletion without switching t
     conversations: [savedChat("active", "Querix shopping demo"), blank],
   });
   await renderPortal();
+  expect(element.querySelector(".chat-empty-conversations")).toBeNull();
+  await act(async () => button("Manage history").click());
   const emptySection = element.querySelector<HTMLDetailsElement>(".chat-empty-conversations")!;
-  expect(emptySection.open).toBe(false);
+  expect(emptySection.open).toBe(true);
   expect(emptySection.textContent).toContain("Empty chats (1)");
   expect(element.querySelectorAll(".chat-history-group .chat-history-item")).toHaveLength(1);
   expect(element.querySelector(".chat-history-group .chat-history-label")?.textContent).toContain(

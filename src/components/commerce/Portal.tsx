@@ -330,12 +330,6 @@ export function PortalGate({
   );
 }
 const ICONS = { clothing: ShoppingBag, beauty: Sparkles, footwear: Footprints, fashion: Watch };
-const DESCRIPTIONS = {
-  clothing: "Everyday pieces, chosen around you.",
-  beauty: "Care for your skin, hair and everyday rituals.",
-  footwear: "Find the right pair for your next step.",
-  fashion: "The small details that make it yours.",
-};
 export function Workspace() {
   const user = usePortalUser()!;
   return (
@@ -358,12 +352,9 @@ export function Workspace() {
                     <span className="portal-icon">
                       <Icon size={24} />
                     </span>
-                    <span className="portal-category-number">
-                      0{(Object.keys(STOREFRONTS) as StorefrontID[]).indexOf(id) + 1} / COLLECTION
-                    </span>
                   </div>
                   <h2>{STOREFRONTS[id].label}</h2>
-                  <p>{DESCRIPTIONS[id]}</p>
+                  <p>“{STOREFRONTS[id].prompts[0]}”</p>
                   <span className="portal-category-link">
                     Start exploring
                     <ArrowRight size={18} />

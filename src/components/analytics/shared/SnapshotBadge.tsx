@@ -12,16 +12,16 @@ export function SnapshotBadge({
     <aside className="analytics-freshness" aria-label="Report freshness">
       <Clock3 size={15} aria-hidden="true" />
       <span>
-        Report generated <strong>{formatDateTime(snapshot.generated_at)}</strong>
-      </span>
-      <span>
         Data through{" "}
         <strong>
-          {snapshot.source_watermark ? formatDateTime(snapshot.source_watermark) : "Not reported"}
+          {snapshot.source_watermark
+            ? formatDateTime(snapshot.source_watermark, true)
+            : "Not reported"}
         </strong>
       </span>
       <details>
         <summary>Refresh details</summary>
+        <p>Report generated {formatDateTime(snapshot.generated_at, true)}</p>
         <p>{snapshot.refresh_schedule}</p>
         {typeof status?.status === "string" && <p>{status.status}</p>}
         <p>Report freshness does not indicate live service health.</p>

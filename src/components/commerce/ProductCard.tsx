@@ -47,7 +47,7 @@ export function ProductCard({
         {sample && <span className="commerce-image-label">Sample product</span>}
       </div>
       <div className="commerce-product-body">
-        <p className="commerce-brand">{product.brand?.value || "Brand not specified"}</p>
+        {product.brand?.value?.trim() && <p className="commerce-brand">{product.brand.value}</p>}
         <h3>{product.title}</h3>
         <div className="commerce-price">
           {productPrice(product)}

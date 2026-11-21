@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Commerce, Task } from "@/features/commerce/model";
+import type { Commerce, Task, Message } from "@/features/commerce/model";
 
 const fields = [
   "maximum price",
@@ -27,11 +27,13 @@ function command(task: Task, field: Field, value: string) {
 
 export function ShoppingFilters({
   current,
+  messages,
   previous,
   previousEdit,
   disabled,
   onSend,
 }: {
+  messages: Message[];
   current: Commerce["preferences"];
   previous?: Commerce["preferences"];
   previousEdit?: string;
@@ -54,6 +56,21 @@ export function ShoppingFilters({
   const valid = editing?.endsWith("price")
     ? /^\d{1,12}(?:\.\d{1,2})?$/.test(value.trim())
     : !!value.trim();
+  const maximum = Number(task.filters.max_price);
+  const originallyUnder = messages.some(
+    (m, index) =>
+      m.role === "user" &&
+      [...m.content.matchAll(/\bunder\s+\$?(\d+(?:\.\d{1,2})?)(?![\d.])/gi)].some(
+        (match) => Math.round(Number(match[1]) * 100) === Math.round(maximum * 100) + 1,
+      ) &&
+      messages[index + 1]?.commerce?.preferences.tasks.some(
+        (t) =>
+          t.id === task.id && t.query === task.query && Number(t.filters.max_price) === maximum,
+      ),
+  );
+  const maxLabel = originallyUnder
+    ? `Under $${Number((maximum + 0.01).toFixed(2))}`
+    : `Max $${valueOf(task, "maximum price")}`;
   function apply(text: string) {
     setEditing(null);
     onSend(text);
@@ -94,8 +111,9 @@ export function ShoppingFilters({
                 setValue(valueOf(task, f));
               }}
             >
-              {f === "maximum price" ? "Max $" : f === "minimum price" ? "Min $" : f + " "}
-              {valueOf(task, f)}
+              {f === "maximum price"
+                ? maxLabel
+                : (f === "minimum price" ? "Min $" : f + " ") + valueOf(task, f)}
             </button>
           ))}
         {undo && prior && (
